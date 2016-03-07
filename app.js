@@ -6,6 +6,7 @@
 /// Packages
 import Fluxible from 'fluxible';
 import FetchrPlugin from 'fluxible-plugin-fetchr';
+// import SequelizePlugin from './utils/SequelizePlugin';
 
 /// Containers
 import Root from './containers/Root';
@@ -24,6 +25,8 @@ const app = new Fluxible({
 app.plug(FetchrPlugin({
     xhrPath: '/api'
 }));
+
+// app.plug(SequelizePlugin);
 
 /// register stores
 app.registerStore(RouteStore);
