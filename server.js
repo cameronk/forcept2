@@ -44,7 +44,9 @@ __debug("  console messages : %s", debugNamespace);
 __debug("  models available : %s", Object.keys(models).length);
 __debug("---");
 
-/// Synchronise models before setting up express server.
+/*
+ * Synchronise models before setting up express server.
+ */
 sequelize.sync().then(function() {
     __debug("Models synchronized.");
 
@@ -57,15 +59,15 @@ sequelize.sync().then(function() {
                 where: {
                     username: username
                 }
-            }).then(functon(user) {
+            }).then(function(user) {
                 if(!user) {
-                    return cb(null, false)''
+                    return cb(null, false);
                 }
                 if(user.password !== password) {
                     return cb(null, false);
                 }
                 return cb(null, user);
-            })
+            });
         }
     ));
 
