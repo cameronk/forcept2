@@ -14,9 +14,11 @@ new WebpackDevServer(webpack(config), {
     }
 }).listen(3000, function () {
 
+    shell.env.PORT = shell.env.PORT || 3001;
+    shell.env.DEBUG = "forcept:*";
+    
     __debug('Shell port: %s', (shell.env.PORT || 3001));
 
-    shell.env.PORT = shell.env.PORT || 3001;
     shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});
     __debug('Webpack Dev Server listening on port 3000');
 });

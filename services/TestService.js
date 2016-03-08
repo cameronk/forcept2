@@ -3,12 +3,18 @@
  * @author Azuru Technology
  */
 
+const __debug = require('debug')('forcept:services:TestService');
+
 export default {
-    name: 'TestService',
-    read: function(req, resource, params, config, callback) {
-        setTimeout(function() {
-            var data = 'response';
-            callback(null, data, null);
-        }, 1000);
+    attach: function(models) {
+        return {
+            name: 'TestService',
+            read: function(req, resource, params, config, callback) {
+                console.log(models);
+                models.User.findOne().then(function(user) {
+                    callback(null, user.firstName, null)
+                });
+            }
+        }
     }
 }

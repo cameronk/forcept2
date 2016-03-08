@@ -28,55 +28,23 @@ import TestService from './services/TestService';
 /// Containers
 import HtmlComponent from './containers/Html';
 
+/// Constants
 const env = process.env.NODE_ENV;
 const port = process.env.PORT || 3000;
+const debugNamespace = process.env.DEBUG || "none";
 const __debug = debug('forcept:server');
 
 __debug("---");
 __debug("Initializing Forcept server.");
 __debug("  web server port  : %s", port);
 __debug("  node environment : %s", env);
+__debug("  console messages : %s", debugNamespace);
 __debug("  models available : %s", Object.keys(models).length);
 __debug("---");
 
 /// Synchronise models before setting up express server.
 sequelize.sync().then(function() {
-
     __debug("Models synchronized.");
-
-    /// Add Fluxible plugin to handle model dispersion to action contexts.
-    app.plug({
-        name: 'SequelizePlugin',
-
-        /**
-         * Called after context creation to dynamically create a context plugin
-         * @method plugContext
-         * @param {Object} options Options passed into createContext
-         * @param {Object} context FluxibleContext instance
-         * @param {Object} app Fluxible instance
-         */
-        plugContext: function(options, context, app) {
-            return {
-                plugActionContext: function(actionContext, context, app) {
-                    actionContext.models = models;
-                }
-            }
-        },
-
-        /**
-         * Allows dehydration of application plugin settings
-         * @method dehydrate
-         */
-        dehydrate: function () { return {}; },
-
-        /**
-         * Allows rehydration of application plugin settings
-         * @method rehydrate
-         * @param {Object} state Object to rehydrate state
-         */
-        rehydrate: function (state) {}
-
-    });
 
     const server = express();
 
@@ -86,10 +54,11 @@ sequelize.sync().then(function() {
 
     /// Use fluxible-plugin-fetchr middleware
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
-          FetchrPlugin.registerService(TestService);
+          FetchrPlugin.registerService(TestService.attach(models));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
+    /// Custom middleware for rendering html to string
     server.use((req, res, next) => {
         const context = app.createContext();
 
@@ -120,9 +89,9 @@ sequelize.sync().then(function() {
                 state: exposed,
                 markup: markup
             });
+
             const html = ReactDOM.renderToStaticMarkup(htmlElement);
 
-            // __debug('Sending markup');
             res.type('html');
             res.write('<!DOCTYPE html>' + html);
             res.end();
@@ -130,7 +99,7 @@ sequelize.sync().then(function() {
     });
 
     server.listen(port);
-    
+
     __debug('Application listening on port ' + port);
 
 });

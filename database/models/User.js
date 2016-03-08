@@ -7,12 +7,10 @@ import Sequelize from 'sequelize';
 
 export var definition = {
     firstName: {
-        type: Sequelize.STRING,
-        field: 'first_name'
+        type: Sequelize.STRING
     },
     lastName: {
-        type: Sequelize.STRING,
-        field: 'last_name'
+        type: Sequelize.STRING
     }
 };
 

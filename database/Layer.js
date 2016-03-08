@@ -17,7 +17,7 @@ const sequelize = new Sequelize(undefined, undefined, undefined, {
 });
 
 const models = {
-    'User': sequelize.define('User', User.definition, User.settings)
+    User: sequelize.define('User', User.definition, User.settings)
 };
 
 export default {
