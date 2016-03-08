@@ -22,82 +22,115 @@ import debug from 'debug';
 
 /// Application imports
 import app from './app';
-import models from './database/Models';
+import { sequelize, models } from './database/Layer';
 import TestService from './services/TestService';
 
 /// Containers
 import HtmlComponent from './containers/Html';
 
 const env = process.env.NODE_ENV;
+const port = process.env.PORT || 3000;
 const __debug = debug('forcept:server');
 
+__debug("---");
+__debug("Initializing Forcept server.");
+__debug("  web server port  : %s", port);
+__debug("  node environment : %s", env);
+__debug("  models available : %s", Object.keys(models).length);
+__debug("---");
+
 /// Synchronise models before setting up express server.
-let promises = [];
-for(var name in Models) {
-    promises.push(Models[name].sync());
-}
+sequelize.sync().then(function() {
 
-Promise.all(promises)
-    .then(function() {
+    __debug("Models synchronized.");
 
-        const server = express();
+    /// Add Fluxible plugin to handle model dispersion to action contexts.
+    app.plug({
+        name: 'SequelizePlugin',
 
-        server.use('/public', express['static'](path.join(__dirname, '/build')));
-        server.use(compression());
-        server.use(bodyParser.json());
-
-        /// Use fluxible-plugin-fetchr middleware
-        const FetchrPlugin = app.getPlugin('FetchrPlugin');
-
-        FetchrPlugin.registerService(TestService);
-        FetchrPlugin.updateOptions({
-            context: {
-                models: Models
-            }
-        });
-
-        server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
-
-        server.use((req, res, next) => {
-            const context = app.createContext();
-
-            __debug('Executing navigate action');
-            context.getActionContext().executeAction(navigateAction, {
-                url: req.url
-            }, (err) => {
-                if (err) {
-                    if (err.statusCode && err.statusCode === 404) {
-                        // Pass through to next middleware
-                        next();
-                    } else {
-                        next(err);
-                    }
-                    return;
+        /**
+         * Called after context creation to dynamically create a context plugin
+         * @method plugContext
+         * @param {Object} options Options passed into createContext
+         * @param {Object} context FluxibleContext instance
+         * @param {Object} app Fluxible instance
+         */
+        plugContext: function(options, context, app) {
+            return {
+                plugActionContext: function(actionContext, context, app) {
+                    actionContext.models = models;
                 }
+            }
+        },
 
-                __debug('Exposing context state');
-                const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
+        /**
+         * Allows dehydration of application plugin settings
+         * @method dehydrate
+         */
+        dehydrate: function () { return {}; },
 
-                __debug('Rendering Root component into html');
-                const markup = ReactDOM.renderToString(createElementWithContext(context));
-
-                const htmlElement = React.createElement(HtmlComponent, {
-                    clientFile: env === 'production' ? 'main.min.js' : 'main.js',
-                    context: context.getComponentContext(),
-                    state: exposed,
-                    markup: markup
-                });
-                const html = ReactDOM.renderToStaticMarkup(htmlElement);
-
-                __debug('Sending markup');
-                res.type('html');
-                res.write('<!DOCTYPE html>' + html);
-                res.end();
-            });
-        });
-
-        const port = process.env.PORT || 3000;
-        server.listen(port);
-        __debug('Application listening on port ' + port);
+        /**
+         * Allows rehydration of application plugin settings
+         * @method rehydrate
+         * @param {Object} state Object to rehydrate state
+         */
+        rehydrate: function (state) {}
 
     });
+
+    const server = express();
+
+    server.use('/public', express['static'](path.join(__dirname, '/build')));
+    server.use(compression());
+    server.use(bodyParser.json());
+
+    /// Use fluxible-plugin-fetchr middleware
+    const FetchrPlugin = app.getPlugin('FetchrPlugin');
+          FetchrPlugin.registerService(TestService);
+
+    server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
+
+    server.use((req, res, next) => {
+        const context = app.createContext();
+
+        __debug('=> %s', req.url);
+
+        context.getActionContext().executeAction(navigateAction, {
+            url: req.url
+        }, (err) => {
+            if (err) {
+                if (err.statusCode && err.statusCode === 404) {
+                    // Pass through to next middleware
+                    next();
+                } else {
+                    next(err);
+                }
+                return;
+            }
+
+            // __debug('Exposing context state');
+            const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
+
+            // __debug('Rendering Root component into html');
+            const markup = ReactDOM.renderToString(createElementWithContext(context));
+
+            const htmlElement = React.createElement(HtmlComponent, {
+                clientFile: env === 'production' ? 'main.min.js' : 'main.js',
+                context: context.getComponentContext(),
+                state: exposed,
+                markup: markup
+            });
+            const html = ReactDOM.renderToStaticMarkup(htmlElement);
+
+            // __debug('Sending markup');
+            res.type('html');
+            res.write('<!DOCTYPE html>' + html);
+            res.end();
+        });
+    });
+
+    server.listen(port);
+    
+    __debug('Application listening on port ' + port);
+
+});
