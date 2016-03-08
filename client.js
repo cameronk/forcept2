@@ -11,7 +11,7 @@ import { createElementWithContext } from 'fluxible-addons-react';
 
 import app from './app';
 
-const debugClient = debug('forcept');
+const __debug = debug('forcept:client');
 const dehydratedState = window.App; // Sent from the server
 
 window.React = ReactDOM; // For chrome dev tool support
@@ -20,21 +20,22 @@ window.React = ReactDOM; // For chrome dev tool support
 // https://github.com/visionmedia/debug#browser-support
 window.fluxibleDebug = debug;
 
-debugClient('rehydrating app');
+__debug('rehydrating app');
 
 // pass in the dehydrated server state from server.js
 app.rehydrate(dehydratedState, (err, context) => {
 
     if (err) throw err;
-    
+
     window.context = context;
     const mountNode = document.getElementById('app');
 
-    debugClient('React Rendering');
+    __debug('React Rendering');
+
     ReactDOM.render(
         /// Create root element with hydrated context.
         createElementWithContext(context),
         mountNode,
-        () => debugClient('React Rendered')
+        () => __debug('React Rendered')
     );
 });

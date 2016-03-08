@@ -22,9 +22,6 @@ class Application extends React.Component {
             return;
         }
 
-        console.log("componentDidUpdate");
-        console.log(this);
-
         document.title = newProps.pageTitle;
     }
 
