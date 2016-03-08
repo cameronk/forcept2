@@ -6,10 +6,10 @@
 import Sequelize from 'sequelize';
 
 export var definition = {
-    firstName: {
+    username: {
         type: Sequelize.STRING
     },
-    lastName: {
+    password: {
         type: Sequelize.STRING
     }
 };

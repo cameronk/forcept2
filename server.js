@@ -16,6 +16,8 @@ import { createElementWithContext } from 'fluxible-addons-react';
 import express from 'express';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
 import path from 'path';
 import serialize from 'serialize-javascript';
 import debug from 'debug';
@@ -26,7 +28,7 @@ import { sequelize, models } from './database/Layer';
 import TestService from './services/TestService';
 
 /// Containers
-import HtmlComponent from './containers/Html';
+import HtmlContainer from './containers/Html';
 
 /// Constants
 const env = process.env.NODE_ENV;
@@ -46,11 +48,51 @@ __debug("---");
 sequelize.sync().then(function() {
     __debug("Models synchronized.");
 
+    /*
+     * Configure Passport local strategy.
+     */
+    passport.use(new LocalStrategy(
+        function(username, password, cb) {
+            models.User.findOne({
+                where: {
+                    username: username
+                }
+            }).then(functon(user) {
+                if(!user) {
+                    return cb(null, false)''
+                }
+                if(user.password !== password) {
+                    return cb(null, false);
+                }
+                return cb(null, user);
+            })
+        }
+    ));
+
+    passport.serializeUser(function(user, cb) {
+        cb(null, user.id);
+    });
+
+    passport.deserializeUser(function(id, cb) {
+        models.User.findOne({
+            where: {
+                id: id
+            }
+        }).then(function(user) {
+            cb(null, user);
+        });
+    });
+
+    /*
+     * Instantiate Express and apply middleware.
+     */
     const server = express();
 
     server.use('/public', express['static'](path.join(__dirname, '/build')));
     server.use(compression());
     server.use(bodyParser.json());
+    server.use(passport.initialize());
+    server.use(passport.session());
 
     /// Use fluxible-plugin-fetchr middleware
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
@@ -83,7 +125,7 @@ sequelize.sync().then(function() {
             // __debug('Rendering Root component into html');
             const markup = ReactDOM.renderToString(createElementWithContext(context));
 
-            const htmlElement = React.createElement(HtmlComponent, {
+            const htmlElement = React.createElement(HtmlContainer, {
                 clientFile: env === 'production' ? 'main.min.js' : 'main.js',
                 context: context.getComponentContext(),
                 state: exposed,
