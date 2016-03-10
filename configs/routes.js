@@ -17,5 +17,12 @@ export default {
         page: 'about',
         handler: require('../containers/pages/About'),
         title: 'About',
+    },
+    login: {
+        path: '/login',
+        method: 'get',
+        page: 'login',
+        handler: require('../containers/pages/Login'),
+        title: 'Login | Forcept'
     }
 };

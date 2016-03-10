@@ -1,6 +1,12 @@
+/**
+ * forcept - components/Nav.js
+ * @author Azuru Technology
+ */
+
 import React from 'react';
 import { NavLink } from 'fluxible-router';
 import { provideContext } from 'fluxible-addons-react';
+
 import TestAction from '../actions/TestAction';
 
 class Nav extends React.Component {

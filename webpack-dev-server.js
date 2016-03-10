@@ -1,8 +1,14 @@
+/**
+ * forcept - webpack-dev-server.js
+ * @author Azuru Technology
+ */
+
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var config = require('./webpack.config');
 var shell = require('shelljs');
-var __debug = require('debug')('forcept:webpack-dev-server');
+// var __debug = require('debug')('forcept:webpack:server');
+var __debug = console.log;
 
 new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
@@ -16,7 +22,7 @@ new WebpackDevServer(webpack(config), {
 
     shell.env.PORT = shell.env.PORT || 3001;
     shell.env.DEBUG = "forcept:*";
-    
+
     __debug('Shell port: %s', (shell.env.PORT || 3001));
 
     shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});

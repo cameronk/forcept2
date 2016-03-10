@@ -14,8 +14,10 @@ import ReactDOM from 'react-dom/server';
 import { navigateAction } from 'fluxible-router';
 import { createElementWithContext } from 'fluxible-addons-react';
 import express from 'express';
+import session from 'express-session';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import path from 'path';
@@ -26,6 +28,7 @@ import debug from 'debug';
 import app from './app';
 import { sequelize, models } from './database/Layer';
 import TestService from './services/TestService';
+import AuthService from './services/AuthService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -92,17 +95,29 @@ sequelize.sync().then(function() {
 
     server.use('/public', express['static'](path.join(__dirname, '/build')));
     server.use(compression());
+    server.use(cookieParser());
     server.use(bodyParser.json());
+    server.use(session({
+        secret: 'keyboard dog',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: true }
+    }));
     server.use(passport.initialize());
     server.use(passport.session());
 
-    /// Use fluxible-plugin-fetchr middleware
+    /*
+     * Use fluxible-plugin-fetchr middleware
+     */
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
           FetchrPlugin.registerService(TestService.attach(models));
+          FetchrPlugin.registerService(AuthService.attach(models, passport));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
-    /// Custom middleware for rendering html to string
+    /*
+     * Custom middleware for rendering html to string
+     */
     server.use((req, res, next) => {
         const context = app.createContext();
 
@@ -141,6 +156,10 @@ sequelize.sync().then(function() {
             res.end();
         });
     });
+
+    // server.get('/logout', function(req, res) {
+        // res.redirect('/test');
+    // });
 
     server.listen(port);
 
