@@ -10,9 +10,8 @@ import { injectIntl } from 'react-intl';
 import { connectToStores, provideContext } from 'fluxible-addons-react';
 import { handleHistory } from 'fluxible-router';
 
-import Nav from '../components/Nav';
 import AppStore from '../flux/App/AppStore';
-import routes from '../flux/Route/Routes';
+import Header from '../components/Header/Header';
 
 class Container extends React.Component {
 
@@ -44,8 +43,8 @@ class Container extends React.Component {
         }
 
         return (
-            <div>
-                <Nav currentRoute={this.props.currentRoute} links={routes} />
+            <div className="p-a-0">
+                <Header />
                 {content}
             </div>
         );

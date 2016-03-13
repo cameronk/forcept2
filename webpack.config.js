@@ -3,7 +3,7 @@ var path = require('path');
 
 var webpackConfig = {
     resolve: {
-        extensions: ['', '.js', '.jsx', '.scss']
+        extensions: ['', '.js', '.jsx', '.less']
     },
     entry: [
         'webpack-dev-server/client?http://localhost:3000',
@@ -26,8 +26,8 @@ var webpackConfig = {
                 ]
             },
             {
-                test: /\.scss$/,
-                loaders: ["style", "css", "sass"]
+                test: /\.less$/,
+                loader: "style!css!less"
             },
             {
                 test: /\.json$/,

@@ -1,12 +1,12 @@
 /**
- * forcept - components/Nav.js
+ * forcept - components/Header/Nav.js
  * @author Azuru Technology
  */
 
 import React from 'react';
 import { provideContext } from 'fluxible-addons-react';
 
-import BaseComponent, { grabContext } from './Base';
+import BaseComponent, { grabContext } from '../Base';
 import NavLink from './NavLink';
 
 class Nav extends BaseComponent {
