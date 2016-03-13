@@ -4,20 +4,26 @@
  */
 
 import BaseStore from 'fluxible/addons/BaseStore';
-import RouteStore from './RouteStore';
+import RouteStore from '../Route/RouteStore';
 
 class ApplicationStore extends BaseStore {
     constructor(dispatcher) {
         super(dispatcher);
         this.pageTitle = '';
+        this.req   = {};
+        this.route = {};
     }
     handlePageTitle(currentRoute) {
         this.dispatcher.waitFor(RouteStore, () => {
+            this.route = currentRoute;
             if (currentRoute && currentRoute.title) {
                 this.pageTitle = currentRoute.title;
                 this.emitChange();
             }
         });
+    }
+    isAuthenticated() {
+        return (this.req.hasOwnProperty('isAuthenticated') && this.req.isAuthenticated);
     }
     getPageTitle() {
         return this.pageTitle;

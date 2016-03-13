@@ -3,7 +3,7 @@ var path = require('path');
 
 var webpackConfig = {
     resolve: {
-        extensions: ['', '.js', '.jsx']
+        extensions: ['', '.js', '.jsx', '.scss']
     },
     entry: [
         'webpack-dev-server/client?http://localhost:3000',
@@ -25,7 +25,14 @@ var webpackConfig = {
                     require.resolve('babel-loader')
                 ]
             },
-            { test: /\.json$/, loader: 'json-loader'}
+            {
+                test: /\.scss$/,
+                loaders: ["style", "css", "sass"]
+            },
+            {
+                test: /\.json$/,
+                loader: 'json-loader'
+            }
         ]
     },
     node: {
@@ -36,7 +43,8 @@ var webpackConfig = {
         new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+                BROWSER: JSON.stringify(true)
             }
         })
     ],

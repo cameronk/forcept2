@@ -11,10 +11,10 @@
 /// Package imports
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import { navigateAction } from 'fluxible-router';
 import { createElementWithContext } from 'fluxible-addons-react';
 import express from 'express';
 import session from 'express-session';
+import connectSQLite from 'connect-sqlite3';
 import compression from 'compression';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -27,8 +27,8 @@ import debug from 'debug';
 /// Application imports
 import app from './app';
 import { sequelize, models } from './database/Layer';
-import TestService from './services/TestService';
-import AuthService from './services/AuthService';
+import { navigateAction } from './flux/Route/RouteActions';
+import AuthService from './flux/Auth/AuthService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -38,6 +38,7 @@ const env = process.env.NODE_ENV;
 const port = process.env.PORT || 3000;
 const debugNamespace = process.env.DEBUG || "none";
 const __debug = debug('forcept:server');
+const SQLiteStore = connectSQLite(session);
 
 __debug("---");
 __debug("Initializing Forcept server.");
@@ -58,6 +59,7 @@ sequelize.sync().then(function() {
      */
     passport.use(new LocalStrategy(
         function(username, password, cb) {
+            __debug('Caught LocalStrategy function');
             models.User.findOne({
                 where: {
                     username: username
@@ -75,10 +77,12 @@ sequelize.sync().then(function() {
     ));
 
     passport.serializeUser(function(user, cb) {
+        __debug("Serializing user #" + user.id);
         cb(null, user.id);
     });
 
     passport.deserializeUser(function(id, cb) {
+        __debug("Deserializing user #" + id);
         models.User.findOne({
             where: {
                 id: id
@@ -98,10 +102,13 @@ sequelize.sync().then(function() {
     server.use(cookieParser());
     server.use(bodyParser.json());
     server.use(session({
+        /*store: new SQLiteStore({
+            dir: './storage'
+        }),*/
         secret: 'keyboard dog',
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: true }
+        cookie: { secure: false }
     }));
     server.use(passport.initialize());
     server.use(passport.session());
@@ -110,8 +117,7 @@ sequelize.sync().then(function() {
      * Use fluxible-plugin-fetchr middleware
      */
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
-          FetchrPlugin.registerService(TestService.attach(models));
-          FetchrPlugin.registerService(AuthService.attach(models, passport));
+          FetchrPlugin.registerService(AuthService.attach(models));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
@@ -119,13 +125,60 @@ sequelize.sync().then(function() {
      * Custom middleware for rendering html to string
      */
     server.use((req, res, next) => {
-        const context = app.createContext();
 
-        __debug('=> %s', req.url);
+        const isAuthenticated = req.isAuthenticated();
+        const context = app.createContext({
 
-        context.getActionContext().executeAction(navigateAction, {
-            url: req.url
-        }, (err) => {
+            /*
+             * Add auth-related pieces to be parsed by plugin.
+             */
+            isAuthenticated: isAuthenticated,
+            user: req.user,
+
+            /*
+             * Build a request object of data we need so
+             * we don't have to serialize the behemoth object.
+             */
+            req: {
+                url: req.url,
+                method: req.method,
+            }
+        });
+
+        const thisContext   = context.getActionContext();
+        const routeStore    = thisContext.getStore('RouteStore');
+        const route         = routeStore.getRoute(req.url);
+
+        if(route) {
+            __debug('=> %s %s', req.method.toUpperCase(), req.url);
+            __debug('| Request from  : %s', req.hostname);
+            __debug('| Requires auth : %s', route.auth);
+            __debug('| Sign in status: %s', req.isAuthenticated());
+
+            /*
+             * Override request if it needs authentication.
+             */
+            if(route.auth && !isAuthenticated) {
+                __debug('| =>  Redirecting to login...');
+                res.redirect('/auth/login');
+                res.end();
+                return;
+            }
+
+            /*
+             * Override request if we can't be here when authenticated (login page)
+             */
+            if(route.antiAuth && isAuthenticated) {
+                __debug('| =>  Redirecting to index...');
+                res.redirect('/');
+                res.end();
+                return;
+            }
+        }
+
+
+        thisContext.executeAction(navigateAction, {}, (err) => {
+
             if (err) {
                 if (err.statusCode && err.statusCode === 404) {
                     // Pass through to next middleware
@@ -136,12 +189,8 @@ sequelize.sync().then(function() {
                 return;
             }
 
-            // __debug('Exposing context state');
             const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
-
-            // __debug('Rendering Root component into html');
             const markup = ReactDOM.renderToString(createElementWithContext(context));
-
             const htmlElement = React.createElement(HtmlContainer, {
                 clientFile: env === 'production' ? 'main.min.js' : 'main.js',
                 context: context.getComponentContext(),
@@ -157,12 +206,9 @@ sequelize.sync().then(function() {
         });
     });
 
-    // server.get('/logout', function(req, res) {
-        // res.redirect('/test');
-    // });
-
     server.listen(port);
 
     __debug('Application listening on port ' + port);
+    __debug(' ');
 
 });

@@ -16,4 +16,13 @@ export var definition = {
 
 export var settings = {
 
+    /**
+     * Exclude password from returned attribtues.
+     */
+    defaultScope: {
+        attributes: {
+            exclude: ['password']
+        }
+    }
+    
 };

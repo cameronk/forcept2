@@ -1,8 +1,13 @@
+/**
+ * forcept - containers/pages/Home.js
+ * @author Azuru Technology
+ */
+
 import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
-import TestStore from '../../stores/TestStore';
+import AppStore from '../../flux/App/AppStore';
 
 const messages = defineMessages({
     welcome: {
@@ -15,7 +20,7 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <h2>Home</h2>
+                <h2>Home {this.props.isAuthenticated ? "lol" : "asdf"}</h2>
                 <p>
                     {this.props.intl.formatMessage(messages.welcome, {
                         count: this.props.hasOwnProperty("testCount") ? this.props.testCount : 0
@@ -26,10 +31,10 @@ class Home extends React.Component {
     }
 }
 
-Home = connectToStores(Home, [TestStore], (context, props) => {
-    var testStore = context.getStore(TestStore);
+Home = connectToStores(Home, [], (context, props) => {
+    var appStore  = context.getStore(AppStore);
     return {
-        testCount: testStore.getArr().length
+        isAuthenticated: appStore.isAuthenticated()
     }
 });
 
