@@ -12,9 +12,21 @@ import { handleHistory } from 'fluxible-router';
 
 import AppStore from '../flux/App/AppStore';
 import Header from '../components/Header/Header';
+import SideBar from '../components/Navigation/SideBar';
+import TopBar from '../components/Navigation/TopBar';
+import SideRail from '../components/Navigation/SideRail';
+
+if(process.env.BROWSER) {
+    require('semantic-ui/dist/components/reset.css');
+    require('semantic-ui/dist/components/site.css');
+    require('../styles/Container.less');
+}
 
 class Container extends React.Component {
 
+    componentDidMount() {
+
+    }
     componentDidUpdate(prevProps, prevState) {
         const newProps = this.props;
         if (newProps.pageTitle === prevProps.pageTitle) {
@@ -25,7 +37,6 @@ class Container extends React.Component {
     }
 
     render() {
-
         const { currentNavigateError, currentRoute, isNavigateComplete } = this.props;
         const Handler = currentRoute && currentRoute.handler;
         let content;
@@ -42,10 +53,22 @@ class Container extends React.Component {
             content = <Handler {...params} />
         }
 
+        /// #Container is now like <body>
         return (
-            <div className="p-a-0">
-                <Header />
-                {content}
+            <div id="Container">
+                <SideBar />
+                <TopBar />
+                <div className="pusher">
+                    <div className="full height">
+                        <div className="toc">
+                            <SideRail />
+                        </div>
+                        <div id="Handler">
+                            {content}
+                        </div>
+                    </div>
+                </div>
+                <ul id="debug"></ul>
             </div>
         );
     }

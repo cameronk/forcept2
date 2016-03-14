@@ -97,7 +97,8 @@ sequelize.sync().then(function() {
      */
     const server = express();
 
-    server.use('/public', express['static'](path.join(__dirname, '/build')));
+    server.use('/public', express['static'](path.join(__dirname, '/dist')));
+    server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
     server.use(compression());
     server.use(cookieParser());
     server.use(bodyParser.json());
@@ -151,8 +152,9 @@ sequelize.sync().then(function() {
 
         if(route) {
             __debug('=> %s %s', req.method.toUpperCase(), req.url);
-            __debug('| Request from  : %s', req.hostname);
-            __debug('| Requires auth : %s', route.auth);
+            __debug('| Request from  : %s', req.ip);
+            __debug('| Request to    : %s', req.hostname);
+            __debug('| Requires auth : %s', route.auth || false);
             __debug('| Sign in status: %s', req.isAuthenticated());
 
             /*
@@ -192,6 +194,7 @@ sequelize.sync().then(function() {
             const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
             const markup = ReactDOM.renderToString(createElementWithContext(context));
             const htmlElement = React.createElement(HtmlContainer, {
+                assets: env === 'production' ? require('./dist/stats.json') : { js: "dev.js" },
                 clientFile: env === 'production' ? 'main.min.js' : 'main.js',
                 context: context.getComponentContext(),
                 state: exposed,

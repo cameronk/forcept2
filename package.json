@@ -4,14 +4,16 @@
   "private": true,
   "main": "start.js",
   "scripts": {
-    "build": "webpack & webpack --config webpack.config.production.js",
-    "dev": "node webpack-dev-server.js",
+    "build": "webpack --progress --config webpack.config.production.js",
+    "dev": "node run-dev.js",
     "lint": "eslint ./*.js ./**/*.js",
-    "start": "node start.js"
+    "start": "node run-prod.js"
   },
   "dependencies": {
+    "autoprefixer-loader": "^3.2.0",
     "babel": "^5.8.23",
     "babel-core": "^5.8.25",
+    "babel-root-import": "^3.2.2",
     "better-console": "^0.2.4",
     "body-parser": "^1.6.4",
     "compression": "^1.5.1",
@@ -21,10 +23,13 @@
     "csurf": "^1.6.3",
     "debug": "^2.0.0",
     "del": "^2.2.0",
+    "expose-loader": "^0.7.1",
     "express": "^4.3.2",
     "express-session": "^1.13.0",
     "express-state": "^1.2.0",
     "extend": "^3.0.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.8.5",
     "fluxible": "^1.0.0",
     "fluxible-addons-react": "^0.2.0",
     "fluxible-plugin-fetchr": "^0.3.9",
@@ -53,6 +58,7 @@
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.5",
     "http-status-codes": "^1.0.6",
+    "jquery": "^2.2.1",
     "keymirror": "^0.1.1",
     "less": "^2.6.1",
     "less-loader": "^2.2.2",
@@ -75,6 +81,8 @@
     "serve-favicon": "^2.1.6",
     "sqlite3": "^3.1.1",
     "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
+    "webpack-stats-plugin": "^0.1.1",
     "yamljs": "^0.2.6"
   },
   "devDependencies": {
@@ -83,6 +91,7 @@
     "babel-root-import": "^3.2.2",
     "bundle-loader": "^0.5.0",
     "eslint": "^0.24.0",
+    "imports-loader": "^0.6.5",
     "json-loader": "^0.5.1",
     "nodemon": "^1.2.1",
     "react-hot-loader": "^1.2.8",

@@ -9,14 +9,13 @@ import { provideContext } from 'fluxible-addons-react';
 
 import Container from './Container';
 
-if(process.env.BROWSER) {
-    require('bootstrap/scss/bootstrap-flex');
-}
-
 class Root extends React.Component {
+    componentDidMount() {
+        console.log("Mounted Root");
+    }
     render() {
         return (
-            <IntlProvider locale="en" messages={{ "pages.home.welcome": "Test" }}>
+            <IntlProvider locale="en" messages={{}}>
                 <Container />
             </IntlProvider>
         );

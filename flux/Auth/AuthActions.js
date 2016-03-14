@@ -17,8 +17,9 @@ export function LoginAction(context, payload, done) {
             if(err) {
                 context.dispatch(Actions.AUTH_ERROR, err);
                 done();
+            } else {
+                context.dispatch(Actions.AUTH_SUCCESS);
             }
-            context.dispatch(Actions.AUTH_SUCCESS);
             console.log(err, data, meta);
         });
 }

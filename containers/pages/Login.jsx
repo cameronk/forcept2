@@ -9,7 +9,7 @@ import React, { PropTypes } from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
-import AuthStore        from '../../flux/auth/AuthStore';
+import AuthStore        from '../../flux/Auth/AuthStore';
 import { LoginAction, CredentialChangeAction }  from '../../flux/Auth/AuthActions';
 import BaseComponent    from '../../components/Base';
 
@@ -29,6 +29,7 @@ class Login extends BaseComponent {
     }
 
     constructor() {
+        console.log("Login component constructor");
         super();
         this.autobind([
             '_submit',
@@ -55,11 +56,9 @@ class Login extends BaseComponent {
                 {this.props.error ? (
                     <h4>Error occurred</h4>
                 ) : ""}
-                <form id="login" method="POST">
-                    <input type="text" name="username" placeholder="Username" value={this.props.username} onChange={this._inputChange("username")} />
-                    <input type="password" name="password" placeholder="Password" value={this.props.password} onChange={this._inputChange("password")} />
-                    <button type="button" onClick={this._submit}>Submit</button>
-                </form>
+                <input type="text" name="username" placeholder="Username" value={this.props.username} onChange={this._inputChange("username")} />
+                <input type="password" name="password" placeholder="Password" value={this.props.password} onChange={this._inputChange("password")} />
+                <button type="button" onClick={this._submit}>Submit</button>
             </div>
         );
     }

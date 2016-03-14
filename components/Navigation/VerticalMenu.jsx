@@ -1,5 +1,5 @@
 /**
- * forcept - components/Header/Header.jsx
+ * forcept - components/Header/VerticalMenu.jsx
  * @author Azuru Technology
  */
 
@@ -11,7 +11,7 @@ import Nav from './Nav';
 if(process.env.BROWSER) {
 }
 
-class Header extends BaseComponent {
+class VerticalMenu extends BaseComponent {
     render() {
         return (
             <div id="Header" className="bg-primary p-a-0">
@@ -21,4 +21,4 @@ class Header extends BaseComponent {
     }
 }
 
-export default Header;
+export default VerticalMenu;

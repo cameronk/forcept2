@@ -3,7 +3,7 @@ var path = require('path');
 
 var webpackConfig = {
     resolve: {
-        extensions: ['', '.js', '.jsx', '.less']
+        extensions: ['', '.js', '.jsx', '.less', '.css']
     },
     entry: [
         'webpack-dev-server/client?http://localhost:3000',
@@ -11,9 +11,9 @@ var webpackConfig = {
         './client.js'
     ],
     output: {
-        path: path.resolve('./build/js'),
-        publicPath: '/public/js/',
-        filename: 'main.js'
+        path: path.resolve('./dist'),
+        publicPath: '/public/',
+        filename: 'dev.js'
     },
     module: {
         loaders: [
@@ -22,8 +22,12 @@ var webpackConfig = {
                 exclude: /node_modules/,
                 loaders: [
                     require.resolve('react-hot-loader'),
-                    require.resolve('babel-loader')
+                    require.resolve('babel-loader'),
                 ]
+            },
+            {
+                test: /\.css$/,
+                loader: "style-loader!css-loader"
             },
             {
                 test: /\.less$/,
@@ -32,6 +36,17 @@ var webpackConfig = {
             {
                 test: /\.json$/,
                 loader: 'json-loader'
+            },
+            {
+                test:   /\.(png|gif|jpe?g|svg)$/i,
+                loader: 'url',
+                query: {
+                    limit: 10000,
+                }
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2)$/,
+                loader: 'file?name=dist/fonts/[name].[ext]'
             }
         ]
     },
