@@ -1,0 +1,61 @@
+#Container {
+
+    .pusher {
+        min-height: 100%;
+    }
+
+    .full.height {
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+
+        &>.toc {
+            z-index: 1;
+            background-color: #1b1c1d;
+            width: 250px;
+            flex: 0 0 auto;
+            min-height: 100%;
+        }
+
+    }
+
+    #SideRail {
+        border-radius: 0;
+        border-width: 0 1px 0 0;
+        box-shadow: none;
+        margin: 0;
+        width: inherit;
+        overflow: hidden;
+        will-change: transform;
+    }
+
+    #SideBar {
+        z-index: 999 !important;
+    }
+
+    #Handler {
+        -webkit-box-flex: 1;
+        flex: 1 1 auto;
+        min-width: 0px;
+    }
+
+}
+
+/**
+ * Sizing
+ */
+@media only screen and (min-width: 1145px) {
+    #Container {
+        #TopBar {
+            display: none;
+        }
+    }
+}
+
+@media only screen and (max-width: 1144px) {
+    #Container {
+        .full.height > .toc {
+            display: none;
+        }
+    }
+}

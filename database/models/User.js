@@ -6,14 +6,23 @@
 import Sequelize from 'sequelize';
 
 export var definition = {
-    firstName: {
+    username: {
         type: Sequelize.STRING
     },
-    lastName: {
+    password: {
         type: Sequelize.STRING
     }
 };
 
 export var settings = {
 
+    /**
+     * Exclude password from returned attribtues.
+     */
+    defaultScope: {
+        attributes: {
+            exclude: ['password']
+        }
+    }
+    
 };
