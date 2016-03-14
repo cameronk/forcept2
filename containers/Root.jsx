@@ -10,12 +10,9 @@ import { provideContext } from 'fluxible-addons-react';
 import Container from './Container';
 
 class Root extends React.Component {
-    componentDidMount() {
-        console.log("Mounted Root");
-    }
     render() {
         return (
-            <IntlProvider locale="en" messages={{}}>
+            <IntlProvider locale="en">
                 <Container />
             </IntlProvider>
         );
