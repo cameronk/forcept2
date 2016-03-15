@@ -103,9 +103,9 @@ sequelize.sync().then(function() {
     server.use(cookieParser());
     server.use(bodyParser.json());
     server.use(session({
-        /*store: new SQLiteStore({
+        store: new SQLiteStore({
             dir: './storage'
-        }),*/
+        }),
         secret: 'keyboard dog',
         resave: false,
         saveUninitialized: true,
@@ -212,6 +212,5 @@ sequelize.sync().then(function() {
     server.listen(port);
 
     __debug('Application listening on port ' + port);
-    __debug(' ');
 
 });

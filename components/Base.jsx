@@ -3,7 +3,7 @@
  * @author Azuru Technology
  */
 
-import { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 export function grabContext(types) {
 
@@ -16,7 +16,7 @@ export function grabContext(types) {
         getUser         : PropTypes.func.isRequired,
     };
 
-    if(types.length === 1 && types[0] === "*") {
+    if(!types || types.length === 0 || (types.length === 1 && types[0] === "*")) {
         return available;
     }
 

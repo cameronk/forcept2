@@ -14,8 +14,8 @@ new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
     hot: true,
     historyApiFallback: true,
-    quiet: true,
-    // noInfo: false,
+    quiet: false,
+    noInfo: false,
     proxy: {
         '*': { target: 'http://localhost:3001' }
     }

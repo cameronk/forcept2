@@ -47,7 +47,7 @@ export default {
         method: 'get',
         page: 'login',
         antiAuth: true,
-        handler: getPage('Login'),
+        handler: getPage('Auth/Login'),
         title: 'Login | Forcept'
     }
 };

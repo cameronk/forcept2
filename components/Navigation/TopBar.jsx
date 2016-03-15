@@ -7,11 +7,11 @@ import React from 'react';
 import BaseComponent from '../Base';
 
 if(process.env.BROWSER) {
-    require('semantic-ui/dist/components/menu.css');
-    require('semantic-ui/dist/components/container.css');
-    require('semantic-ui/dist/components/sidebar.css');
-    require('semantic-ui/dist/components/list.css');
-    require('semantic-ui/dist/components/icon.css');
+    // require('semantic-ui/dist/components/menu.css');
+    // require('semantic-ui/dist/components/container.css');
+    // require('semantic-ui/dist/components/sidebar.css');
+    // require('semantic-ui/dist/components/list.css');
+    // require('semantic-ui/dist/components/icon.css');
 }
 
 class TopBar extends BaseComponent {
@@ -23,7 +23,6 @@ class TopBar extends BaseComponent {
     }
 
     _handleShowSidebar() {
-        alert("Click!");
         $("#SideBar")
             .sidebar({
                 context: $("#Container")
