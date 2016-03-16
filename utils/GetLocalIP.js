@@ -1,3 +1,8 @@
+/**
+ * forcept - utils/GetLocalIP.js
+ * @author Azuru Technology
+ */
+
 var os = require('os');
 var ifaces = os.networkInterfaces();
 
