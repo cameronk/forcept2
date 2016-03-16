@@ -18,6 +18,11 @@ const messages = defineMessages({
     loginHeading: {
         id: 'pages.home.heading',
         defaultMessage: 'Sign in to Forcept'
+    },
+    "errors.auth.credentialMismatch": {
+        id: "errors.auth.credentialMismatch",
+        description: "User credentials not found in DB",
+        defaultMessage: "Unable to locate matching credentials."
     }
 });
 
@@ -46,25 +51,31 @@ class Login extends BaseComponent {
         }.bind(this);
     }
     _submit() {
-        this.context.executeAction(LoginAction);
+        return (evt) => {
+            console.log("Submit!");
+            this.context.executeAction(LoginAction);
+        };
     }
 
     render() {
+        var props = this.props;
+        
         return (
             <div className="ui stackable one column centered grid">
                 <div className="five wide computer seven wide tablet column">
                     <div className="ui raised segment">
                         <FormScaffold
                             heading={{
-                                text: this.props.intl.formatMessage(messages.loginHeading)
+                                text: props.intl.formatMessage(messages.loginHeading)
                             }}
+                            error={props.error ? props.intl.formatMessage(messages[props.error.body.identifier]) : null}
                             fields={{
                                 Username: {
                                     label: "Username",
                                     input: {
                                         type: "text",
                                         name: "username",
-                                        value: this.props.username,
+                                        value: props.username,
                                         onChange: this._inputChange("username"),
                                         icon: {
                                             name: "user"
@@ -76,7 +87,7 @@ class Login extends BaseComponent {
                                     input: {
                                         type: "password",
                                         name: "password",
-                                        value: this.props.password,
+                                        value: props.password,
                                         onChange: this._inputChange("password"),
                                         icon: {
                                             name: "lock"
@@ -88,13 +99,10 @@ class Login extends BaseComponent {
                                         type: "button",
                                         className: "fluid primary",
                                         text: "Log in",
-                                        onClick: this._submit
+                                        onClick: this._submit()
                                     }
                                 }
                             }} />
-                        {this.props.error ? (
-                            <h4>Error occurred</h4>
-                        ) : ""}
                     </div>
                 </div>
             </div>

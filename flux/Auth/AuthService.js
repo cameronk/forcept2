@@ -26,7 +26,10 @@ export default {
                         __debug("[read]: => login failed! user not found");
                         callback(
                             BuildError('Unable to locate matching credentials.', {
-                                statusCode: HttpStatus.UNAUTHORIZED,
+                                output: {
+                                    identifier: "errors.auth.credentialMismatch"
+                                },
+                                statusCode: HttpStatus.UNAUTHORIZED
                             })
                         );
                         return;

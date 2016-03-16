@@ -4,7 +4,9 @@
  */
 
 export default function BuildError(err, props) {
+
     let error = new Error(err);
+
     for(var key in props) {
         error[key] = props[key];
     }

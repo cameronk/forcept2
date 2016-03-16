@@ -5,6 +5,11 @@
 
 import React, { Component, PropTypes } from 'react';
 
+/*
+ * This must be exported separately because
+ * we can't call it for static types inside
+ * a react class that hasn't been instantiated.
+ */
 export function grabContext(types) {
 
     var using = {};
@@ -30,9 +35,14 @@ export function grabContext(types) {
 };
 
 export default class BaseComponent extends Component {
+
+    /*
+     * Autobind specified methods
+     */
     autobind(methods) {
         methods.map(method => {
             this[method] = this[method].bind(this);
         });
     }
+
 }
