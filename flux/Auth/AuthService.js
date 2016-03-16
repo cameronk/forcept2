@@ -12,7 +12,7 @@ export default {
     attach: function(models) {
         return {
             name: 'AuthService',
-            read: function(req, resource, params, config, callback) {
+            create: function(req, resource, params, body, config, callback) {
                 __debug("[read]: Attempting to login '%s'", params.username);
 
                 models.User.findOne({
@@ -47,6 +47,10 @@ export default {
                         callback(null, user, null);
                     });
                 });
+            },
+            delete: function(req, resource, params, config, callback) {
+                req.logout();
+                return callback(null, true, null);
             }
         }
     }

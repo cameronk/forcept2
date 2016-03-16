@@ -7,7 +7,7 @@ import debug from 'debug';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
-var action = function navigateAction(context, payload, done) {
+var navAction = function navigateAction(context, payload, done) {
 
     var request = context.getRequest();
     var routeStore = context.getStore('RouteStore');
@@ -99,6 +99,6 @@ var action = function navigateAction(context, payload, done) {
     });
 }
 
-action.displayName = 'navigateAction';
+navAction.displayName = 'navigateAction';
 
-export var navigateAction = action
+export var navigateAction = navAction;

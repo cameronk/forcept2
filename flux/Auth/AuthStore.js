@@ -13,6 +13,7 @@ class AuthStore extends BaseStore {
 
     static storeName = 'AuthStore'
     static handlers = {
+        [Actions.AUTH_LOGOUT]: 'handleAuthLogout',
         [Actions.AUTH_ERROR]: 'handleAuthError',
         [Actions.AUTH_SUCCESS]: 'handleAuthSuccess',
         [Actions.AUTH_CREDENTIAL_CHANGE]: 'handleCredentialChange'
@@ -32,13 +33,15 @@ class AuthStore extends BaseStore {
     /*
      * Setters
      */
+    handleAuthLogout(err) {
+        window.location.reload();
+    }
     handleAuthError(err) {
         this.error = err;
         this.emitChange();
     }
     handleAuthSuccess() {
         window.location.reload();
-        this.setInitialState();
     }
     handleCredentialChange({username, password}) {
         if(typeof username !== "undefined") {
