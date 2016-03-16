@@ -21,9 +21,11 @@ import MessageScaffold from './Message';
 class FormScaffold extends BaseComponent {
 
     render() {
-        var { fields, heading, error } = this.props;
+        var { onSubmit, fields, heading, error } = this.props;
         return (
-            <div className={["ui form", this.props.className || null, error ? "error" : null].join(" ")}>
+            <form
+                className={["ui form", this.props.className || null, error ? "error" : null].join(" ").trim()}
+                onSubmit={onSubmit || function() {}}>
                 {heading ? (
                     <div>
                         <HeadingScaffold {...heading} />
@@ -59,7 +61,7 @@ class FormScaffold extends BaseComponent {
                         </div>
                     );
                 }) : null}
-            </div>
+            </form>
         );
     }
 }
