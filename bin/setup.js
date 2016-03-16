@@ -56,6 +56,7 @@ var schema = {
 if(program.dev) {
     schema.properties['devPort'] = {
         description: "Development broadcast port",
+        type: 'integer',
         message: 'The port must be a number.',
         default: data.devPort ? parseInt(data.devPort) : 3000
     }
@@ -70,7 +71,7 @@ prompt.get(schema, function (err, result) {
 
     /// If devPort flag was already in file, add it to result
     if(!program.dev && !result.devPort && data.devPort) {
-        result['devPort'] = data.devPort;
+        result['devPort'] = parseInt(data.devPort);
     }
 
     var result = JSON.stringify(result);
