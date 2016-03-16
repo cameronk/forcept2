@@ -12,7 +12,7 @@ var getConfig = require('./utils/GetConfig');
 
 getConfig(function(config) {
 
-    const webpackPort = (config.devPort || 3000)
+    const webpackPort = (config.devPort || 3000);
     const expressPort = (webpackPort + 1);
     const webpackConfig = configureWebpack(webpackPort);
 
