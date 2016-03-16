@@ -53,7 +53,8 @@ app.plug({
                 return req;
             };
             context.getUser = function(param) {
-                if(!param || !user.hasOwnProperty(param)) return user;
+                if(!param) return user;
+                if(!user.hasOwnProperty(param)) return null;
                 return user[param];
             }
             context.isAuthenticated = function() {

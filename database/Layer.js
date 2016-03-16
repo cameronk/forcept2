@@ -20,7 +20,7 @@ if(!fs.existsSync(storagePath)) {
 }
 
 /// Instantiate Sequelize
-const sequelize = new Sequelize(undefined, undefined, undefined, {
+var seq = new Sequelize(undefined, undefined, undefined, {
     username: null,
     password: null,
     database: 'forcept',
@@ -29,11 +29,7 @@ const sequelize = new Sequelize(undefined, undefined, undefined, {
     storage: 'storage/forcept.db'
 });
 
-const models = {
-    User: sequelize.define('User', User.definition, User.settings)
-};
-
-export default {
-    sequelize: sequelize,
-    models: models
+export var sequelize = seq;
+export var models = {
+    User: seq.define('User', User.definition, User.settings)
 };

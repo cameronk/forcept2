@@ -5,6 +5,9 @@
 
 import BaseStore from 'fluxible/addons/BaseStore';
 import Actions from '../actions';
+import debug from 'debug';
+
+const __debug = debug('forcept:flux:Auth:AuthStore');
 
 class AuthStore extends BaseStore {
 

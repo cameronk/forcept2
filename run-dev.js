@@ -17,9 +17,9 @@ new WebpackDevServer(webpack(config), {
     quiet: false,
     noInfo: false,
     proxy: {
-        '*': { target: 'http://10.0.0.5:3001' }
+        '*': { target: 'http://localhost:3001' }
     }
-}).listen(3000, '10.0.0.5', function () {
+}).listen(3000, '0.0.0.0', function () {
 
     shell.env.PORT = shell.env.PORT || 3001;
     shell.env.DEBUG = "forcept:*";

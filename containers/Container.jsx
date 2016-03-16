@@ -11,22 +11,17 @@ import { connectToStores, provideContext } from 'fluxible-addons-react';
 import { handleHistory } from 'fluxible-router';
 
 import AppStore from '../flux/App/AppStore';
-import Header from '../components/Header/Header';
 import SideBar from '../components/Navigation/SideBar';
 import TopBar from '../components/Navigation/TopBar';
 import SideRail from '../components/Navigation/SideRail';
 
 if(process.env.BROWSER) {
-    require('semantic-ui/dist/components/reset.css');
-    require('semantic-ui/dist/components/site.css');
+    require('../semantic/dist/semantic.css');
     require('../styles/Container.less');
 }
 
 class Container extends React.Component {
 
-    componentDidMount() {
-
-    }
     componentDidUpdate(prevProps, prevState) {
         const newProps = this.props;
         if (newProps.pageTitle === prevProps.pageTitle) {

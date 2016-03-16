@@ -31,7 +31,7 @@ var webpackConfig = {
             },
             {
                 test: /\.less$/,
-                loader: "style!css!less"
+                loader: "style-loader!css-loader!less-loader"
             },
             {
                 test: /\.json$/,

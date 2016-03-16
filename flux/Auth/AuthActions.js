@@ -5,6 +5,9 @@
 
 import Actions from '../actions';
 import AuthStore from './AuthStore';
+import debug from 'debug';
+
+const __debug = debug('forcept:flux:Auth:AuthActions');
 
 /*
  * Attempt to log a user in.
@@ -20,7 +23,6 @@ export function LoginAction(context, payload, done) {
             } else {
                 context.dispatch(Actions.AUTH_SUCCESS);
             }
-            console.log(err, data, meta);
         });
 }
 
