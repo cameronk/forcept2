@@ -1,6 +1,10 @@
+/**
+ * forcept - bin/setup.js
+ * @author Azuru Technology
+ */
+
 var prompt = require('prompt');
 var fs = require('fs');
-
 var data = {};
 
 const storagePath = './storage';
