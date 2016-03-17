@@ -10,7 +10,6 @@ var __debug   = require('debug')('forcept:database:models');
 var db        = {};
 
 __debug("Loading models for " + env + " environment.");
-__debug(config);
 
 if (config.use_env_variable) {
     var sequelize = new Sequelize(process.env[config.use_env_variable]);
