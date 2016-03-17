@@ -6,14 +6,10 @@
 import React from 'react';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
+import NavLink from './NavLink';
 import { defineMessages, injectIntl } from 'react-intl';
 
 if(process.env.BROWSER) {
-    // require('semantic-ui/dist/components/menu.css');
-    // require('semantic-ui/dist/components/sidebar.css');
-    // require('semantic-ui/dist/components/dropdown.css');
-    // require('semantic-ui/dist/components/statistic.css');
-    // require('semantic-ui/dist/components/label.css');
     require('../../styles/VerticalMenu.less');
 }
 
@@ -32,7 +28,7 @@ const messages = defineMessages({
         id: "verticalmenu.user.logout",
         defaultMessage: "Sign out"
     }
-    
+
 })
 
 class VerticalMenu extends BaseComponent {
@@ -56,7 +52,7 @@ class VerticalMenu extends BaseComponent {
                     <div className="menu">
                         <a className="item"><i className="globe icon"></i> {formatMessage(messages.chooseLanguage)}</a>
                         <a className="item"><i className="settings icon"></i> Account Settings</a>
-                        <a className="item"><i className="sign out icon"></i> {formatMessage(messages.logout)}</a>
+                        <NavLink routeName={"logout"} className="item"><i className="sign out icon"></i> {formatMessage(messages.logout)}</NavLink>
                     </div>
                 </div>
             );

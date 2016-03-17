@@ -11,10 +11,12 @@ class ButtonScaffold extends BaseComponent {
 
     render() {
         var props = this.props;
+        console.log(props);
         return (
             <button
-                className={"ui button " + (props.className || "")}
-                {...omit(props, ["className"])}>
+                type={props.submit === true ? "submit" : "button"}
+                className={("ui button " + (props.className || "")).trim()}
+                {...omit(props, ["className", "type"])}>
                 {props.text}
             </button>
         );

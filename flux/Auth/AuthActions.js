@@ -14,15 +14,27 @@ const __debug = debug('forcept:flux:Auth:AuthActions');
  */
 export function LoginAction(context, payload, done) {
     context.service
-        .read('AuthService')
+        .create('AuthService')
         .params(context.getStore(AuthStore).getCredentials())
         .end(function(err, data, meta) {
             if(err) {
                 context.dispatch(Actions.AUTH_ERROR, err);
-                done();
             } else {
                 context.dispatch(Actions.AUTH_SUCCESS);
             }
+            done();
+        });
+}
+
+/*
+ * Attempt to log a user in.
+ */
+export function LogoutAction(context, payload, done) {
+    context.service
+        .delete('AuthService')
+        .end(function(err, data, meta) {
+            context.dispatch(Actions.AUTH_LOGOUT);
+            done();
         });
 }
 
@@ -31,4 +43,5 @@ export function LoginAction(context, payload, done) {
  */
 export function CredentialChangeAction(context, payload, done) {
     context.dispatch(Actions.AUTH_CREDENTIAL_CHANGE, payload);
+    done();
 }
