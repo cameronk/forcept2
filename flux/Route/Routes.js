@@ -40,6 +40,7 @@ export default {
         method: 'get',
         page: 'logout',
         auth: true,
+        handler: getPage('Auth/Logout'),
         action: LogoutAction
     },
     login: {

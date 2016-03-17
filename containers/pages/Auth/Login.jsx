@@ -4,14 +4,13 @@
  */
 
 import React, { PropTypes } from 'react';
-// import ReactMixin from 'react-mixin';
-// import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import AuthStore        from '../../../flux/Auth/AuthStore';
 import { LoginAction, CredentialChangeAction }  from '../../../flux/Auth/AuthActions';
 import BaseComponent    from '../../../components/Base';
+import BuildError       from '../../../utils/BuildError';
 import FormScaffold     from '../../../components/Scaffold/Form';
 
 const messages = defineMessages({
@@ -43,28 +42,34 @@ class Login extends BaseComponent {
     }
 
     _inputChange(field) {
-        return function(evt) {
+        return (evt) => {
             var data = {
                 [field]: evt.target.value
             };
             this.context.executeAction(CredentialChangeAction, data);
-        }.bind(this);
+        };
     }
     _submit() {
         return (evt) => {
-            console.log("Submit!");
-            this.context.executeAction(LoginAction);
+            /// Prevent page from reloading
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            if(this.props.username.length !== 0 && this.props.password.length !== 0) {
+                this.context.executeAction(LoginAction);
+            }
         };
     }
 
     render() {
         var props = this.props;
-        
+
         return (
             <div className="ui stackable one column centered grid">
                 <div className="five wide computer seven wide tablet column">
                     <div className="ui raised segment">
                         <FormScaffold
+                            onSubmit={this._submit()}
                             heading={{
                                 text: props.intl.formatMessage(messages.loginHeading)
                             }}
@@ -97,9 +102,10 @@ class Login extends BaseComponent {
                                 Button: {
                                     input: {
                                         type: "button",
+                                        submit: true,
                                         className: "fluid primary",
                                         text: "Log in",
-                                        onClick: this._submit()
+                                        disabled: props.username.length === 0 || props.password.length === 0
                                     }
                                 }
                             }} />
