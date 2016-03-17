@@ -9,7 +9,9 @@
     "lint": "eslint ./*.js ./**/*.js",
     "start": "node run-prod.js",
     "setup": "node bin/setup.js",
-    "db:migrate": "sequelize db:migrate"
+    "db:migrate": "sequelize db:migrate",
+    "db:seed": "sequelize db:seed:all",
+    "db:seed:rollback": "sequelize db:seed:undo:all"
   },
   "dependencies": {
     "autoprefixer-loader": "^3.2.0",
@@ -47,6 +49,7 @@
     "node-sass": "^3.4.2",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "password-hash-and-salt": "^0.1.3",
     "prompt": "^1.0.0",
     "react": "^0.14.0",
     "react-addons-linked-state-mixin": "^0.14.7",

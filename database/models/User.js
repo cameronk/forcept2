@@ -1,28 +1,26 @@
-/**
- * forcept - database/models/User.js
- * @author Azuru Technology
- */
-
-import Sequelize from 'sequelize';
-
-export var definition = {
-    username: {
-        type: Sequelize.STRING
-    },
-    password: {
-        type: Sequelize.STRING
-    }
-};
-
-export var settings = {
-
-    /**
-     * Exclude password from returned attribtues.
-     */
-    defaultScope: {
-        attributes: {
-            exclude: ['password']
+'use strict';
+module.exports = function(sequelize, DataTypes) {
+    var User = sequelize.define('User', {
+        username: DataTypes.STRING,
+        password: DataTypes.TEXT,
+        admin: DataTypes.BOOLEAN,
+        device: DataTypes.STRING,
+        platform: DataTypes.STRING,
+        browser: DataTypes.STRING
+    }, {
+        /**
+         * Exclude password from returned attribtues.
+         */
+        defaultScope: {
+            attributes: {
+                exclude: ['password']
+            }
+        },
+        classMethods: {
+            associate: function(models) {
+                // associations can be defined here
+            }
         }
-    }
-    
+    });
+    return User;
 };
