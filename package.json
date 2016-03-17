@@ -17,6 +17,7 @@
     "babel-root-import": "^3.2.2",
     "better-console": "^0.2.4",
     "body-parser": "^1.6.4",
+    "commander": "^2.9.0",
     "compression": "^1.5.1",
     "connect-sqlite3": "^0.9.7",
     "cookie-parser": "^1.4.1",

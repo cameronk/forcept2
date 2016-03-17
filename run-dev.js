@@ -5,28 +5,36 @@
 
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.config');
+var configureWebpack = require('./webpack.config');
 var shell = require('shelljs');
-require('./utils/GetLocalIP');
 var __debug = console.log;
+var getConfig = require('./utils/GetConfig');
 
-new WebpackDevServer(webpack(config), {
-    publicPath: config.output.publicPath,
-    hot: true,
-    historyApiFallback: true,
-    quiet: false,
-    noInfo: false,
-    proxy: {
-        '*': { target: 'http://localhost:3001' }
-    }
-}).listen(3000, '0.0.0.0', function () {
+getConfig(function(config) {
 
-    shell.env.PORT = shell.env.PORT || 3001;
-    shell.env.DEBUG = "forcept:*";
+    const webpackPort = (config.devPort || 3000);
+    const expressPort = (webpackPort + 1);
+    const webpackConfig = configureWebpack(webpackPort);
 
-    __debug('Shell port: %s', (shell.env.PORT || 3001));
+    __debug("run-dev: webpack port = " + webpackPort);
+    __debug("run-dev: express port = " + expressPort);
 
-    shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});
-    __debug('Webpack Dev Server listening on port 3000');
+    new WebpackDevServer(webpack(webpackConfig), {
+        publicPath: webpackConfig.output.publicPath,
+        hot: true,
+        historyApiFallback: true,
+        quiet: false,
+        noInfo: false,
+        proxy: {
+            '*': { target: 'http://localhost:' + expressPort }
+        }
+    }).listen(webpackPort, '0.0.0.0', function () {
 
+        shell.env.PORT = expressPort;
+        shell.env.DEBUG = "forcept:*";
+
+        shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});
+        __debug('run-dev: Webpack Dev Server listening on port ' + config.devPort);
+
+    });
 });
