@@ -1,6 +1,6 @@
 'use strict';
 
-var pwd = require('password-hash-and-salt');
+const SHA256 = require('crypto').createHash("sha256");
 
 module.exports = {
     up: function (queryInterface, Sequelize) {
@@ -14,19 +14,15 @@ module.exports = {
             isBetaMember: false
         }], {});
         */
-        return pwd('1234').hash(function(err, hash) {
-            if(err) throw err;
-            console.log(hash);
-            return queryInterface.bulkInsert('Users', [
-                {
-                    username: 'admin',
-                    password: hash,
-                    admin: true,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                }
-            ], {});
-        });
+        return queryInterface.bulkInsert('Users', [
+            {
+                username: 'admin',
+                password: SHA256.update('1234').digest('hex'),
+                admin: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            }
+        ], {});
     },
 
     down: function (queryInterface, Sequelize) {
