@@ -4,8 +4,6 @@
  */
 
 import React, { PropTypes } from 'react';
-// import ReactMixin from 'react-mixin';
-// import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
