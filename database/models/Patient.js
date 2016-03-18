@@ -1,4 +1,7 @@
 'use strict';
+
+var ModelHelper = require('../helper.js');
+
 module.exports = function(sequelize, DataTypes) {
   var Patient = sequelize.define('Patient', {
     firstName: DataTypes.STRING,

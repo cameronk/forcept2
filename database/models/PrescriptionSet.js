@@ -1,18 +1,23 @@
 'use strict';
+
+var ModelHelper = require('../helper.js');
+
 module.exports = function(sequelize, DataTypes) {
-    var Visit = sequelize.define('Visit', {
-        patients: {
+    var PrescriptionSet = sequelize.define('PrescriptionSet', {
+        visit: DataTypes.INTEGER,
+        patient: DataTypes.INTEGER,
+        createdBy: DataTypes.INTEGER,
+        prescriptions: {
             type: DataTypes.TEXT,
             get: function() {
                 return ModelHelper.jsonGetter(
-                    this.getDataValue('visits')
+                    this.getDataValue('prescriptions')
                 );
             },
             set: function(val) {
-                this.setDataValue('visits', ModelHelper.jsonSetter(val));
+                this.setDataValue('prescriptions', ModelHelper.jsonSetter(val));
             }
-        },
-        stage: DataTypes.STRING
+        }
     }, {
         classMethods: {
             associate: function(models) {
@@ -20,5 +25,5 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     });
-    return Visit;
+    return PrescriptionSet;
 };
