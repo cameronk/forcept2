@@ -24,7 +24,7 @@ getConfig(function(config) {
         hot: true,
         historyApiFallback: true,
         quiet: false,
-        noInfo: false,
+        noInfo: true,
         proxy: {
             '*': { target: 'http://localhost:' + expressPort }
         }

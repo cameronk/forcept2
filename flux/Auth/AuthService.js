@@ -6,7 +6,7 @@
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
 
-const __debug = require('debug')('forcept:flux:Auth:service');
+const __debug = require('debug')('forcept:flux:Auth:service')
 
 export default {
     attach: function(models) {
@@ -18,7 +18,7 @@ export default {
                 models.User.findOne({
                     where: {
                         username: params.username,
-                        password: params.password
+                        password: require('crypto').createHash("sha256").update(params.password).digest('hex')
                     }
                 }).then(user => {
 

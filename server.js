@@ -26,7 +26,7 @@ import debug from 'debug';
 
 /// Application imports
 import app from './app';
-import { sequelize, models } from './database/Layer';
+import db from './database/models';
 import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
 
@@ -45,14 +45,13 @@ __debug("Initializing Forcept server.");
 __debug("  web server port  : %s", port);
 __debug("  node environment : %s", env);
 __debug("  console messages : %s", debugNamespace);
-__debug("  models available : %s", Object.keys(models).length);
 __debug("---");
 
 /*
  * Synchronise models before setting up express server.
  */
-sequelize.sync().then(function() {
-    __debug("Models synchronized.");
+(db.sequelize).sync().then(function() {
+    __debug("Database synchronized.");
 
     /*
      * Configure Passport local strategy.
@@ -60,7 +59,7 @@ sequelize.sync().then(function() {
     passport.use(new LocalStrategy(
         function(username, password, cb) {
             __debug('Caught LocalStrategy function');
-            models.User.findOne({
+            db.User.findOne({
                 where: {
                     username: username
                 }
@@ -83,7 +82,7 @@ sequelize.sync().then(function() {
 
     passport.deserializeUser(function(id, cb) {
         __debug("Deserializing user #" + id);
-        models.User.findOne({
+        db.User.findOne({
             where: {
                 id: id
             }
@@ -118,7 +117,7 @@ sequelize.sync().then(function() {
      * Use fluxible-plugin-fetchr middleware
      */
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
-          FetchrPlugin.registerService(AuthService.attach(models));
+          FetchrPlugin.registerService(AuthService.attach(db));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 

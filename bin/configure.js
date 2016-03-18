@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * forcept - bin/setup.js
+ * forcept - bin/configure.js
  * @author Azuru Technology
  */
 
