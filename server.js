@@ -175,6 +175,16 @@ __debug("---");
                 res.end();
                 return;
             }
+
+            /*
+             * If this page requires admin protection, hide it if necessary
+             */
+            if(route.admin && !req.user.admin) {
+                __debug('| =>  Redirecting to login...');
+                res.redirect('/auth/login');
+                res.end();
+                return;
+            }
         }
 
 

@@ -35,6 +35,8 @@ export default {
         handler: getPage('About'),
         title: 'About',
     },
+
+    /** Auth **/
     logout: {
         path: '/auth/logout',
         method: 'get',
@@ -50,5 +52,26 @@ export default {
         antiAuth: true,
         handler: getPage('Auth/Login'),
         title: 'Login | Forcept'
+    },
+
+    /** Admin **/
+    console: {
+        path: '/console',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Index'),
+        title: 'Console'
+    },
+    consoleStages: {
+        path: '/console/stages',
+        namespace: 'console',
+        method: 'get',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Stages'),
+        title: 'Console Stages'
     }
 };

@@ -1,5 +1,5 @@
 /**
- * forcept - containers/pages/Auth/Logout.js
+ * forcept - containers/pages/Console/Index.jsx
  * @author Azuru Technology
  */
 
@@ -12,13 +12,9 @@ import { LoginAction, CredentialChangeAction }  from '../../../flux/Auth/AuthAct
 import BaseComponent    from '../../../components/Base';
 
 const messages = defineMessages({
-    logoutMessage: {
-        id: 'pages.logout.message',
-        defaultMessage: 'One moment, signing out...'
-    },
 });
 
-class Logout extends BaseComponent {
+class Index extends BaseComponent {
 
     static contextTypes = {
         getStore:       PropTypes.func.isRequired,
@@ -37,10 +33,7 @@ class Logout extends BaseComponent {
             <div className="ui stackable one column centered grid">
                 <div className="three wide computer four wide tablet column">
                     <div className="ui center aligned raised attached blue segment">
-                        <i className="huge notched circle loading icon"></i>
-                    </div>
-                    <div className="ui center aligned bottom attached header">
-                        {this.props.intl.formatMessage(messages.logoutMessage)}
+                        Console
                     </div>
                 </div>
             </div>
@@ -48,13 +41,4 @@ class Logout extends BaseComponent {
     }
 }
 
-Logout = connectToStores(Logout, [AuthStore], (context, props) => {
-    var authStore = context.getStore(AuthStore);
-    return {
-        error   : authStore.getError(),
-        username: authStore.getUsername(),
-        password: authStore.getPassword(),
-    };
-});
-
-export default injectIntl(Logout);
+export default injectIntl(Index);

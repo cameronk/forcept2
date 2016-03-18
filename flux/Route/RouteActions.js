@@ -16,12 +16,12 @@ var navAction = function navigateAction(context, payload, done) {
         url: request.url,
         transactionId: context.rootId
     }, payload);
+
     if (!payload.url && payload.routeName) {
         navigate.url = routeStore.makePath(payload.routeName, payload.params);
         navigate.routeName = null;
     }
 
-    // __debug('dispatching NAVIGATE_START', navigate);
     context.dispatch('NAVIGATE_START', navigate);
 
     if (!routeStore.getCurrentRoute) {
