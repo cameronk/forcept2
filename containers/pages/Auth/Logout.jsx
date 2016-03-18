@@ -34,7 +34,7 @@ class Logout extends BaseComponent {
         var props = this.props;
 
         return (
-            <div className="ui stackable one column centered grid">
+            <div className="ui top spaced stackable one column centered grid">
                 <div className="three wide computer four wide tablet column">
                     <div className="ui center aligned raised attached blue segment">
                         <i className="huge notched circle loading icon"></i>
