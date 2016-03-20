@@ -12,10 +12,6 @@ if(process.env.BROWSER) {
     require('../../styles/HeaderBar.less');
 }
 
-const messages = defineMessages({
-
-});
-
 class HeaderBar extends BaseComponent {
 
     static contextTypes = grabContext()
@@ -28,7 +24,7 @@ class HeaderBar extends BaseComponent {
 
         return (
             <div id="HeaderBar">
-                <div className="ui massive dividing header">
+                <div className="ui huge dividing header">
                     Heading
                 </div>
             </div>

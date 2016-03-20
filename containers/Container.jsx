@@ -6,7 +6,7 @@
 /*globals document*/
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
 import { connectToStores, provideContext } from 'fluxible-addons-react';
 import { handleHistory } from 'fluxible-router';
 
@@ -28,7 +28,7 @@ class Container extends React.Component {
             return;
         }
 
-        document.title = newProps.pageTitle;
+        document.title = "lol"; //this.props.intl.formatMessage(newProps.pageTitle);
     }
 
     render() {
@@ -75,7 +75,10 @@ export default injectIntl(handleHistory(connectToStores(
     function (context, props) {
         var appStore = context.getStore(AppStore);
         return {
-            pageTitle: appStore.getPageTitle()
+            pageTitle: {
+                    id: "pages.about.title",
+                    defaultMessage: "About / Forcept"
+                }
         };
     }
 )));

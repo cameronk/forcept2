@@ -7,12 +7,17 @@ import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
 import { defineMessages } from 'react-intl';
 
+const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
-
+    aboutTitle: {
+        id: "pages.about.title",
+        defaultMessage: "About / Forcept"
+    }
 });
 
-const __debug = debug('forcept:flux:Route:Routes');
-
+/*
+ * Require a page.
+ */
 function getPage(page) {
     __debug("Grabbing page '%s'", page);
     return require('../../containers/pages/' + page);
@@ -25,7 +30,7 @@ export default {
         page: 'home',
         title: 'Home',
         auth: true,
-        handler: getPage('Home'),
+        handler: getPage('Home')
     },
     about: {
         path: '/about',
@@ -33,7 +38,7 @@ export default {
         page: 'about',
         auth: true,
         handler: getPage('About'),
-        title: 'About',
+        title: messages.aboutTitle,
     },
 
     /** Auth **/
@@ -51,7 +56,9 @@ export default {
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-        title: 'Login | Forcept'
+        // title: 'Login | Forcept',
+
+        title: "pages.login.title"
     },
 
     /** Admin **/
