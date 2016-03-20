@@ -28,7 +28,9 @@ class Container extends React.Component {
             return;
         }
 
-        document.title = "lol"; //this.props.intl.formatMessage(newProps.pageTitle);
+        console.log(newProps.pageTitle);
+
+        document.title = this.props.intl.formatMessage(newProps.pageTitle); //this.props.intl.formatMessage(newProps.pageTitle);
     }
 
     render() {
@@ -51,19 +53,29 @@ class Container extends React.Component {
         /// #Container is now like <body>
         return (
             <div id="Container">
+
+                {/** CSS hides these for large screen sizes **/}
                 <SideBar />
                 <TopBar />
+
+                {/** Add .pusher so semantic can fiddle with sidebar **/}
                 <div className="pusher">
+
                     <div className="full height">
+
+                        {/** CSS displays SideRail on large screen sizes **/}
                         <div className="toc">
                             <SideRail />
                         </div>
+
                         <div id="Handler">
                             {content}
                         </div>
+
                     </div>
+
                 </div>
-                <ul id="debug"></ul>
+
             </div>
         );
     }
@@ -75,10 +87,7 @@ export default injectIntl(handleHistory(connectToStores(
     function (context, props) {
         var appStore = context.getStore(AppStore);
         return {
-            pageTitle: {
-                    id: "pages.about.title",
-                    defaultMessage: "About / Forcept"
-                }
-        };
+            pageTitle: appStore.getPageTitle()
+        }
     }
 )));

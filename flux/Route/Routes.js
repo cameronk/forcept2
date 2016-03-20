@@ -5,13 +5,22 @@
 
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
+// import { LoadStagesAction } from '../Console/StageActions';
 import { defineMessages } from 'react-intl';
 
 const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
-    aboutTitle: {
-        id: "pages.about.title",
-        defaultMessage: "About / Forcept"
+    "pages.console.title": {
+        id: "pages.console.title",
+        defaultMessage: "Console / Forcept"
+    },
+    "pages.console.stages.title": {
+        id: "pages.console.stages.title",
+        defaultMessage: "Stages / Console / Forcept"
+    },
+    "pages.console.stages.stage.title": {
+        id: "pages.console.stages.stage.title",
+        defaultMessage: "{name} / Stages / Console / Forcept"
     }
 });
 
@@ -31,14 +40,6 @@ export default {
         title: 'Home',
         auth: true,
         handler: getPage('Home')
-    },
-    about: {
-        path: '/about',
-        method: 'get',
-        page: 'about',
-        auth: true,
-        handler: getPage('About'),
-        title: messages.aboutTitle,
     },
 
     /** Auth **/
@@ -69,16 +70,24 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Index'),
-        title: 'Console'
+        title: messages["pages.console.title"]
     },
     consoleStages: {
         path: '/console/stages',
         namespace: 'console',
         method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Stages'),
+        title: messages["pages.console.stages.title"]
+    },
+    consoleStagesStage: {
+        path: '/console/stages/:id',
+        namespace: 'console',
         method: 'get',
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: 'Console Stages'
+        title: messages["pages.console.stages.stage.title"]
     }
 };

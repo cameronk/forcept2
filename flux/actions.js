@@ -15,4 +15,9 @@ export default keyMirror({
     'AUTH_SUCCESS': null,
     'AUTH_CREDENTIAL_CHANGE': null,
 
+    /// Console
+
+        /// Stages
+        'CONSOLE_STAGES_LOAD': null,
+
 });

@@ -6,14 +6,6 @@
 import React from 'react';
 import BaseComponent from '../Base';
 
-if(process.env.BROWSER) {
-    // require('semantic-ui/dist/components/menu.css');
-    // require('semantic-ui/dist/components/container.css');
-    // require('semantic-ui/dist/components/sidebar.css');
-    // require('semantic-ui/dist/components/list.css');
-    // require('semantic-ui/dist/components/icon.css');
-}
-
 class TopBar extends BaseComponent {
 
     componentDidMount() {

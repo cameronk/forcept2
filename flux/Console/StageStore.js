@@ -13,6 +13,7 @@ class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
     static handlers = {
+
     }
 
     constructor(dispatcher) {
@@ -21,52 +22,13 @@ class StageStore extends BaseStore {
     }
 
     setInitialState() {
-        this.error = null;
-        this.username = "";
-        this.password = "";
     }
 
-    /*
-     * Setters
-     */
-    handleAuthLogout(err) {
-        window.location.reload();
-    }
-    handleAuthError(err) {
-        this.error = err;
-        this.emitChange();
-    }
-    handleAuthSuccess() {
-        window.location.reload();
-    }
-    handleCredentialChange({username, password}) {
-        if(typeof username !== "undefined") {
-            this.username = username;
-        }
-        if(typeof password !== "undefined") {
-            this.password = password;
-        }
-        this.emitChange();
+
+    getStages() {
+        return {};
     }
 
-    /*
-     * Getters
-     */
-    getUsername() {
-        return this.username;
-    }
-    getPassword() {
-        return this.password;
-    }
-    getError() {
-        return this.error;
-    }
-    getCredentials() {
-        return {
-            username: this.getUsername(),
-            password: this.getPassword()
-        };
-    }
     dehydrate() {
         return {
         };

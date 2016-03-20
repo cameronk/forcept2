@@ -46,7 +46,6 @@ const messages = defineMessages({
 });
 
 class VerticalMenu extends BaseComponent {
-                    // <i className="notched circle loading icon"></i>
 
     static contextTypes = grabContext()
 

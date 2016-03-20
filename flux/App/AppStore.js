@@ -9,7 +9,10 @@ import RouteStore from '../Route/RouteStore';
 class ApplicationStore extends BaseStore {
     constructor(dispatcher) {
         super(dispatcher);
-        this.pageTitle = '';
+        this.pageTitle = {
+            id: "meta.titles.loading",
+            defaultMessage: "Loading..."
+        };
         this.req   = {};
         this.route = {};
     }
