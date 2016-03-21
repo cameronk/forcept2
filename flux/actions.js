@@ -19,5 +19,7 @@ export default keyMirror({
 
         /// Stages
         'CONSOLE_STAGES_LOAD': null,
+        'CONSOLE_STAGES_LOADED': null,
+        'CONSOLE_STAGES_LOAD_ERROR': null,
 
 });

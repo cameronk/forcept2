@@ -29,6 +29,7 @@ import app from './app';
 import db from './database/models';
 import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
+import ConsoleStagesService from './flux/Console/StagesService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -118,6 +119,7 @@ __debug("---");
      */
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
           FetchrPlugin.registerService(AuthService.attach(db));
+          FetchrPlugin.registerService(ConsoleStagesService.attach(db));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 

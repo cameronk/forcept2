@@ -10,6 +10,8 @@ module.exports = {
      */
     jsonGetter: function(val) {
 
+        if(!val || typeof val !== "string") return {};
+
         var obj = {};
 
         try {

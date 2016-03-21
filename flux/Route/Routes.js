@@ -5,7 +5,7 @@
 
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
-// import { LoadStagesAction } from '../Console/StageActions';
+import { LoadStagesAction } from '../Console/StageActions';
 import { defineMessages } from 'react-intl';
 
 const __debug = debug('forcept:flux:Route:Routes');
@@ -24,6 +24,8 @@ const messages = defineMessages({
     }
 });
 
+__debug(messages);
+__debug(messages['pages.console.stages.title']);
 /*
  * Require a page.
  */
@@ -57,7 +59,6 @@ export default {
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-        // title: 'Login | Forcept',
 
         title: "pages.login.title"
     },
@@ -79,7 +80,8 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages["pages.console.stages.title"]
+        title: messages['pages.console.stages.title'],
+        action: LoadStagesAction
     },
     consoleStagesStage: {
         path: '/console/stages/:id',
@@ -88,6 +90,7 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages["pages.console.stages.stage.title"]
+        title: messages["pages.console.stages.stage.title"],
+        action: LoadStagesAction
     }
 };

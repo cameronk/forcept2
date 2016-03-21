@@ -13,27 +13,52 @@ class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
     static handlers = {
-
+        [Actions.CONSOLE_STAGES_LOADED]: "handleStagesLoaded"
     }
 
+    /**
+     * Constructor / setup
+     */
     constructor(dispatcher) {
         super(dispatcher);
         this.setInitialState();
     }
 
     setInitialState() {
+        this.stages = {};
     }
 
+    /**
+     * Event handlers
+     */
+    handleStagesLoaded(stages) {
+        if(typeof stages === "object" && stages !== null) {
+            this.stages = stages;
+        }
+        this.emitChange();
+    }
 
+    /**
+     * Getters
+     */
     getStages() {
-        return {};
+        return this.stages;
     }
 
+    hasLoadedStages() {
+        return Object.keys(this.stages).length > 0;
+    }
+
+    /**
+     * H20
+     */
     dehydrate() {
         return {
+            stages: this.stages
         };
     }
     rehydrate(state) {
+        this.stages = state.stages || {};
     }
 }
 
