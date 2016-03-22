@@ -1,12 +1,12 @@
 /**
- * forcept - stores/ApplicationStore.js
+ * forcept - stores/AppStore.js
  * @author Azuru Technology
  */
 
 import BaseStore from 'fluxible/addons/BaseStore';
 import RouteStore from '../Route/RouteStore';
 
-class ApplicationStore extends BaseStore {
+class AppStore extends BaseStore {
     constructor(dispatcher) {
         super(dispatcher);
         this.pageTitle = {
@@ -41,9 +41,9 @@ class ApplicationStore extends BaseStore {
     }
 }
 
-ApplicationStore.storeName = 'ApplicationStore';
-ApplicationStore.handlers = {
+AppStore.storeName = 'AppStore';
+AppStore.handlers = {
     'NAVIGATE_SUCCESS': 'handlePageTitle'
 };
 
-export default ApplicationStore;
+export default AppStore;
