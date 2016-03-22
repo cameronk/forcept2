@@ -14,12 +14,21 @@ import RouteStore from '../../../flux/Route/RouteStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import NavLink    from '../../../components/Navigation/NavLink';
 import BaseComponent, { grabContext } from '../../../components/Base';
+import StageBuilder from '../../../components/Console/StageBuilder';
 
 const __debug = debug("forcept:containers:pages:Console:Stages");
 const messages = defineMessages({
     "pages.console.stages.heading": {
         id: "pages.console.stages.heading",
         defaultMessage: "Stages"
+    },
+    "pages.console.stages.errors.badLocation.heading": {
+        id: "pages.console.stages.errors.badLocation.heading",
+        defaultMessage: "Something odd happened."
+    },
+    "pages.console.stages.errors.badLocation": {
+        id: "pages.console.stages.errors.badLocation",
+        defaultMessage: "Please try clicking one of the links at your left."
     }
 });
 
@@ -37,11 +46,33 @@ class Stages extends BaseComponent {
 
     render() {
 
-        var { stages, location, isLoading } = this.props;
+        var props = this.props;
+        var { stages, location, isLoading } = props;
         var props = this.props,
-            ctx   = this.context;
+            ctx   = this.context,
+            /*
+             * Default stage dom shows error message.
+             */
+            stageDOM = (
+                <div className="ui error message">
+                    <div className="header">
+                        {props.intl.formatMessage(messages["pages.console.stages.errors.badLocation.heading"])}
+                    </div>
+                    <p>{props.intl.formatMessage(messages["pages.console.stages.errors.badLocation"])}</p>
+                </div>
+            );
 
         __debug("Render stages @ location %s", location);
+
+
+        /*
+         * Location = 0 -> "Create a new stage"
+         */
+        if(location == 0) {
+            stageDOM = <StageBuilder />
+        } else {
+
+        }
 
         return (
             <div className="ui stackable centered grid">
@@ -74,7 +105,8 @@ class Stages extends BaseComponent {
                             </NavLink>
                         </div>
                     </div>
-                    <div className="thirteen wide computer twelve wide tablet column">
+                    <div className="thirteen wide computer twelve wide tablet top right spaced column">
+                        {stageDOM}
                     </div>
                 </div>
             </div>
@@ -97,6 +129,7 @@ Stages = connectToStores(
         if(params.id) {
             location = params.id;
         }
+
         return {
             location: location,
             stages: stages

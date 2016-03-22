@@ -13,7 +13,8 @@ class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
     static handlers = {
-        [Actions.CONSOLE_STAGES_LOADED]: 'handleStagesLoaded'
+        [Actions.CONSOLE_STAGES_LOADED]: 'handleStagesLoaded',
+        [Actions.CONSOLE_STAGES_UPDATE_CACHE]: 'handleUpdateCache'
     }
 
     /**
@@ -26,6 +27,11 @@ class StageStore extends BaseStore {
 
     setInitialState() {
         this.stages = {};
+        this.cache  = {
+            name: "",
+            type: "basic",
+            fields: {}
+        };
     }
 
     /**
@@ -36,6 +42,28 @@ class StageStore extends BaseStore {
             this.stages = stages;
         }
         this.emitChange();
+    }
+
+    /*
+     * Update cache data
+     */
+    handleUpdateCache(data) {
+        for(var k in data) {
+            if(k === "fields") {
+                for(var f in data.fields) {
+                    this.cache.fields[f] = data.fields[f];
+                }
+            } else if(this.cache.hasOwnProperty(k)) {
+                this.cache[k] = data[k];
+            }
+        }
+        this.emitChange();
+    }
+    /*
+     * Get current cache data.
+     */
+    getCache() {
+        return this.cache;
     }
 
     /**
@@ -54,11 +82,13 @@ class StageStore extends BaseStore {
      */
     dehydrate() {
         return {
-            stages: this.stages
+            stages: this.stages,
+            cache:  this.cache
         };
     }
     rehydrate(state) {
-        this.stages = state.stages || {};
+        this.stages = state.stages;
+        this.cache  = state.cache;
     }
 }
 

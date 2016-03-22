@@ -26,4 +26,6 @@ export default keyMirror({
         'CONSOLE_STAGES_LOADED': null,
         'CONSOLE_STAGES_LOAD_ERROR': null,
 
+        'CONSOLE_STAGES_UPDATE_CACHE': null
+
 });

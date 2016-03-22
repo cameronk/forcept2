@@ -31,3 +31,9 @@ export function LoadStagesAction(context, payload, done) {
     } else done();
 
 }
+
+export function UpdateCacheAction(context, payload, done) {
+    __debug("Updating cache. %s", payload);
+
+    context.dispatch(Actions.CONSOLE_STAGES_UPDATE_CACHE, payload);
+}

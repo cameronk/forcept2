@@ -22,7 +22,7 @@ export default {
             read: function(req, resource, params, config, callback) {
                 models.Stage.findAll({
                     where: params || {},
-                    attributes: ['id', 'name'],
+                    // attributes: ['id', 'name'],
                     order: ['order']
                 }).then(stages => {
                     callback(null, stages, null);
