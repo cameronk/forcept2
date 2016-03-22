@@ -13,7 +13,7 @@ class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
     static handlers = {
-        [Actions.CONSOLE_STAGES_LOADED]: "handleStagesLoaded"
+        [Actions.CONSOLE_STAGES_LOADED]: 'handleStagesLoaded'
     }
 
     /**

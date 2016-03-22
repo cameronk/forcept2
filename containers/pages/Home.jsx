@@ -20,22 +20,9 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <h2>Home {this.props.isAuthenticated ? "lol" : "asdf"}</h2>
-                <p>
-                    {this.props.intl.formatMessage(messages.welcome, {
-                        count: this.props.hasOwnProperty("testCount") ? this.props.testCount : 0
-                    })}
-                </p>
             </div>
         );
     }
 }
-
-Home = connectToStores(Home, [], (context, props) => {
-    var appStore  = context.getStore(AppStore);
-    return {
-        isAuthenticated: appStore.isAuthenticated()
-    }
-});
 
 export default injectIntl(Home);

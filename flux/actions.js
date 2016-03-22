@@ -9,6 +9,10 @@ export default keyMirror({
 
     'TEST_ACTION': null,
 
+    /// Application
+    'APP_SET_LOADING_MODE': null,
+    'APP_SET_LOADING_CONTAINER': null,
+
     /// Authentication
     'AUTH_LOGOUT': null,
     'AUTH_ERROR': null,

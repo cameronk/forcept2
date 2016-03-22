@@ -9,7 +9,7 @@ import debug from 'debug';
 const __debug = debug('forcept:flux:Console:StageActions');
 
 /*
- * Attempt to log a user in.
+ * load stage names and IDs for list display.
  */
 export function LoadStagesAction(context, payload, done) {
     __debug("Loading stages.");
@@ -29,5 +29,5 @@ export function LoadStagesAction(context, payload, done) {
                 done();
             });
     } else done();
-    
+
 }
