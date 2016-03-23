@@ -29,7 +29,7 @@ import app from './app';
 import db from './database/models';
 import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
-import ConsoleStagesService from './flux/Console/StagesService';
+import StageService from './flux/Stage/StageService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -59,7 +59,7 @@ __debug("---");
      */
     passport.use(new LocalStrategy(
         function(username, password, cb) {
-            __debug('Caught LocalStrategy function');
+            // __debug('Caught LocalStrategy function');
             db.User.findOne({
                 where: {
                     username: username
@@ -77,12 +77,12 @@ __debug("---");
     ));
 
     passport.serializeUser(function(user, cb) {
-        __debug("Serializing user #" + user.id);
+        // __debug("Serializing user #" + user.id);
         cb(null, user.id);
     });
 
     passport.deserializeUser(function(id, cb) {
-        __debug("Deserializing user #" + id);
+        // __debug("Deserializing user #" + id);
         db.User.findOne({
             where: {
                 id: id
@@ -119,7 +119,7 @@ __debug("---");
      */
     const FetchrPlugin = app.getPlugin('FetchrPlugin');
           FetchrPlugin.registerService(AuthService.attach(db));
-          FetchrPlugin.registerService(ConsoleStagesService.attach(db));
+          FetchrPlugin.registerService(StageService.attach(db));
 
     server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 

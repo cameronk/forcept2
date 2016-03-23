@@ -40,5 +40,10 @@ module.exports = {
 
         return str;
 
+    },
+
+    JsonModel: function(model) {
+        if(model.toJSON) return model.toJSON();
+        else return model;
     }
 };

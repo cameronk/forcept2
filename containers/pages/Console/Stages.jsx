@@ -47,7 +47,7 @@ class Stages extends BaseComponent {
     render() {
 
         var props = this.props;
-        var { stages, location, isLoading } = props;
+        var { stages, location, isLoaded } = props;
         var props = this.props,
             ctx   = this.context,
             /*
@@ -68,11 +68,6 @@ class Stages extends BaseComponent {
         /*
          * Location = 0 -> "Create a new stage"
          */
-        if(location == 0) {
-            stageDOM = <StageBuilder />
-        } else {
-
-        }
 
         return (
             <div className="ui stackable centered grid">
@@ -90,8 +85,8 @@ class Stages extends BaseComponent {
                                     <NavLink
                                         key={"console-open-stage-" + thisStage.id}
                                         href={'/console/stages/' + thisStage.id}
-                                        className={(isCurrent ? "active " : "") + "item"}
-                                        disabled={isCurrent || isLoading}>
+                                        className="item"
+                                        disabled={isCurrent || !isLoaded}>
                                         {thisStage.name}
                                     </NavLink>
                                 );
@@ -99,14 +94,14 @@ class Stages extends BaseComponent {
                             <NavLink
                                 href={'/console/stages'}
                                 className={((0 == location) ? "active " : "") + " blue item"}
-                                disabled={(0 == location)}>
+                                disabled={(0 == location || !isLoaded)}>
                                 <i className="plus icon"></i>
                                 Create a new stage
                             </NavLink>
                         </div>
                     </div>
-                    <div className="thirteen wide computer twelve wide tablet top right spaced column">
-                        {stageDOM}
+                    <div className="thirteen wide computer twelve wide tablet right spaced column">
+                        <StageBuilder />
                     </div>
                 </div>
             </div>
@@ -132,7 +127,8 @@ Stages = connectToStores(
 
         return {
             location: location,
-            stages: stages
+            stages: stages,
+            isLoaded: routeStore.isNavigateComplete()
         };
     }
 )

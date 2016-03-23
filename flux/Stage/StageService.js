@@ -1,5 +1,5 @@
 /**
- * forcept - flux/Console/StagesService.js
+ * forcept - flux/Stage/StageService.js
  * @author Azuru Technology
  */
 
@@ -11,7 +11,7 @@ const __debug = require('debug')('forcept:flux:Console:StagesService')
 export default {
     attach: function(models) {
         return {
-            name: 'ConsoleStagesService',
+            name: 'StageService',
 
             /**
              * Read and return stages from Stages table.
