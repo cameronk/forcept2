@@ -68,7 +68,6 @@ class Stages extends BaseComponent {
         /*
          * Location = 0 -> "Create a new stage"
          */
-
         return (
             <div className="ui stackable centered grid">
                 <div className="row clear bottom">
@@ -87,7 +86,7 @@ class Stages extends BaseComponent {
                                         href={'/console/stages/' + thisStage.id}
                                         className="item"
                                         disabled={isCurrent || !isLoaded}>
-                                        {thisStage.name}
+                                        {thisStage.name.length > 0 ? thisStage.name : "Untitled stage"}
                                     </NavLink>
                                 );
                             })}

@@ -24,6 +24,21 @@ export default {
                 });
             },
 
+            /**
+             * Upsert a Stage.
+             */
+            update: function(req, resource, params, body, config, callback) {
+                __debug("Upserting:");
+                __debug(body);
+                __debug(params);
+                models.Stage
+                    .upsert(body, {
+                        id: params.id
+                    }).then((x) => {
+                        callback(null, x, null);
+                    });
+
+            }
         }
     }
 }

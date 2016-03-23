@@ -12,6 +12,11 @@ class HeadingScaffold extends BaseComponent {
         var props = this.props;
         return (
             <div className={"ui large header " + (props.className || "")}>
+                {props.label ? (
+                    <div className={"ui label " + (props.label.className || "")}>
+                        {props.label.text}
+                    </div>
+                ) : null}
                 {props.text}
             </div>
         );

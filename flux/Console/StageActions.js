@@ -3,8 +3,10 @@
  * @author Azuru Technology
  */
 
-import Actions from '../actions';
 import debug from 'debug';
+
+import Actions from '../actions';
+import StageStore from './StageStore';
 import { JsonModel } from '../../database/helper';
 const __debug = debug('forcept:flux:Console:StageActions');
 
@@ -86,6 +88,33 @@ export function LoadStagesAction(context, payload, done) {
     })
 }
 
+/*
+ * Update the stage cache via payload.
+ */
 export function UpdateCacheAction(context, payload, done) {
     context.dispatch(Actions.CONSOLE_STAGES_UPDATE_CACHE, payload);
+}
+
+/*
+ * Save cached stage.
+ */
+export function SaveStageAction(context, payload, done) {
+
+    let cache = context.getStore(StageStore).getCache();
+    context.service
+        .update('StageService')
+        .params({
+            id: payload.id
+        })
+        .body(cache).end()
+        .then((data) => {
+            __debug(data);
+            done();
+        }).catch((err) => {
+            __debug(err);
+        });
+
+    // context.dispatch(
+    //     Actions.CONSOLE_STAGES_SAVE_STAGE,
+    // );
 }

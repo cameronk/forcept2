@@ -9,7 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';
 
-import { UpdateCacheAction } from '../../flux/Console/StageActions';
+import { UpdateCacheAction, SaveStageAction } from '../../flux/Console/StageActions';
 import StageStore from '../../flux/Console/StageStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
@@ -69,6 +69,10 @@ class StageBuilder extends BaseComponent {
         this.context.executeAction(UpdateCacheAction, { type: evt.target.value });
     }
 
+    _save = (evt) => {
+        this.context.executeAction(SaveStageAction, { id: this.props.id || null });
+    };
+
     _addField(evt) {
         this.context.executeAction(UpdateCacheAction, {
             fields: {
@@ -92,7 +96,12 @@ class StageBuilder extends BaseComponent {
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
         return (
             <div className="ui basic expanded segment" id="StageBuilder">
-                <HeadingScaffold text={props.name.length === 0 ? "Untitled stage" : ("Stage: " + props.name)} />
+                <HeadingScaffold
+                    label={{
+                        className: 'teal',
+                        text: props.id || 'Unsaved'
+                    }}
+                    text={props.name.length === 0 ? "Untitled stage" : props.name} />
                 <div className="ui divider"></div>
 
                 <form className="ui form">
@@ -158,7 +167,7 @@ class StageBuilder extends BaseComponent {
                         <i className="plus icon"></i>
                         Add a new field
                     </button>
-                    <button className="ui right labeled icon positive button">
+                    <button onClick={this._save} className="ui right labeled icon positive button">
                         Save
                         <i className="save icon"></i>
                     </button>
@@ -172,8 +181,10 @@ StageBuilder = connectToStores(
     StageBuilder,
     [StageStore],
     function(context, props) {
+        var routeStore = context.getStore('RouteStore');
         return Object.assign(context.getStore(StageStore).getCache(), {
-            isLoading: context.getStore('RouteStore').isNavigateComplete()
+            id: routeStore.getCurrentRoute().params.id || null,
+            isLoading: routeStore.isNavigateComplete()
         });
     }
 )
