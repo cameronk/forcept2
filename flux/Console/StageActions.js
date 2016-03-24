@@ -92,6 +92,7 @@ export function LoadStagesAction(context, payload, done) {
  * Update the stage cache via payload.
  */
 export function UpdateCacheAction(context, payload, done) {
+    context.dispatch(Actions.CONSOLE_STAGES_CACHE_MODIFIED);
     context.dispatch(Actions.CONSOLE_STAGES_UPDATE_CACHE, payload);
 }
 
@@ -99,6 +100,8 @@ export function UpdateCacheAction(context, payload, done) {
  * Save cached stage.
  */
 export function SaveStageAction(context, payload, done) {
+
+    context.dispatch(Actions.CONSOLE_STAGES_SET_STATUS, "saving");
 
     let cache = context.getStore(StageStore).getCache();
     context.service
@@ -108,13 +111,13 @@ export function SaveStageAction(context, payload, done) {
         })
         .body(cache).end()
         .then((data) => {
+            __debug("data");
             __debug(data);
+            context.dispatch(Actions.CONSOLE_STAGES_SET_STATUS, "saved");
             done();
         }).catch((err) => {
             __debug(err);
         });
 
-    // context.dispatch(
-    //     Actions.CONSOLE_STAGES_SAVE_STAGE,
-    // );
+
 }

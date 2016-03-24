@@ -14,6 +14,7 @@ import StageStore from '../../flux/Console/StageStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import HeadingScaffold from '../Scaffold/Heading';
+import MessageScaffold from '../Scaffold/Message';
 import Field from './Field';
 
 const __debug = debug("forcept:components:Console:StageBuilder");
@@ -90,10 +91,24 @@ class StageBuilder extends BaseComponent {
 
         var props = this.props,
             ctx = this.context,
-            { fields } = props,
+            { fields, status } = props,
             fieldKeys = Object.keys(fields);
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
+
+        var message;
+
+        switch(status) {
+            case "saved":
+                message = (
+                    <MessageScaffold
+                        type="success"
+                        text="Stage saved successfully." />
+                );
+                break;
+        }
+
+
         return (
             <div className="ui basic expanded segment" id="StageBuilder">
                 <HeadingScaffold
@@ -102,9 +117,10 @@ class StageBuilder extends BaseComponent {
                         text: props.id || 'Unsaved'
                     }}
                     text={props.name.length === 0 ? "Untitled stage" : props.name} />
+                {message}
                 <div className="ui divider"></div>
 
-                <form className="ui form">
+                <form className={"ui form" + (status === 'saving' ? " loading" : "")}>
                     <div className="fields">
                         <div className="eight wide field">
                             <label>{nameLabel}</label>
@@ -163,11 +179,18 @@ class StageBuilder extends BaseComponent {
                 <div className="ui divider"></div>
 
                 <div className="ui buttons">
-                    <button onClick={this._addField} className="ui labeled icon button">
+                    <button
+                        onClick={this._addField}
+                        className={"ui labeled icon button" + (props.status === 'saving' ? ' disabled' : '')}>
                         <i className="plus icon"></i>
                         Add a new field
                     </button>
-                    <button onClick={this._save} className="ui right labeled icon positive button">
+                    <button
+                        onClick={this._save}
+                        className={
+                            "ui right labeled icon positive button" +
+                            ((!props.isModified || props.status === 'saving') ? ' disabled' : '') +
+                            ((props.status === 'saving') ? ' loading' : '')}>
                         Save
                         <i className="save icon"></i>
                     </button>
@@ -181,11 +204,17 @@ StageBuilder = connectToStores(
     StageBuilder,
     [StageStore],
     function(context, props) {
+
         var routeStore = context.getStore('RouteStore');
-        return Object.assign(context.getStore(StageStore).getCache(), {
+        var stageStore = context.getStore(StageStore);
+
+        return Object.assign(stageStore.getCache(), {
             id: routeStore.getCurrentRoute().params.id || null,
-            isLoading: routeStore.isNavigateComplete()
+            isLoading: routeStore.isNavigateComplete(),
+            isModified: stageStore.isCacheModified(),
+            status: stageStore.getStatus()
         });
+
     }
 )
 

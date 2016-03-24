@@ -28,7 +28,8 @@ export default keyMirror({
 
         'CONSOLE_STAGES_UPDATE_CACHE': null,
         'CONSOLE_STAGES_CLEAR_CACHE': null,
+        'CONSOLE_STAGES_CACHE_MODIFIED': null,
 
-        'CONSOLE_STAGES_SAVE_STAGE': null,
+        'CONSOLE_STAGES_SET_STATUS': null,
 
 });

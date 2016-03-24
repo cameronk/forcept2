@@ -17,6 +17,7 @@ class HeadingScaffold extends BaseComponent {
                         {props.label.text}
                     </div>
                 ) : null}
+                {" "}
                 {props.text}
             </div>
         );

@@ -27,14 +27,6 @@ class Field extends BaseComponent {
             .dropdown();
     }
 
-    getDefaultSettings(type) {
-        switch(type) {
-            default:
-                return {};
-                break;
-        }
-    }
-
     _change = (prop) => {
         return (evt) => {
             this.context.executeAction(UpdateCacheAction, {
@@ -42,11 +34,19 @@ class Field extends BaseComponent {
                     [this.props._key]: Object.assign({
                         [prop]: evt.target.value
                     }, prop === "type" ? {
-                        settings: this.getDefaultSettings(evt.target.value)
+                        settings: null
                     } : {})
                 }
             });
         }
+    }
+
+    _removeField = (evt) => {
+        this.context.executeAction(UpdateCacheAction, {
+            fields: {
+                [this.props._key]: null
+            }
+        });
     }
 
     render() {
@@ -84,6 +84,12 @@ class Field extends BaseComponent {
                             <label>Description:</label>
                             <textarea value={""} placeholder={"Enter a field description (optional)"} value={props.description} onChange={this._change('description')} ></textarea>
                         </div>
+                        <button
+                            onClick={this._removeField}
+                            className="ui tiny basic red labeled icon button">
+                            <i className="remove icon"></i>
+                            Remove this field
+                        </button>
                     </div>
                     <div className="ten wide field">
                         <FieldSettings {...props.settings} type={props.type} _key={props._key} />

@@ -36,8 +36,9 @@ export default {
                         id: params.id
                     }).then((x) => {
                         callback(null, x, null);
+                    }).catch(err => {
+                        __debug(err);
                     });
-
             }
         }
     }
