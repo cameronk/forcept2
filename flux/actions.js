@@ -25,6 +25,7 @@ export default keyMirror({
         'CONSOLE_STAGES_LOAD': null,
         'CONSOLE_STAGES_LOADED': null,
         'CONSOLE_STAGES_LOAD_ERROR': null,
+        'CONSOLE_STAGES_SET_OPTION_SHIFT_CONTEXT': null,
 
         'CONSOLE_STAGES_UPDATE_CACHE': null,
         'CONSOLE_STAGES_CLEAR_CACHE': null,

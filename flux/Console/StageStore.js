@@ -15,6 +15,8 @@ class StageStore extends BaseStore {
     static handlers = {
         [Actions.CONSOLE_STAGES_LOADED]: 'handleStagesLoaded',
         [Actions.CONSOLE_STAGES_UPDATE_CACHE]: 'handleUpdateCache',
+        [Actions.CONSOLE_STAGES_LOAD_ERROR]: 'handleStageLoadError',
+        [Actions.CONSOLE_STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
         [Actions.CONSOLE_STAGES_CLEAR_CACHE]: 'handleClearCache',
         [Actions.CONSOLE_STAGES_CACHE_MODIFIED]: 'handleCacheWasModified',
         [Actions.CONSOLE_STAGES_SET_STATUS]: 'handleSetStatus'
@@ -29,8 +31,19 @@ class StageStore extends BaseStore {
     }
 
     setInitialState() {
+        this.error  = false;
+        this.optionShiftContext = false;
         this.stages = [];
         this.handleClearCache();
+    }
+
+    handleSetOptionShiftContext(ctx) {
+        this.optionShiftContext = ctx;
+        this.emitChange();
+    }
+
+    getOptionShiftContext() {
+        return this.optionShiftContext;
     }
 
     /**
@@ -43,8 +56,42 @@ class StageStore extends BaseStore {
         this.emitChange();
     }
 
+    handleStageLoadError(err) {
+        this.error = err;
+        this.emitChange();
+    }
+
+    getError() {
+        return this.error;
+    }
+
+    /**
+     * Get default settings for a field type.
+     * @return Object
+     */
     getDefaultSettings(type) {
         switch(type) {
+            case "date":
+                return {
+                    useBroadSelector: false
+                };
+                break;
+            case "select":
+                return {
+                    options: {},
+                    allowCustomData: false
+                };
+                break;
+            case "multiselect":
+                return {
+                    options: {}
+                };
+                break;
+            case "file":
+                return {
+                    accept: []
+                };
+                break;
             default:
                 return {};
                 break;
@@ -110,6 +157,7 @@ class StageStore extends BaseStore {
                                             type = thisField['type'];
                                         }
 
+                                        /// Get default settings for this field type
                                         this.cache.fields[f]['settings'] = type ? this.getDefaultSettings(type) : {};
 
                                     }
@@ -121,10 +169,29 @@ class StageStore extends BaseStore {
                                         if(setting === "options" && this.cache.fields[f]['settings'].hasOwnProperty('options')) {
 
                                             var theseOptions = thisField['settings']['options'];
-
+                                            var theseKeys    = Object.keys(theseOptions);
                                             __debug(" |--|--|==> %s", setting);
 
-                                            for(var option in theseOptions) {
+                                            if(theseKeys.length > 0) {
+                                                if(theseKeys.length > 1) {
+                                                    /// Multiple options set (probably in a new order).
+                                                    this.cache.fields[f]['settings']['options'] = theseOptions;
+                                                    __debug(" |--|--|--|==> options overwritten");
+                                                } else {
+                                                    var singleOptionKey = theseKeys[0];
+                                                    var thisOption = theseOptions[singleOptionKey];
+
+                                                    if(thisOption === null) {
+                                                        __debug(" |--|--|--|==> #%s removed", singleOptionKey);
+                                                        delete this.cache.fields[f]['settings']['options'][singleOptionKey];
+                                                    } else {
+                                                        __debug(" |--|--|--|==> #%s = '%s'", singleOptionKey, thisOption.value || '');
+                                                        this.cache.fields[f]['settings']['options'][singleOptionKey] = thisOption;
+                                                    }
+                                                }
+                                            }
+
+                                            /*for(var option in theseOptions) {
 
                                                 var thisOption = theseOptions[option];
 
@@ -137,7 +204,7 @@ class StageStore extends BaseStore {
                                                     this.cache.fields[f]['settings']['options'][option] = thisOption;
                                                 }
 
-                                            }
+                                            }*/
 
                                         }
 
@@ -170,6 +237,10 @@ class StageStore extends BaseStore {
                 this.cache[k] = data[k];
             }
         }
+
+        __debug("New cache:");
+        __debug(this.cache);
+
         this.emitChange();
     }
 
@@ -177,6 +248,7 @@ class StageStore extends BaseStore {
      * Reset cache back to empty values.
      */
     handleClearCache() {
+        this.error  = false;
         this.status = null;
         this.cacheModified = false;
         this.cache  = {
@@ -223,6 +295,7 @@ class StageStore extends BaseStore {
      */
     dehydrate() {
         return {
+            error:  this.error,
             status: this.status,
             stages: this.stages,
             cache:  this.cache,
@@ -230,8 +303,9 @@ class StageStore extends BaseStore {
         };
     }
     rehydrate(state) {
-        this.stages = state.stages;
+        this.error  = state.error;
         this.status = state.status;
+        this.stages = state.stages;
         this.cache  = state.cache;
         this.cacheModified = state.cacheModified;
     }

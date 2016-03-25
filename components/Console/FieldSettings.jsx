@@ -8,7 +8,10 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
-import { UpdateCacheAction } from '../../flux/Console/StageActions';
+import { UpdateCacheAction, SetOptionShiftContext } from '../../flux/Console/StageActions';
+import OptionList from './OptionList';
+import SettingCheckbox from './SettingCheckbox';
+import SettingSelect from './SettingSelect';
 import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Console:FieldSettings');
@@ -33,47 +36,17 @@ class FieldSettings extends BaseComponent {
         }
     };
 
-    _updateOption = (key) => {
-        return (evt) => {
-
-            /// If no key provided, create an option with a default value.
-            var val = key ? evt.target.value : '';
-                key = key || new Date().getTime();
-
-            this.context.executeAction(UpdateCacheAction, {
-                fields: {
-                    [this.props._key]: {
-                        settings: {
-                            options: {
-                                [key]: {
-                                    value: val
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        };
-    }
-
-    _deleteOption = (key) => {
-        return (evt) => {
-            this.context.executeAction(UpdateCacheAction, {
-                fields: {
-                    [this.props._key]: {
-                        settings: {
-                            options: {
-                                [key]: null
-                            }
-                        }
-                    }
-                }
-            });
-        };
-    };
-
     render() {
+
         var props = this.props;
+        var settingsHeader = (
+            <div className="ui small dividing header">
+                <i className="setting icon"></i>
+                <div className="content">
+                    Settings
+                </div>
+            </div>
+        );
 
         switch(props.type) {
             case "text":
@@ -90,49 +63,58 @@ class FieldSettings extends BaseComponent {
                     </div>
                 )
                 break;
+
+            case "date":
+                return (
+                    <div className="DateSettings">
+                        {settingsHeader}
+                        <SettingCheckbox
+                            id="DateSettings-broad"
+                            label="Use broad date selector"
+                            field={props._key}
+                            setting="useBroadSelector" />
+                    </div>
+                );
+                break;
             case "select":
             case "multiselect":
-                __debug("Options:");
-                __debug(props.options);
                 let optionKeys = Object.keys(props.options || {});
                 return (
                     <div className="FieldSettings">
-                        <div className="ui dividing header">
-                            <i className="settings icon"></i>
-                            <div className="content">
-                                Settings
-                            </div>
-                        </div>
-                        {optionKeys.length > 0 ? optionKeys.map((option, index) => {
-                            let thisOption = props.options[option];
-                            return (
-                                <div className="ui small labeled right left action input" key={option + "-" + index}>
-                                    <button className="ui icon button">
-                                        <i className="sidebar icon"></i>
-                                    </button>
-                                    <input type="text"
-                                        placeholder="Type an option value here"
-                                        value={thisOption.value}
-                                        onChange={this._updateOption(option)} />
-                                    <button className="ui red icon button" onClick={this._deleteOption(option)}>
-                                        <i className="close icon"></i>
-                                    </button>
-                                </div>
+
+                        {props.type === "select" ? [
+                            settingsHeader,
+                            (
+                                <SettingCheckbox
+                                    id="FieldSettings-custom"
+                                    label="Allow custom field data"
+                                    field={props._key}
+                                    setting="allowCustomData" />
+                            ),
+                            (
+                                <div className="ui hidden divider"></div>
                             )
-                        }) : (
-                            <div className="ui blue message">
-                                <div className="header">
-                                    No options defined.
-                                </div>
-                            </div>
-                        )}
-                        <div className="ui divider"></div>
-                        <div className="ui labeled icon button" onClick={this._updateOption()}>
-                            <i className="plus icon"></i>
-                            Add an option
-                        </div>
+                        ]: null}
+
+                        <OptionList field={props._key} options={props.options || {}} />
                     </div>
-                )
+                );
+                break;
+            case "file":
+                return (
+                    <div className="FileSettings">
+                        {settingsHeader}
+                        <SettingSelect
+                            label="Acceptable filetypes"
+                            placeholder="Choose acceptable filetypes"
+                            multiple={true}
+                            field={props._key}
+                            setting="accept"
+                            options={{
+                                "image/*": "image / *"
+                            }} />
+                    </div>
+                );
                 break;
         }
 

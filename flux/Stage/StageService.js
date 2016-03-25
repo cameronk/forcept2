@@ -35,7 +35,9 @@ export default {
                     .upsert(body, {
                         id: params.id
                     }).then((x) => {
-                        callback(null, x, null);
+                        callback(null, {
+                            id: 1
+                        }, null);
                     }).catch(err => {
                         __debug(err);
                     });

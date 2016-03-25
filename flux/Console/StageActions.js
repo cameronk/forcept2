@@ -6,6 +6,7 @@
 import debug from 'debug';
 
 import Actions from '../actions';
+import { navigateAction } from '../Route/RouteActions';
 import StageStore from './StageStore';
 import { JsonModel } from '../../database/helper';
 const __debug = debug('forcept:flux:Console:StageActions');
@@ -31,7 +32,7 @@ export function LoadStagesAction(context, payload, done) {
                     attributes: ['id', 'name']
                 }).end()
                 .then(({data}) => {
-                    __debug(data);
+                    // __debug(data);
                     context.dispatch(Actions.CONSOLE_STAGES_LOADED, data.map(stage => JsonModel(stage)));
                     return;
                 })
@@ -63,13 +64,19 @@ export function LoadStagesAction(context, payload, done) {
                     }
                 }).end()
                 .then(({data}) => {
-                    context.dispatch(Actions.CONSOLE_STAGES_UPDATE_CACHE, JsonModel(data[0]));
+                    __debug("Grab data:")
+                    __debug(data);
+                    if(data.length > 0) {
+                        context.dispatch(Actions.CONSOLE_STAGES_UPDATE_CACHE, JsonModel(data[0]));
+                    } else {
+                        throw new Error("Stage not found");
+                    }
                     return;
                 })
                 .catch(err => {
                     __debug("Error occurred when fetching stage %s", payload.params.id);
                     __debug(err);
-                    // context.dispatch(Actions.CONSOLE_STAGES_LOAD_ERROR, err);
+                    context.dispatch(Actions.CONSOLE_STAGES_LOAD_ERROR, err);
                     return;
                 })
         );
@@ -104,20 +111,36 @@ export function SaveStageAction(context, payload, done) {
     context.dispatch(Actions.CONSOLE_STAGES_SET_STATUS, "saving");
 
     let cache = context.getStore(StageStore).getCache();
+    let id    = payload.id;
+
+    __debug("Saving stage '%s' to id '%s'", cache.name, id);
+
     context.service
         .update('StageService')
         .params({
-            id: payload.id
+            id: id
         })
         .body(cache).end()
-        .then((data) => {
-            __debug("data");
-            __debug(data);
+        .then(response => {
+
+            /// If ID was initially unset...
+            if(!id && response.data.id) {
+                context.executeAction(navigateAction, {
+                    url: '/console/stages/' + response.data.id
+                });
+            }
+
             context.dispatch(Actions.CONSOLE_STAGES_SET_STATUS, "saved");
             done();
+
         }).catch((err) => {
             __debug(err);
         });
+}
 
-
+/*
+ * Set the current option shift context.
+ */
+export function SetOptionShiftContext(context, payload, done) {
+    context.dispatch(Actions.CONSOLE_STAGES_SET_OPTION_SHIFT_CONTEXT, payload);
 }

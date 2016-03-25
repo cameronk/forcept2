@@ -81,7 +81,7 @@ class StageBuilder extends BaseComponent {
     				name: "",
     				type: "text",
     				mutable: true,
-    				settings: {},
+    				settings: this.context.getStore(StageStore).getDefaultSettings(),
     			}
             }
         });

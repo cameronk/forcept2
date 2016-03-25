@@ -15,6 +15,7 @@ import HeaderBar  from '../../../components/Meta/HeaderBar';
 import NavLink    from '../../../components/Navigation/NavLink';
 import BaseComponent, { grabContext } from '../../../components/Base';
 import StageBuilder from '../../../components/Console/StageBuilder';
+import MessageScaffold from '../../../components/Scaffold/Message';
 
 const __debug = debug("forcept:containers:pages:Console:Stages");
 const messages = defineMessages({
@@ -62,7 +63,7 @@ class Stages extends BaseComponent {
                 </div>
             );
 
-        __debug("Render stages @ location %s", location);
+        // __debug("Render stages @ location %s", location);
 
 
         /*
@@ -100,7 +101,11 @@ class Stages extends BaseComponent {
                         </div>
                     </div>
                     <div className="thirteen wide computer twelve wide tablet right spaced column">
-                        <StageBuilder />
+                        {props.error ? (
+                            <MessageScaffold
+                                type="error"
+                                text={props.error.toString()} />
+                        ) : (<StageBuilder />)}
                     </div>
                 </div>
             </div>
@@ -126,6 +131,7 @@ Stages = connectToStores(
 
         return {
             location: location,
+            error: stageStore.getError(),
             stages: stages,
             isLoaded: routeStore.isNavigateComplete()
         };
