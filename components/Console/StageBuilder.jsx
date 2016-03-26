@@ -134,6 +134,7 @@ class StageBuilder extends BaseComponent {
                 <div className="ui divider"></div>
 
                 {fieldKeys.length > 0 ? (
+                    <div className={"ui basic segment" + (status === 'saving' ? " loading" : "")}>
                     <div className="ui fluid accordion">
                         {
                             flatten(
@@ -164,6 +165,7 @@ class StageBuilder extends BaseComponent {
                             )
                         }
                     </div>
+                    </div>
                 ) : (
                     <div className="ui error message">
                         <div className="header">
@@ -186,11 +188,25 @@ class StageBuilder extends BaseComponent {
                     <button
                         onClick={this._save}
                         className={
-                            "ui right labeled icon positive button" +
+                            "ui right labeled positive icon button" +
                             ((!props.isModified || props.status === 'saving') ? ' disabled' : '') +
                             ((props.status === 'saving') ? ' loading' : '')}>
                         Save
                         <i className="save icon"></i>
+                    </button>
+                </div>
+                <div className="ui tiny right floated buttons">
+                    <button
+                        onClick={this._upload}
+                        className={"ui labeled icon button" + (props.status === 'saving' ? ' disabled' : '')}>
+                        <i className="upload icon"></i>
+                        Upload
+                    </button>
+                    <button
+                        onClick={this._download}
+                        className={"ui right labeled icon button" + (props.status === 'saving' ? ' disabled' : '')}>
+                        <i className="download icon"></i>
+                        Download
                     </button>
                 </div>
             </div>
