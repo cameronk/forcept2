@@ -140,22 +140,25 @@ class StageBuilder extends BaseComponent {
                                 fieldKeys.map((key, i) => {
                                     let thisField = fields[key];
                                     return [
-                                        (<div className="title">
-                                            <div className="ui medium header">
-                                                <i className="dropdown icon"></i>
-                                                {thisField.name.length > 0 ? thisField.name : "Untitled field"}
-                                                {" "}
-                                                <div className="tiny ui teal label">
-                                                    {key}
+                                        (
+                                            <div className="title" key={key + "-title"}>
+                                                <div className="ui medium header">
+                                                    <i className="dropdown icon"></i>
+                                                    {thisField.name.length > 0 ? thisField.name : "Untitled field"}
+                                                    {" "}
+                                                    <div className="tiny ui teal label">
+                                                        {key}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>),
-                                        (<div className="content">
-                                            <Field
-                                                {...thisField}
-                                                key={key}
-                                                _key={key} />
-                                        </div>)
+                                        ),
+                                        (
+                                            <div className="content" key={key + "-content"}>
+                                                <Field
+                                                    {...thisField}
+                                                    _key={key} />
+                                            </div>
+                                        )
                                     ];
                                 })
                             )

@@ -70,7 +70,7 @@ class SettingSelect extends BaseComponent {
                     ) : null}
                     {optionKeys.map((key) => {
                         return (
-                            <option value={key}>{props.options[key]}</option>
+                            <option key={key} value={key}>{props.options[key]}</option>
                         );
                     })}
                 </select>

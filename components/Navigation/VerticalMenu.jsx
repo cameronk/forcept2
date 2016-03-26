@@ -4,10 +4,13 @@
  */
 
 import React from 'react';
+import { connectToStores } from 'fluxible-addons-react';
+import { defineMessages, injectIntl } from 'react-intl';
+
+import StageStore from '../../flux/Stage/StageStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import NavLink from './NavLink';
-import { defineMessages, injectIntl } from 'react-intl';
 
 if(process.env.BROWSER) {
     require('../../styles/VerticalMenu.less');
@@ -53,9 +56,10 @@ class VerticalMenu extends BaseComponent {
 
         let { formatMessage } = this.props.intl;
 
-        var ctx = this.context,
+        var props = this.props,
+            ctx = this.context,
             isAuthenticated = ctx.isAuthenticated(),
-            userItem;
+            userItem, stagesItem;
 
         /// Show the user area if user is authenticated
         if(isAuthenticated) {
@@ -95,6 +99,19 @@ class VerticalMenu extends BaseComponent {
                     </div>
                 </div>
             );
+
+            stagesItem = (
+                <div className="item">
+                    <div className="header">Stages</div>
+                    <div className="menu">
+                        {props.stages.map((stage) => {
+                            return (
+                                <div key={stage.id} className="item">{stage.name || "Untitled stage"}</div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
         }
 
         return (
@@ -119,17 +136,21 @@ class VerticalMenu extends BaseComponent {
                         <div className="item">Triage</div>
                     </div>
                 </div>
-                <div className="item">
-                    <div className="header">Stages</div>
-                    <div className="menu">
-                        <div className="item">New visit</div>
-                        <div className="item">Triage</div>
-                    </div>
-                </div>
+                {stagesItem}
                 {userItem}
             </div>
         );
     }
 }
+
+VerticalMenu = connectToStores(
+    VerticalMenu,
+    [StageStore],
+    function(context, props) {
+        return {
+            stages: context.getStore(StageStore).getStages()
+        }
+    }
+)
 
 export default injectIntl(VerticalMenu);

@@ -63,7 +63,6 @@ class FieldSettings extends BaseComponent {
                     </div>
                 )
                 break;
-
             case "date":
                 return (
                     <div className="DateSettings">
@@ -81,7 +80,6 @@ class FieldSettings extends BaseComponent {
                 let optionKeys = Object.keys(props.options || {});
                 return (
                     <div className="FieldSettings">
-
                         {props.type === "select" ? [
                             settingsHeader,
                             (
@@ -95,7 +93,6 @@ class FieldSettings extends BaseComponent {
                                 <div className="ui hidden divider"></div>
                             )
                         ]: null}
-
                         <OptionList field={props._key} options={props.options || {}} />
                     </div>
                 );
