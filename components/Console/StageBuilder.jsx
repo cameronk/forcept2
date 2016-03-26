@@ -9,7 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';
 
-import { UpdateCacheAction, SaveStageAction } from '../../flux/Stage/StageActions';
+import { UpdateCacheAction, SaveStageAction, UploadFieldsAction } from '../../flux/Stage/StageActions';
 import StageStore from '../../flux/Stage/StageStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
@@ -83,6 +83,39 @@ class StageBuilder extends BaseComponent {
         });
     }
 
+    _uploadConfig = (evt) => {
+		var reader = new FileReader();
+		var file = evt.target.files[0];
+
+		reader.onload = function(upload) {
+
+			var fields = JSON.parse(
+                atob(upload.target.result.split(",")[1])
+            );
+
+			if(fields) {
+
+                /**
+                 * Clear fields out before adding new ones
+                 */
+                // this.context.executeAction(UpdateCacheAction, {
+                //     fields: null
+                // }, () => {
+                //     __debug("Applying uploaded fields.");
+                //     this.context.executeAction(UpdateCacheAction, {
+                //         fields: fields
+                //     });
+                // });
+                this.context.executeAction(UploadFieldsAction, {
+                    fields: fields
+                });
+			}
+
+		}.bind(this);
+
+		reader.readAsDataURL(file);
+    }
+
     render() {
 
         var props = this.props,
@@ -134,37 +167,42 @@ class StageBuilder extends BaseComponent {
                 <div className="ui divider"></div>
 
                 {fieldKeys.length > 0 ? (
-                    <div className={"ui basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <div className="ui fluid accordion">
-                        {
-                            flatten(
-                                fieldKeys.map((key, i) => {
-                                    let thisField = fields[key];
-                                    return [
-                                        (
-                                            <div className="title" key={key + "-title"}>
-                                                <div className="ui medium header">
-                                                    <i className="dropdown icon"></i>
-                                                    {thisField.name.length > 0 ? thisField.name : "Untitled field"}
-                                                    {" "}
-                                                    <div className="tiny ui teal label">
-                                                        {key}
+                    <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
+                        <div className="ui fluid accordion">
+                            {
+                                flatten(
+                                    fieldKeys.map((key, i) => {
+                                        let thisField = fields[key];
+                                        return [
+                                            (
+                                                <div className="title" key={key + "-title"}>
+                                                    <div className="ui medium header">
+                                                        <i className="dropdown icon"></i>
+                                                        {thisField.name.length > 0 ? thisField.name : "Untitled field"}
+                                                        {" "}
+                                                        <div className="tiny ui teal label">
+                                                            {key}
+                                                            {(thisField.mutable === "false") ? (
+                                                                <div className="detail">
+                                                                    <i className="lock icon"></i>
+                                                                </div>
+                                                            ) : null}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ),
-                                        (
-                                            <div className="content" key={key + "-content"}>
-                                                <Field
-                                                    {...thisField}
-                                                    _key={key} />
-                                            </div>
-                                        )
-                                    ];
-                                })
-                            )
-                        }
-                    </div>
+                                            ),
+                                            (
+                                                <div className="content" key={key + "-content"}>
+                                                    <Field
+                                                        {...thisField}
+                                                        _key={key} />
+                                                </div>
+                                            )
+                                        ];
+                                    })
+                                )
+                            }
+                        </div>
                     </div>
                 ) : (
                     <div className="ui error message">
@@ -195,13 +233,16 @@ class StageBuilder extends BaseComponent {
                         <i className="save icon"></i>
                     </button>
                 </div>
+
+                {/** Upload/download configuration files **/}
                 <div className="ui tiny right floated buttons">
-                    <button
+                    <label
+                        htmlFor="StageBuilder-UploadConfig"
                         onClick={this._upload}
                         className={"ui labeled icon button" + (props.status === 'saving' ? ' disabled' : '')}>
                         <i className="upload icon"></i>
                         Upload
-                    </button>
+                    </label>
                     <button
                         onClick={this._download}
                         className={"ui right labeled icon button" + (props.status === 'saving' ? ' disabled' : '')}>
@@ -209,6 +250,8 @@ class StageBuilder extends BaseComponent {
                         Download
                     </button>
                 </div>
+                <input type="file" id="StageBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
+
             </div>
         );
     }

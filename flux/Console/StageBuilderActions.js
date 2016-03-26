@@ -3,6 +3,8 @@
  * @author Azuru Technology
  */
 
+import Actions from '../actions';
+
 /*
  * Set the current option shift context.
  */

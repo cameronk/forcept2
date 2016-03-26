@@ -56,12 +56,12 @@ class FieldSettings extends BaseComponent {
 			case "header":
 			case "pharmacy":
                 return (
-                    <div className="ui blue message">
+                    <div className="ui fluid blue message">
                         <div className="header">
                             No configuration is required for {props.type} fields.
                         </div>
                     </div>
-                )
+                );
                 break;
             case "date":
                 return (
@@ -113,11 +113,17 @@ class FieldSettings extends BaseComponent {
                     </div>
                 );
                 break;
+            default:
+                return (
+                    <div className="ui fluid error message">
+                        <div className="header">
+                            <i className="warning icon"></i>
+                            Warning: unrecognized field type.
+                        </div>
+                    </div>
+                );
+                break;
         }
-
-        return (
-            <div>asdf</div>
-        );
     }
 
 }

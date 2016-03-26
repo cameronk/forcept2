@@ -114,116 +114,126 @@ class StageStore extends BaseStore {
         __debug("Updating cache.");
 
         for(var k in data) {
-            __debug(" | %s", k);
+            __debug(" | %s = %s", k, data[k]);
 
             /// If this is a field, loop through its properties.
             if(k === "fields") {
 
-                for(var f in data.fields) {
+                /// Remove all fields if fields = null
+                if(data.fields === null) {
+                    this.cache.fields = {};
+                }
 
-                    let thisField = data.fields[f];
-                    let fieldAlreadyExists = this.cache.fields.hasOwnProperty(f);
-                    __debug(" |==> #%s", f);
+                /// Otherwise, loop through fields
+                else {
 
-                    if(thisField === null && fieldAlreadyExists) {
-                        delete this.cache.fields[f];
-                    } else {
+                    for(var f in data.fields) {
 
-                        /// Add the field if it's not cached already.
-                        if(!fieldAlreadyExists) {
-                            this.cache.fields[f] = thisField;
-                        }
+                        let thisField = data.fields[f];
+                        let fieldAlreadyExists = this.cache.fields.hasOwnProperty(f);
+                        __debug(" |==> #%s", f);
 
-                        /// Otherwise, add properties individually
-                        else {
+                        if(thisField === null && fieldAlreadyExists) {
+                            delete this.cache.fields[f];
+                        } else {
 
-                            /// Check field properties (name, type, description, settings, etc.)
-                            for(var prop in thisField) {
+                            /// Add the field if it's not cached already.
+                            if(!fieldAlreadyExists) {
+                                this.cache.fields[f] = thisField;
+                            }
 
-                                /// Loop through settings if we've already stored them
-                                if(prop === "settings" && this.cache.fields[f].hasOwnProperty('settings')) {
+                            /// Otherwise, add properties individually
+                            else {
 
-                                    __debug(" |--|==> %s", prop);
+                                /// Check field properties (name, type, description, settings, etc.)
+                                for(var prop in thisField) {
 
-                                    /// If the passed settings are null, reset settings object
-                                    if(thisField['settings'] === null) {
+                                    /// Loop through settings if we've already stored them
+                                    if(prop === "settings" && this.cache.fields[f].hasOwnProperty('settings')) {
 
-                                        __debug(" |--|--|==> overwriting settings with new object");
+                                        __debug(" |--|==> %s", prop);
 
-                                        var type;
+                                        /// If the passed settings are null, reset settings object
+                                        if(thisField['settings'] === null) {
 
-                                        /// Make sure we have a type available
-                                        if(this.cache.fields[f]['type']) {
-                                            type = this.cache.fields[f]['type'];
-                                        } else if(thisField['type']) {
-                                            type = thisField['type'];
-                                        }
+                                            __debug(" |--|--|==> overwriting settings with new object");
 
-                                        /// Get default settings for this field type
-                                        this.cache.fields[f]['settings'] = type ? this.getDefaultSettings(type) : {};
+                                            var type;
 
-                                    }
-
-                                    /// Loop through settings (options, allowCustomData, etc.)
-                                    for(var setting in thisField['settings']) {
-
-                                        /// Loop through options if we need to apply them individually.
-                                        if(setting === "options" && this.cache.fields[f]['settings'].hasOwnProperty('options')) {
-
-                                            var theseOptions = thisField['settings']['options'];
-                                            var theseKeys    = Object.keys(theseOptions);
-                                            __debug(" |--|--|==> %s", setting);
-
-                                            if(theseKeys.length > 0) {
-                                                if(theseKeys.length > 1) {
-                                                    /// Multiple options set (probably in a new order).
-                                                    this.cache.fields[f]['settings']['options'] = theseOptions;
-                                                    __debug(" |--|--|--|==> options overwritten");
-                                                } else {
-                                                    var singleOptionKey = theseKeys[0];
-                                                    var thisOption = theseOptions[singleOptionKey];
-
-                                                    if(thisOption === null) {
-                                                        __debug(" |--|--|--|==> #%s removed", singleOptionKey);
-                                                        delete this.cache.fields[f]['settings']['options'][singleOptionKey];
-                                                    } else {
-                                                        __debug(" |--|--|--|==> #%s = '%s'", singleOptionKey, thisOption.value || '');
-                                                        this.cache.fields[f]['settings']['options'][singleOptionKey] = thisOption;
-                                                    }
-                                                }
+                                            /// Make sure we have a type available
+                                            if(this.cache.fields[f]['type']) {
+                                                type = this.cache.fields[f]['type'];
+                                            } else if(thisField['type']) {
+                                                type = thisField['type'];
                                             }
 
-                                            /*for(var option in theseOptions) {
-
-                                                var thisOption = theseOptions[option];
-
-                                                /// null = delete
-                                                if(thisOption === null) {
-                                                    __debug(" |--|--|--|==> #%s removed", option);
-                                                    delete this.cache.fields[f]['settings']['options'][option];
-                                                } else {
-                                                    __debug(" |--|--|--|==> #%s = '%s'", option, thisOption.value || '');
-                                                    this.cache.fields[f]['settings']['options'][option] = thisOption;
-                                                }
-
-                                            }*/
+                                            /// Get default settings for this field type
+                                            this.cache.fields[f]['settings'] = type ? this.getDefaultSettings(type) : {};
 
                                         }
 
-                                        /// Otherwise, apply settings / options..
-                                        else {
-                                            __debug(" |--|--|==> %s = '%s'", setting, thisField['settings'][setting]);
-                                            this.cache.fields[f]['settings'][setting] = thisField['settings'][setting];
+                                        /// Loop through settings (options, allowCustomData, etc.)
+                                        for(var setting in thisField['settings']) {
+
+                                            /// Loop through options if we need to apply them individually.
+                                            if(setting === "options" && this.cache.fields[f]['settings'].hasOwnProperty('options')) {
+
+                                                var theseOptions = thisField['settings']['options'];
+                                                var theseKeys    = Object.keys(theseOptions);
+                                                __debug(" |--|--|==> %s", setting);
+
+                                                if(theseKeys.length > 0) {
+                                                    if(theseKeys.length > 1) {
+                                                        /// Multiple options set (probably in a new order).
+                                                        this.cache.fields[f]['settings']['options'] = theseOptions;
+                                                        __debug(" |--|--|--|==> options overwritten");
+                                                    } else {
+                                                        var singleOptionKey = theseKeys[0];
+                                                        var thisOption = theseOptions[singleOptionKey];
+
+                                                        if(thisOption === null) {
+                                                            __debug(" |--|--|--|==> #%s removed", singleOptionKey);
+                                                            delete this.cache.fields[f]['settings']['options'][singleOptionKey];
+                                                        } else {
+                                                            __debug(" |--|--|--|==> #%s = '%s'", singleOptionKey, thisOption.value || '');
+                                                            this.cache.fields[f]['settings']['options'][singleOptionKey] = thisOption;
+                                                        }
+                                                    }
+                                                }
+
+                                                /*for(var option in theseOptions) {
+
+                                                    var thisOption = theseOptions[option];
+
+                                                    /// null = delete
+                                                    if(thisOption === null) {
+                                                        __debug(" |--|--|--|==> #%s removed", option);
+                                                        delete this.cache.fields[f]['settings']['options'][option];
+                                                    } else {
+                                                        __debug(" |--|--|--|==> #%s = '%s'", option, thisOption.value || '');
+                                                        this.cache.fields[f]['settings']['options'][option] = thisOption;
+                                                    }
+
+                                                }*/
+
+                                            }
+
+                                            /// Otherwise, apply settings / options..
+                                            else {
+                                                __debug(" |--|--|==> %s = '%s'", setting, thisField['settings'][setting]);
+                                                this.cache.fields[f]['settings'][setting] = thisField['settings'][setting];
+                                            }
+
                                         }
 
                                     }
 
-                                }
+                                    /// Otherwise, apply property / settings object.
+                                    else {
+                                        __debug(" |--|==> %s = '%s'", prop, thisField[prop]);
+                                        this.cache.fields[f][prop] = thisField[prop];
+                                    }
 
-                                /// Otherwise, apply property / settings object.
-                                else {
-                                    __debug(" |--|==> %s = '%s'", prop, thisField[prop]);
-                                    this.cache.fields[f][prop] = thisField[prop];
                                 }
 
                             }

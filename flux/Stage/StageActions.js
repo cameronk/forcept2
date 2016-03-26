@@ -13,13 +13,6 @@ import { JsonModel } from '../../database/helper';
 const __debug = debug('forcept:flux:Stage:StageActions');
 
 /*
- *
- */
-export function ClearCacheAction(context, payload, done) {
-   context.dispatch(Actions.STAGES_CLEAR_CACHE);
-}
-
-/*
  * load stage data [name, id] for list display.
  * Dispatches:
  *  STAGES_LOADED -> Stage/StageStore
@@ -77,11 +70,32 @@ export function GrabStageAction(context, { id }) {
 }
 
 /*
+ *
+ */
+export function ClearCacheAction(context, payload) {
+   context.dispatch(Actions.STAGES_CLEAR_CACHE);
+}
+
+/*
  * Update the stage cache via payload.
  */
 export function UpdateCacheAction(context, payload, done) {
     context.dispatch(Actions.STAGES_CACHE_MODIFIED);
     context.dispatch(Actions.STAGES_UPDATE_CACHE, payload);
+    done();
+}
+
+/*
+ * Process uploading of new fields.
+ */
+export function UploadFieldsAction(context, { fields }) {
+    context.executeAction(UpdateCacheAction, {
+        fields: null
+    }, () => {
+        context.executeAction(UpdateCacheAction, {
+            fields: fields
+        });
+    });
 }
 
 /*
