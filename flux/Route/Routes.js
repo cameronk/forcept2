@@ -24,13 +24,10 @@ const messages = defineMessages({
     }
 });
 
-__debug(messages);
-__debug(messages['pages.console.stages.title']);
 /*
  * Require a page.
  */
 function getPage(page) {
-    __debug("Grabbing page '%s'", page);
     return require('../../containers/pages/' + page);
 };
 
@@ -80,17 +77,15 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages['pages.console.stages.title'],
-        action: LoadStagesAction
+        title: messages['pages.console.stages.title']
     },
     consoleStagesStage: {
-        path: '/console/stages/:id',
+        path: '/console/stages/:stageID',
         namespace: 'console',
         method: 'get',
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages["pages.console.stages.stage.title"],
-        action: LoadStagesAction
+        title: messages["pages.console.stages.stage.title"]
     }
 };

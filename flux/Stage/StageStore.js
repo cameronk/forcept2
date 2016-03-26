@@ -248,6 +248,7 @@ class StageStore extends BaseStore {
      * Reset cache back to empty values.
      */
     handleClearCache() {
+        __debug("Clearing cache.");
         this.error  = false;
         this.status = null;
         this.cacheModified = false;

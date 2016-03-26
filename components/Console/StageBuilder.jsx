@@ -204,7 +204,7 @@ StageBuilder = connectToStores(
         var stageStore = context.getStore(StageStore);
 
         return Object.assign(stageStore.getCache(), {
-            id: routeStore.getCurrentRoute().params.id || null,
+            id: routeStore.getCurrentRoute().params.stageID || null,
             isLoading: routeStore.isNavigateComplete(),
             isModified: stageStore.isCacheModified(),
             status: stageStore.getStatus()

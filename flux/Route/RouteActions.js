@@ -5,7 +5,65 @@
 
 import debug from 'debug';
 
+import StageStore from '../Stage/StageStore';
+import { LoadStagesAction, GrabStageAction, ClearCacheAction } from '../Stage/StageActions';
+
 var __debug = debug('forcept:flux:Route:RouteActions');
+
+/*
+ * Dispatch actions handled during *every* page load.
+ *
+ * Expected payload: routeStore.getCurrentRoute()
+ * Dispatches:
+ *  STAGES_CLEAR_CACHE -> Stage/StageStore
+ */
+var RunPageLoadActions = function(context, payload, done) {
+
+    let promises = [];
+
+    /*
+     * Clear stage cache every page load.
+     */
+    // promises.push(
+        context.executeAction(ClearCacheAction);
+    // );
+
+    /*
+     * If stages name/ID list has not been loaded
+     * grab it from the database now.
+     */
+    if(context.getStore(StageStore).hasLoadedStages() === false) {
+
+        __debug("Loading stage IDs and NAMEs");
+        promises.push(
+            context.executeAction(LoadStagesAction)
+        );
+
+    }
+
+    /*
+     * Automagically cache stage data if a stageID parameter is provided.
+     */
+    if(payload.hasOwnProperty('params') && payload.params.hasOwnProperty('stageID')) {
+
+        promises.push(
+            context.executeAction(GrabStageAction, {
+                id: payload.params.stageID
+            })
+        );
+
+    }
+
+    __debug("Executing %s promises prior to load.", promises.length);
+
+    /*
+     * Run all promises before returning done()
+     */
+    Promise.all(promises).then(() => {
+        done();
+    });
+
+}
 
 var navAction = function navigateAction(context, payload, done) {
 
@@ -69,33 +127,45 @@ var navAction = function navigateAction(context, payload, done) {
 
     }
 
-    var action = route.action;
-    if ('string' === typeof action && context.getAction) {
-        action = context.getAction(action);
-    }
+    /*
+     * Execute actions required for page load first.
+     */
+    context.executeAction(RunPageLoadActions, route, (err) => {
 
-    if (!action || 'function' !== typeof action) {
-        __debug('route has no action, dispatching without calling action');
-        context.dispatch('NAVIGATE_SUCCESS', route);
-        done();
-        return;
-    }
+        __debug("Page-load actions done.");
 
-    __debug('executing route action');
-    context.executeAction(action, route, function (err) {
-        if (err) {
-            var error500 = {
-                transactionId: navigate.transactionId,
-                statusCode: err.statusCode || 500,
-                message: err.message
-            };
+        /*
+         * Run action specified by route.
+         */
+        var action = route.action;
+        if ('string' === typeof action && context.getAction) {
+            action = context.getAction(action);
+        }
 
-            context.dispatch('NAVIGATE_FAILURE', error500);
-            done(Object.assign(err, error500));
-        } else {
+        if (!action || 'function' !== typeof action) {
+            __debug('route has no action, dispatching without calling action');
             context.dispatch('NAVIGATE_SUCCESS', route);
             done();
+            return;
         }
+
+        __debug('executing route action');
+        context.executeAction(action, route, function (err) {
+            if (err) {
+                var error500 = {
+                    transactionId: navigate.transactionId,
+                    statusCode: err.statusCode || 500,
+                    message: err.message
+                };
+
+                context.dispatch('NAVIGATE_FAILURE', error500);
+                done(Object.assign(err, error500));
+            } else {
+                context.dispatch('NAVIGATE_SUCCESS', route);
+                done();
+            }
+        });
+
     });
 }
 

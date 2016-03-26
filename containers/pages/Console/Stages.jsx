@@ -64,6 +64,19 @@ class Stages extends BaseComponent {
 
         // __debug("Render stages @ location %s", location);
 
+        if(props.error) {
+            stageDOM = (
+                <MessageScaffold
+                    type="error"
+                    text={props.error.toString()} />
+            );
+        } else if(!props.isLoaded) {
+            stageDOM = "Loading"
+        } else {
+            stageDOM = (
+                <StageBuilder />
+            );
+        }
 
         /*
          * Location = 0 -> "Create a new stage"
@@ -100,11 +113,7 @@ class Stages extends BaseComponent {
                         </div>
                     </div>
                     <div className="thirteen wide computer twelve wide tablet right spaced column">
-                        {props.error ? (
-                            <MessageScaffold
-                                type="error"
-                                text={props.error.toString()} />
-                        ) : (<StageBuilder />)}
+                        {stageDOM}
                     </div>
                 </div>
             </div>
@@ -124,8 +133,8 @@ Stages = connectToStores(
         var stages = stageStore.getStages();
         var params = routeStore.getCurrentRoute().params;
 
-        if(params.id) {
-            location = params.id;
+        if(params.stageID) {
+            location = params.stageID;
         }
 
         return {

@@ -1,8 +1,12 @@
 /**
- *
+ * forcept - flux/App/AppActions.js
+ * @author Azuru Technology
  */
 
+import debug from 'debug';
 import Actions from '../actions';
+
+const __debug = debug('forcept:flux:App:AppActions');
 
 export default function SetLoadingModeAction(context, payload, done) {
 

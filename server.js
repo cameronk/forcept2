@@ -27,6 +27,7 @@ import debug from 'debug';
 /// Application imports
 import app from './app';
 import db from './database/models';
+import { RunPageLoadActions } from './flux/App/AppActions';
 import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
@@ -189,7 +190,9 @@ __debug("---");
             }
         }
 
-
+        /*
+         * Run the navigateAction so that route information is built + dispatched.
+         */
         thisContext.executeAction(navigateAction, {}, (err) => {
 
             if (err) {
