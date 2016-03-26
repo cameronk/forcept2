@@ -102,7 +102,9 @@ class StageStore extends BaseStore {
      * The cache was modified.
      */
     handleCacheWasModified() {
+        __debug("cache was modified");
         this.cacheModified = true;
+        this.emitChange();
     }
 
     /*

@@ -71,7 +71,9 @@ class Stages extends BaseComponent {
                     text={props.error.toString()} />
             );
         } else if(!props.isLoaded) {
-            stageDOM = "Loading"
+            stageDOM = (
+                <div className="ui active loader"></div>
+            );
         } else {
             stageDOM = (
                 <StageBuilder />
@@ -99,6 +101,9 @@ class Stages extends BaseComponent {
                                         href={'/console/stages/' + thisStage.id}
                                         className="item"
                                         disabled={isCurrent || !isLoaded}>
+                                        {(isCurrent && props.isCacheModified) ? (
+                                            <div className="ui label">M</div>
+                                        ) : null}
                                         {thisStage.name.length > 0 ? thisStage.name : "Untitled stage"}
                                     </NavLink>
                                 );
@@ -140,6 +145,7 @@ Stages = connectToStores(
         return {
             location: location,
             error: stageStore.getError(),
+            isCacheModified: stageStore.isCacheModified(),
             stages: stages,
             isLoaded: routeStore.isNavigateComplete()
         };

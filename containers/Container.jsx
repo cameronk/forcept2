@@ -71,11 +71,11 @@ class Container extends React.Component {
                 // content = getHandler();
         }
 
-        if(!isNavigateComplete) {
+        /*if(!isNavigateComplete) {
             loading = (
                 <div className="ui active loader"></div>
             );
-        }
+        }*/
 
         /// #Container is now like <body>
         return (
