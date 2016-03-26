@@ -9,8 +9,8 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';
 
-import { UpdateCacheAction, SaveStageAction } from '../../flux/Console/StageActions';
-import StageStore from '../../flux/Console/StageStore';
+import { UpdateCacheAction, SaveStageAction } from '../../flux/Stage/StageActions';
+import StageStore from '../../flux/Stage/StageStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import HeadingScaffold from '../Scaffold/Heading';
@@ -44,11 +44,6 @@ class StageBuilder extends BaseComponent {
 
     constructor() {
         super();
-        this.autobind([
-            '_typeChange',
-            '_nameChange',
-            '_addField',
-        ]);
     }
 
     componentDidMount() {
@@ -62,19 +57,20 @@ class StageBuilder extends BaseComponent {
             .accordion();
     }
 
-    _nameChange(evt) {
+    _nameChange = (evt) => {
+        __debug("Name change.");
         this.context.executeAction(UpdateCacheAction, { name: evt.target.value });
     }
 
-    _typeChange(evt) {
+    _typeChange = (evt) => {
         this.context.executeAction(UpdateCacheAction, { type: evt.target.value });
     }
 
     _save = (evt) => {
         this.context.executeAction(SaveStageAction, { id: this.props.id || null });
-    };
+    }
 
-    _addField(evt) {
+    _addField = (evt) => {
         this.context.executeAction(UpdateCacheAction, {
             fields: {
                 [new Date().getTime()]: {
@@ -95,7 +91,6 @@ class StageBuilder extends BaseComponent {
             fieldKeys = Object.keys(fields);
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
-
         var message;
 
         switch(status) {

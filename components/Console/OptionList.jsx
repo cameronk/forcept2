@@ -8,8 +8,9 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
-import StageStore from '../../flux/Console/StageStore';
-import { UpdateCacheAction, SetOptionShiftContext } from '../../flux/Console/StageActions';
+import StageStore from '../../flux/Stage/StageStore';
+import { UpdateCacheAction } from '../../flux/Stage/StageActions';
+import { SetOptionShiftContext } from '../../flux/Console/StageBuilderActions';
 import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Console:OptionList');

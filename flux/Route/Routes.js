@@ -5,7 +5,7 @@
 
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
-import { LoadStagesAction } from '../Console/StageActions';
+import { LoadStagesAction } from '../Stage/StageActions';
 import { defineMessages } from 'react-intl';
 
 const __debug = debug('forcept:flux:Route:Routes');

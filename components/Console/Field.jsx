@@ -8,7 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
-import { UpdateCacheAction } from '../../flux/Console/StageActions';
+import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../Base';
 import FieldSettings from './FieldSettings';
 

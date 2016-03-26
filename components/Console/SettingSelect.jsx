@@ -9,8 +9,8 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import $ from 'jquery';
 
-import StageStore from '../../flux/Console/StageStore';
-import { UpdateCacheAction, SetOptionShiftContext } from '../../flux/Console/StageActions';
+import StageStore from '../../flux/Stage/StageStore';
+import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Console:SettingSelect');

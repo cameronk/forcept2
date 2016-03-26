@@ -19,18 +19,16 @@ export default keyMirror({
     'AUTH_SUCCESS': null,
     'AUTH_CREDENTIAL_CHANGE': null,
 
-    /// Console
+    /// Stages
+    'STAGES_LOAD': null,
+    'STAGES_LOADED': null,
+    'STAGES_LOAD_ERROR': null,
+    'STAGES_SET_OPTION_SHIFT_CONTEXT': null,
 
-        /// Stages
-        'CONSOLE_STAGES_LOAD': null,
-        'CONSOLE_STAGES_LOADED': null,
-        'CONSOLE_STAGES_LOAD_ERROR': null,
-        'CONSOLE_STAGES_SET_OPTION_SHIFT_CONTEXT': null,
+    'STAGES_UPDATE_CACHE': null,
+    'STAGES_CLEAR_CACHE': null,
+    'STAGES_CACHE_MODIFIED': null,
 
-        'CONSOLE_STAGES_UPDATE_CACHE': null,
-        'CONSOLE_STAGES_CLEAR_CACHE': null,
-        'CONSOLE_STAGES_CACHE_MODIFIED': null,
-
-        'CONSOLE_STAGES_SET_STATUS': null,
+    'STAGES_SET_STATUS': null,
 
 });

@@ -13,13 +13,13 @@ class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
     static handlers = {
-        [Actions.CONSOLE_STAGES_LOADED]: 'handleStagesLoaded',
-        [Actions.CONSOLE_STAGES_UPDATE_CACHE]: 'handleUpdateCache',
-        [Actions.CONSOLE_STAGES_LOAD_ERROR]: 'handleStageLoadError',
-        [Actions.CONSOLE_STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
-        [Actions.CONSOLE_STAGES_CLEAR_CACHE]: 'handleClearCache',
-        [Actions.CONSOLE_STAGES_CACHE_MODIFIED]: 'handleCacheWasModified',
-        [Actions.CONSOLE_STAGES_SET_STATUS]: 'handleSetStatus'
+        [Actions.STAGES_LOADED]: 'handleStagesLoaded',
+        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
+        [Actions.STAGES_LOAD_ERROR]: 'handleStageLoadError',
+        [Actions.STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
+        [Actions.STAGES_CLEAR_CACHE]: 'handleClearCache',
+        [Actions.STAGES_CACHE_MODIFIED]: 'handleCacheWasModified',
+        [Actions.STAGES_SET_STATUS]: 'handleSetStatus'
     }
 
     /**

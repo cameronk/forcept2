@@ -8,7 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
-import { UpdateCacheAction, SetOptionShiftContext } from '../../flux/Console/StageActions';
+import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import OptionList from './OptionList';
 import SettingCheckbox from './SettingCheckbox';
 import SettingSelect from './SettingSelect';

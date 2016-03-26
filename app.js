@@ -14,7 +14,7 @@ import Root from './containers/Root';
 import ApplicationStore from './flux/App/AppStore';
 import AuthStore from './flux/Auth/AuthStore';
 import RouteStore from './flux/Route/RouteStore';
-import StageStore from './flux/Console/StageStore';
+import StageStore from './flux/Stage/StageStore';
 
 /// create new fluxible instance
 const app = new Fluxible({

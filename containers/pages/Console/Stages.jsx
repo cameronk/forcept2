@@ -8,8 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from "debug";
 
-// import { SetLoadingModeAction } from '../../../flux/App/AppActions';
-import StageStore from '../../../flux/Console/StageStore';
+import StageStore from '../../../flux/Stage/StageStore';
 import RouteStore from '../../../flux/Route/RouteStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import NavLink    from '../../../components/Navigation/NavLink';
