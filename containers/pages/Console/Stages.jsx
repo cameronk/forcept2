@@ -83,10 +83,10 @@ class Stages extends BaseComponent {
                     </div>
                 </div>
                 <div className="row clear top">
-                    <div className="three wide computer four wide tablet column">
+                    <div className="four wide computer five wide tablet column">
                         <StagesMenu />
                     </div>
-                    <div className="thirteen wide computer twelve wide tablet right spaced column">
+                    <div className="twelve wide computer eleven wide tablet right spaced column">
                         {stageDOM}
                     </div>
                 </div>
