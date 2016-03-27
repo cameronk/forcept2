@@ -67,7 +67,7 @@ class VerticalMenu extends BaseComponent {
             var consoleLink,
                 consoleHeirarchy;
 
-            if(ctx.getUser("admin") === true) {
+            if(ctx.getUser("isAdmin") === true) {
                 consoleLink = (
                     <NavLink href={"/console"} className="item">
                         <i className="lock icon"></i> {formatMessage(messages.consoleItem)}
