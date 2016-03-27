@@ -17,9 +17,7 @@ export default {
              * Read and return stages from Stages table.
              */
             read: function(req, resource, params, config, callback) {
-                models.Stage.findAll(Object.assign(params, {
-                    order: ['order']
-                })).then(stages => {
+                models.Stage.findAll(params).then(stages => {
                     callback(null, stages, null);
                 });
             },

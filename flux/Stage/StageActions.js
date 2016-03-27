@@ -24,6 +24,7 @@ export function LoadStagesAction(context, payload, done) {
         .read("StageService")
         .params({
             where: {},
+            order: ['order'],
             attributes: ['id', 'name']
         }).end()
         .then(({data}) => {
@@ -106,10 +107,14 @@ export function SaveStageAction(context, payload, done) {
     context.dispatch(Actions.STAGES_SET_STATUS, "saving");
 
     let cache = context.getStore(StageStore).getCache();
+    let isNew = payload.hasOwnProperty('id') && payload.id !== null;
     let id    = payload.id;
 
     __debug("Saving stage '%s' to id '%s'", cache.name, id);
 
+    /**
+     * Save the stage record to stages DB.
+     */
     context.service
         .update('StageService')
         .params({
@@ -118,17 +123,54 @@ export function SaveStageAction(context, payload, done) {
         .body(cache).end()
         .then(response => {
 
-            /// If ID was initially unset...
-            if(!id && response.data.id) {
-                context.executeAction(navigateAction, {
-                    url: '/console/stages/' + response.data.id
-                });
-            }
+            context.service
+                .read('StageService')
+                .params({
+                    where: Object.assign(
+                        {
+                            name: cache.name
+                        },
+                        isNew ? { id: id } : {}
+                    ),
+                    order: ['createdAt']
+                }).end()
+                .then(({data}) => {
+                    if(data.length > 0) {
 
-            context.dispatch(Actions.STAGES_SET_STATUS, "saved");
-            context.executeAction(LoadStagesAction, {}, (err) => {
-                done();
-            });
+                        var newStage   = JsonModel(data[0]);
+                        var newStageID = newStage.id;
+
+                        if(newStageID) {
+
+                            /*
+                             * If this is a new stage, create a stage table for it.
+                             */
+                            if(isNew)
+
+                            // context.dispatch(Actions.STAGES_UPDATE_CACHE, insertedStage);
+
+                            /// If ID was initially unset...
+                            if(isNew) {
+                                context.executeAction(navigateAction, {
+                                    url: '/console/stages/' + insertedStage.id
+                                });
+                            }
+
+                            context.dispatch(Actions.STAGES_SET_STATUS, "saved");
+                            context.executeAction(LoadStagesAction, {}, (err) => {
+                                done();
+                            });
+
+                        } else {
+                            throw new Error("The new stage is missing an ID :(");
+                        }
+
+                    } else {
+                        throw new Error("Somehow this stage wasn't found");
+                    }
+                }).catch((err) => {
+                    throw err;
+                });
 
         }).catch((err) => {
             __debug(err);
