@@ -101,11 +101,59 @@ class StageBuilder extends BaseComponent {
             { cache, status } = stage;
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
-        var message;
+        var messageDOM, AddNewFieldButtonDOM, PresetControlsDOM,
+            FieldsAccordionDOM, FieldsAccordionDividerDOM;
+
+        /// Enable some fields when ID is set.
+        if(stage.id) {
+
+            /// Add a new field
+            AddNewFieldButtonDOM = (
+                <button
+                    onClick={this._addField}
+                    className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+                    <i className="plus icon"></i>
+                    Add a new field
+                </button>
+            );
+
+            /// Upload/download configuration files
+            PresetControlsDOM = (
+                <div className="ui tiny right floated buttons">
+                    <label
+                        htmlFor="StageBuilder-UploadConfig"
+                        onClick={this._upload}
+                        className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+                        <i className="upload icon"></i>
+                        Upload
+                    </label>
+                    <input type="file" id="StageBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
+                    <button
+                        onClick={this._download}
+                        className={"ui right labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+                        <i className="download icon"></i>
+                        Download
+                    </button>
+                </div>
+            );
+
+            /// FieldsAccordion
+            FieldsAccordionDOM = (
+                <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
+                    <FieldsAccordion fields={cache.fields} />
+                </div>
+            );
+
+            /// FieldsAccordion bottom divider
+            FieldsAccordionDividerDOM = (
+                <div className="ui divider"></div>
+            );
+
+        }
 
         switch(status) {
             case "saved":
-                message = (
+                messageDOM = (
                     <MessageScaffold
                         type="success"
                         text="Stage saved successfully." />
@@ -121,7 +169,7 @@ class StageBuilder extends BaseComponent {
                         text: stage.id || 'Unsaved'
                     }}
                     text={cache.name.length === 0 ? "Untitled stage" : cache.name} />
-                {message}
+                {messageDOM}
                 <div className="ui divider"></div>
 
                 <form className={"ui form" + (status === 'saving' ? " loading" : "")}>
@@ -140,20 +188,13 @@ class StageBuilder extends BaseComponent {
                         </div>
                     </div>
                 </form>
+                <div className="ui divider"></div>
 
-                <div className="ui divider"></div>
-                <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <FieldsAccordion fields={cache.fields} />
-                </div>
-                <div className="ui divider"></div>
+                {FieldsAccordionDOM}
+                {FieldsAccordionDividerDOM}
 
                 <div className="ui buttons">
-                    <button
-                        onClick={this._addField}
-                        className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
-                        <i className="plus icon"></i>
-                        Add a new field
-                    </button>
+                    {AddNewFieldButtonDOM}
                     <button
                         onClick={this._save}
                         className={
@@ -165,24 +206,7 @@ class StageBuilder extends BaseComponent {
                     </button>
                 </div>
 
-                {/** Upload/download configuration files **/}
-                <div className="ui tiny right floated buttons">
-                    <label
-                        htmlFor="StageBuilder-UploadConfig"
-                        onClick={this._upload}
-                        className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
-                        <i className="upload icon"></i>
-                        Upload
-                    </label>
-                    <button
-                        onClick={this._download}
-                        className={"ui right labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
-                        <i className="download icon"></i>
-                        Download
-                    </button>
-                </div>
-                <input type="file" id="StageBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
-
+                {PresetControlsDOM}
             </div>
         );
     }

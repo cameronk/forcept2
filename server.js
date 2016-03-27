@@ -27,6 +27,7 @@ import debug from 'debug';
 /// Application imports
 import app from './app';
 import db from './database/models';
+import UpdateStageDefinition from './database/StageDefinition';
 import { RunPageLoadActions } from './flux/App/AppActions';
 import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
@@ -53,178 +54,187 @@ __debug("---");
  * Synchronise models before setting up express server.
  */
 (db.sequelize).sync().then(function() {
+
     __debug("Database synchronized.");
 
-    /*
-     * Configure Passport local strategy.
-     */
-    passport.use(new LocalStrategy(
-        function(username, password, cb) {
-            // __debug('Caught LocalStrategy function');
-            db.User.findOne({
-                where: {
-                    username: username
-                }
-            }).then(function(user) {
-                if(!user) {
-                    return cb(null, false);
-                }
-                if(user.password !== password) {
-                    return cb(null, false);
-                }
-                return cb(null, user);
-            });
-        }
-    ));
+    db.Stage.findAll().then(stages => {
 
-    passport.serializeUser(function(user, cb) {
-        // __debug("Serializing user #" + user.id);
-        cb(null, user.id);
-    });
-
-    passport.deserializeUser(function(id, cb) {
-        // __debug("Deserializing user #" + id);
-        db.User.findOne({
-            where: {
-                id: id
-            }
-        }).then(function(user) {
-            cb(null, user);
-        });
-    });
-
-    /*
-     * Instantiate Express and apply middleware.
-     */
-    const server = express();
-
-    server.use('/public', express['static'](path.join(__dirname, '/dist')));
-    server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
-    server.use(compression());
-    server.use(cookieParser());
-    server.use(bodyParser.json());
-    server.use(session({
-        store: new SQLiteStore({
-            dir: './storage'
-        }),
-        secret: 'keyboard dog',
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false }
-    }));
-    server.use(passport.initialize());
-    server.use(passport.session());
-
-    /*
-     * Use fluxible-plugin-fetchr middleware
-     */
-    const FetchrPlugin = app.getPlugin('FetchrPlugin');
-          FetchrPlugin.registerService(AuthService.attach(db));
-          FetchrPlugin.registerService(StageService.attach(db));
-
-    server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
-
-    /*
-     * Custom middleware for rendering html to string
-     */
-    server.use((req, res, next) => {
-
-        const isAuthenticated = req.isAuthenticated();
-        const context = app.createContext({
-
-            /*
-             * Add auth-related pieces to be parsed by plugin.
-             */
-            isAuthenticated: isAuthenticated,
-            user: req.user,
-
-            /*
-             * Build a request object of data we need so
-             * we don't have to serialize the behemoth object.
-             */
-            req: {
-                url: req.url,
-                method: req.method,
-            }
+        stages.map(stage => {
+            UpdateStageDefinition(stage, db);
         });
 
-        const thisContext   = context.getActionContext();
-        const routeStore    = thisContext.getStore('RouteStore');
-        const route         = routeStore.getRoute(req.url);
-
-        if(route) {
-            __debug('=> %s %s', req.method.toUpperCase(), req.url);
-            __debug('| Request from  : %s', req.ip);
-            __debug('| Request to    : %s', req.hostname);
-            __debug('| Requires auth : %s', route.auth || false);
-            __debug('| Sign in status: %s', req.isAuthenticated());
-
-            /*
-             * Override request if it needs authentication.
-             */
-            if(route.auth && !isAuthenticated) {
-                __debug('| =>  Redirecting to login...');
-                res.redirect('/auth/login');
-                res.end();
-                return;
-            }
-
-            /*
-             * Override request if we can't be here when authenticated (login page)
-             */
-            if(route.antiAuth && isAuthenticated) {
-                __debug('| =>  Redirecting to index...');
-                res.redirect('/');
-                res.end();
-                return;
-            }
-
-            /*
-             * If this page requires admin protection, hide it if necessary
-             */
-            if(route.admin && !req.user.isAdmin) {
-                __debug('| =>  Redirecting to login...');
-                res.redirect('/auth/login');
-                res.end();
-                return;
-            }
-        }
+        __debug("Available models:");
+        __debug(Object.keys(db.sequelize.models));
 
         /*
-         * Run the navigateAction so that route information is built + dispatched.
+         * Configure Passport local strategy.
          */
-        thisContext.executeAction(navigateAction, {}, (err) => {
-
-            if (err) {
-                if (err.statusCode && err.statusCode === 404) {
-                    // Pass through to next middleware
-                    next();
-                } else {
-                    next(err);
-                }
-                return;
+        passport.use(new LocalStrategy(
+            function(username, password, cb) {
+                db.User.findOne({
+                    where: {
+                        username: username
+                    }
+                }).then(function(user) {
+                    if(!user) {
+                        return cb(null, false);
+                    }
+                    if(user.password !== password) {
+                        return cb(null, false);
+                    }
+                    return cb(null, user);
+                });
             }
+        ));
 
-            const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
-            const markup = ReactDOM.renderToString(createElementWithContext(context));
-            const htmlElement = React.createElement(HtmlContainer, {
-                assets: env === 'production' ? require('./dist/stats.json') : { js: "dev.js" },
-                clientFile: env === 'production' ? 'main.min.js' : 'main.js',
-                context: context.getComponentContext(),
-                state: exposed,
-                markup: markup
+        passport.serializeUser(function(user, cb) {
+            cb(null, user.id);
+        });
+
+        passport.deserializeUser(function(id, cb) {
+            db.User.findOne({
+                where: {
+                    id: id
+                }
+            }).then(function(user) {
+                cb(null, user);
+            });
+        });
+
+        /*
+         * Instantiate Express and apply middleware.
+         */
+        const server = express();
+
+        server.use('/public', express['static'](path.join(__dirname, '/dist')));
+        server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
+        server.use(compression());
+        server.use(cookieParser());
+        server.use(bodyParser.json());
+        server.use(session({
+            store: new SQLiteStore({
+                dir: './storage'
+            }),
+            secret: 'keyboard dog',
+            resave: false,
+            saveUninitialized: true,
+            cookie: { secure: false }
+        }));
+        server.use(passport.initialize());
+        server.use(passport.session());
+
+        /*
+         * Use fluxible-plugin-fetchr middleware
+         */
+        const FetchrPlugin = app.getPlugin('FetchrPlugin');
+              FetchrPlugin.registerService(AuthService.attach(db));
+              FetchrPlugin.registerService(StageService.attach(db));
+
+        server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
+
+        /*
+         * Custom middleware for rendering html to string
+         */
+        server.use((req, res, next) => {
+
+            const isAuthenticated = req.isAuthenticated();
+            const context = app.createContext({
+
+                /*
+                 * Add auth-related pieces to be parsed by plugin.
+                 */
+                isAuthenticated: isAuthenticated,
+                user: req.user,
+
+                /*
+                 * Build a request object of data we need so
+                 * we don't have to serialize the behemoth object.
+                 */
+                req: {
+                    url: req.url,
+                    method: req.method,
+                }
             });
 
-            const html = ReactDOM.renderToStaticMarkup(htmlElement);
+            const thisContext   = context.getActionContext();
+            const routeStore    = thisContext.getStore('RouteStore');
+            const route         = routeStore.getRoute(req.url);
 
-            res.type('html');
-            res.write('<!DOCTYPE html>' + html);
-            res.end();
+            if(route) {
+                __debug('=> %s %s', req.method.toUpperCase(), req.url);
+                __debug('| Request from  : %s', req.ip);
+                __debug('| Request to    : %s', req.hostname);
+                __debug('| Requires auth : %s', route.auth || false);
+                __debug('| Sign in status: %s', req.isAuthenticated());
+
+                /*
+                 * Override request if it needs authentication.
+                 */
+                if(route.auth && !isAuthenticated) {
+                    __debug('| =>  Redirecting to login...');
+                    res.redirect('/auth/login');
+                    res.end();
+                    return;
+                }
+
+                /*
+                 * Override request if we can't be here when authenticated (login page)
+                 */
+                if(route.antiAuth && isAuthenticated) {
+                    __debug('| =>  Redirecting to index...');
+                    res.redirect('/');
+                    res.end();
+                    return;
+                }
+
+                /*
+                 * If this page requires admin protection, hide it if necessary
+                 */
+                if(route.admin && !req.user.isAdmin) {
+                    __debug('| =>  Redirecting to login...');
+                    res.redirect('/auth/login');
+                    res.end();
+                    return;
+                }
+            }
+
+            /*
+             * Run the navigateAction so that route information is built + dispatched.
+             */
+            thisContext.executeAction(navigateAction, {}, (err) => {
+
+                if (err) {
+                    if (err.statusCode && err.statusCode === 404) {
+                        // Pass through to next middleware
+                        next();
+                    } else {
+                        next(err);
+                    }
+                    return;
+                }
+
+                const exposed = 'window.App=' + serialize(app.dehydrate(context)) + ';';
+                const markup = ReactDOM.renderToString(createElementWithContext(context));
+                const htmlElement = React.createElement(HtmlContainer, {
+                    assets: env === 'production' ? require('./dist/stats.json') : { js: "dev.js" },
+                    clientFile: env === 'production' ? 'main.min.js' : 'main.js',
+                    context: context.getComponentContext(),
+                    state: exposed,
+                    markup: markup
+                });
+
+                const html = ReactDOM.renderToStaticMarkup(htmlElement);
+
+                res.type('html');
+                res.write('<!DOCTYPE html>' + html);
+                res.end();
+            });
         });
+
+        server.listen(port);
+
+        __debug('Application listening on port ' + port);
+
     });
-
-    server.listen(port);
-
-    __debug('Application listening on port ' + port);
 
 });
