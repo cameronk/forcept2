@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';

@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import isEqual from 'lodash/isEqual';
@@ -28,7 +27,7 @@ class Field extends BaseComponent {
         $(".StageField .ui.dropdown")
             .dropdown();
     }
-    
+
     _change = (prop) => {
         return (evt) => {
             this.context.executeAction(UpdateCacheAction, {
