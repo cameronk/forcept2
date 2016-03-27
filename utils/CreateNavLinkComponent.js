@@ -9,6 +9,8 @@ import RouteStore from '../flux/Route/RouteStore';
 import debug from 'debug';
 import { navigateAction } from '../flux/Route/RouteActions';
 
+const __debug = debug('forcept:utils:CreateNavLinkComponent');
+
 function isLeftClickEvent (e) {
     return e.button === 0;
 }
@@ -32,6 +34,11 @@ export default function createNavLinkComponent (overwriteSpec) {
         },
         propTypes: {
             href: React.PropTypes.string,
+
+            /// forcept
+            /// add disabled attr proptype
+            disabled: React.PropTypes.bool,
+            
             stopPropagation: React.PropTypes.bool,
             routeName: React.PropTypes.string,
             navParams: React.PropTypes.object,
@@ -108,7 +115,15 @@ export default function createNavLinkComponent (overwriteSpec) {
             var navParams = this.getNavParams(this.props);
             var navType = this.props.replaceState ? 'replacestate' : 'click';
             var shouldFollowLink = this.shouldFollowLink(this.props);
-            debug('dispatchNavAction: action=NAVIGATE', this.props.href, shouldFollowLink, navParams);
+            __debug('dispatchNavAction: action=NAVIGATE', this.props.href, shouldFollowLink, navParams);
+
+            /// forcept:
+            /// override and halt navigation if disabled attr is present
+            if(this.props.disabled) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
 
             if (this.props.stopPropagation) {
                 e.stopPropagation();

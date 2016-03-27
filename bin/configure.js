@@ -74,6 +74,8 @@ prompt.get(schema, function (err, result) {
         result['devPort'] = parseInt(data.devPort);
     }
 
+    result['locales'] = ["en"];
+
     var result = JSON.stringify(result);
     if(result) {
         fs.writeFile(storageFile, result, function(err) {

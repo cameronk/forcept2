@@ -65,7 +65,7 @@ class Login extends BaseComponent {
         var props = this.props;
 
         return (
-            <div className="ui stackable one column centered grid">
+            <div className="ui top spaced stackable one column centered grid">
                 <div className="five wide computer seven wide tablet column">
                     <div className="ui raised segment">
                         <FormScaffold

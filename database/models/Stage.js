@@ -5,13 +5,19 @@ var ModelHelper = require('../helper.js');
 
 module.exports = function(sequelize, DataTypes) {
     var Stage = sequelize.define('Stage', {
-        order: DataTypes.INTEGER,
+        order: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        type: DataTypes.ENUM('basic', 'pharmacy'),
-        root: {
+        type: {
+            type: DataTypes.ENUM('basic', 'pharmacy'),
+            allowNull: false
+        },
+        isRoot: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
@@ -27,6 +33,11 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     }, {
+        getterMethods: {
+            tableName: function() {
+                return 'stage_' + this.id;
+            }
+        },
         classMethods: {
             associate: function(models) {
                 // associations can be defined here

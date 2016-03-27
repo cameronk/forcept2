@@ -5,16 +5,29 @@
 
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
+import { LoadStagesAction } from '../Stage/StageActions';
 import { defineMessages } from 'react-intl';
 
+const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
-
+    "pages.console.title": {
+        id: "pages.console.title",
+        defaultMessage: "Console / Forcept"
+    },
+    "pages.console.stages.title": {
+        id: "pages.console.stages.title",
+        defaultMessage: "Stages / Console / Forcept"
+    },
+    "pages.console.stages.stage.title": {
+        id: "pages.console.stages.stage.title",
+        defaultMessage: "{name} / Stages / Console / Forcept"
+    }
 });
 
-const __debug = debug('forcept:flux:Route:Routes');
-
+/*
+ * Require a page.
+ */
 function getPage(page) {
-    __debug("Grabbing page '%s'", page);
     return require('../../containers/pages/' + page);
 };
 
@@ -25,16 +38,10 @@ export default {
         page: 'home',
         title: 'Home',
         auth: true,
-        handler: getPage('Home'),
+        handler: getPage('Home')
     },
-    about: {
-        path: '/about',
-        method: 'get',
-        page: 'about',
-        auth: true,
-        handler: getPage('About'),
-        title: 'About',
-    },
+
+    /** Auth **/
     logout: {
         path: '/auth/logout',
         method: 'get',
@@ -49,6 +56,36 @@ export default {
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-        title: 'Login | Forcept'
+
+        title: "pages.login.title"
+    },
+
+    /** Admin **/
+    console: {
+        path: '/console',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Index'),
+        title: messages["pages.console.title"]
+    },
+    consoleStages: {
+        path: '/console/stages',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Stages'),
+        title: messages['pages.console.stages.title']
+    },
+    consoleStagesStage: {
+        path: '/console/stages/:stageID',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Stages'),
+        title: messages["pages.console.stages.stage.title"]
     }
 };

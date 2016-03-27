@@ -10,6 +10,8 @@ module.exports = {
      */
     jsonGetter: function(val) {
 
+        if(!val || typeof val !== "string") return {};
+
         var obj = {};
 
         try {
@@ -38,5 +40,10 @@ module.exports = {
 
         return str;
 
+    },
+
+    JsonModel: function(model) {
+        if(model.toJSON) return model.toJSON();
+        else return model;
     }
 };

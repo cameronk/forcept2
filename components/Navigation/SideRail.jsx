@@ -10,10 +10,10 @@ import VerticalMenu from './VerticalMenu';
 class SideRail extends BaseComponent {
 
     componentDidMount() {
-        $("#SideRail")
-            .sticky({
-                context: $(".toc")
-            });
+        // $("#SideRail")
+        //     .sticky({
+        //         context: $(".toc")
+        //     });
     }
 
     render() {

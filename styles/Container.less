@@ -34,10 +34,13 @@
     }
 
     #Handler {
-        padding-top: 2rem;
         -webkit-box-flex: 1;
         flex: 1 1 auto;
         min-width: 0px;
+
+        &>.ui.grid.top.spaced {
+            margin-top: 1rem;
+        }
     }
 
 }
@@ -61,5 +64,45 @@
         #Handler {
             margin-top: 40px;
         }
+    }
+}
+
+/**
+ * Semantic modifications
+ */
+.ui.grid {
+    & > .row.clear.top {
+        padding-top: 0;
+    }
+    & > .row.clear.bottom {
+        padding-bottom: 0;
+    }
+
+    .column.top.spaced {
+        padding-top: 1rem;
+    }
+    .column.bottom.spaced {
+        padding-bottom: 1rem;
+    }
+
+    /*
+     * Default is 1rem, make it 2.
+     */
+    .column.right.spaced {
+        padding-right: 2rem;
+    }
+    .column.left.spaced {
+        padding-left: 2rem;
+    }
+}
+
+.ui.segment {
+    &.expanded {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    &.fully.expanded {
+        padding: 0;
+        margin: 0;
     }
 }
