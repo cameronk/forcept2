@@ -10,7 +10,7 @@ module.exports = {
             },
             order: {
                 type: Sequelize.INTEGER,
-                allowNull: false
+                allowNull: true
             },
             name: {
                 type: Sequelize.STRING,
