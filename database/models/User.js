@@ -3,7 +3,7 @@ module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
         username: DataTypes.STRING,
         password: DataTypes.TEXT,
-        admin: DataTypes.BOOLEAN,
+        isAdmin: DataTypes.BOOLEAN,
         device: DataTypes.STRING,
         platform: DataTypes.STRING,
         browser: DataTypes.STRING

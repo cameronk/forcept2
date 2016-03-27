@@ -3,7 +3,7 @@ module.exports = function(sequelize, DataTypes) {
     var Resource = sequelize.define('Resource', {
         type: DataTypes.STRING,
         data: DataTypes.TEXT,
-        referenced: {
+        isReferenced: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
         },
