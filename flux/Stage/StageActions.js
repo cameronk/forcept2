@@ -132,5 +132,6 @@ export function SaveStageAction(context, payload, done) {
 
         }).catch((err) => {
             __debug(err);
+            done();
         });
 }

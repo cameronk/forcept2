@@ -28,18 +28,16 @@ export default {
              * Upsert a Stage.
              */
             update: function(req, resource, params, body, config, callback) {
-                __debug("Upserting:");
-                __debug(body);
-                __debug(params);
                 models.Stage
-                    .upsert(body, {
+                    .upsert(Object.assign(body, {
                         id: params.id
-                    }).then((x) => {
+                    })).then((x) => {
                         callback(null, {
-                            id: 1
+                            // id:
                         }, null);
                     }).catch(err => {
                         __debug(err);
+                        callback(err);
                     });
             }
         }

@@ -7,6 +7,7 @@ import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import isEqual from 'lodash/isEqual';
 
 import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import OptionList from './OptionList';
@@ -38,17 +39,18 @@ class FieldSettings extends BaseComponent {
 
     render() {
 
-        var props = this.props;
-        var settingsHeader = (
-            <div className="ui small dividing header">
-                <i className="setting icon"></i>
-                <div className="content">
-                    Settings
+        var props = this.props,
+            { type, settings } = props,
+            settingsHeader = (
+                <div className="ui small dividing header">
+                    <i className="setting icon"></i>
+                    <div className="content">
+                        Settings
+                    </div>
                 </div>
-            </div>
-        );
+            );
 
-        switch(props.type) {
+        switch(type) {
             case "text":
 			case "textarea":
 			case "number":
@@ -58,7 +60,7 @@ class FieldSettings extends BaseComponent {
                 return (
                     <div className="ui fluid blue message">
                         <div className="header">
-                            No configuration is required for {props.type} fields.
+                            No configuration is required for {type} fields.
                         </div>
                     </div>
                 );
@@ -71,16 +73,16 @@ class FieldSettings extends BaseComponent {
                             id="DateSettings-broad"
                             label="Use broad date selector"
                             field={props._key}
-                            setting="useBroadSelector" />
+                            setting="useBroadSelector"
+                            checked={settings.useBroadSelector || false} />
                     </div>
                 );
                 break;
             case "select":
             case "multiselect":
-                let optionKeys = Object.keys(props.options || {});
                 return (
                     <div className="FieldSettings">
-                        {props.type === "select" ? [
+                        {type === "select" ? [
                             settingsHeader,
                             (
                                 <SettingCheckbox
@@ -93,7 +95,9 @@ class FieldSettings extends BaseComponent {
                                 <div className="ui hidden divider"></div>
                             )
                         ]: null}
-                        <OptionList field={props._key} options={props.options || {}} />
+                        <OptionList
+                            field={props._key}
+                            options={settings.options || {}} />
                     </div>
                 );
                 break;
@@ -107,9 +111,8 @@ class FieldSettings extends BaseComponent {
                             multiple={true}
                             field={props._key}
                             setting="accept"
-                            options={{
-                                "image/*": "image / *"
-                            }} />
+                            options={{ "image/*": "image / *" }}
+                            value={settings.accept || ""} />
                     </div>
                 );
                 break;

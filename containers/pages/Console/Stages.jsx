@@ -31,6 +31,26 @@ const messages = defineMessages({
     }
 });
 
+/**
+ * Controller view for console/Stages
+ *
+ * Prop heirarchy:
+ * ==================
+ * Stages
+ *  - isNavigateComplete
+ *  - stages
+ *  - currentStage ===============> StageBuilder
+ *      - id =====================> StageBuilder
+ *      - cache ==================> StageBuilder
+ *          - [.fields] ===========[StageBuilder]=====> FieldsAccordion
+ *              - [.field] ========[StageBuilder]======[FieldsAccordion]======> Field
+ *                  - [.type] =====[StageBuilder]======[FieldsAccordion]=======[Field]======> FieldSettings
+ *                  - [.settings] =[StageBuilder]======[FieldsAccordion]=======[Field]======> FieldSettings
+ *      - optionShiftContext =====> StageBuilder
+ *      - isCacheModified ========> StageBuilder
+ *      - status =================> StageBuilder
+ *      - error ==================> StageBuilder
+ */
 class Stages extends BaseComponent {
 
     static contextTypes = grabContext()
@@ -62,13 +82,13 @@ class Stages extends BaseComponent {
                     type="error"
                     text={props.error.toString()} />
             );
-        } else if(!props.isLoaded) {
+        } else if(!props.isNavigateComplete) {
             stageDOM = (
                 <div className="ui active loader"></div>
             );
         } else {
             stageDOM = (
-                <StageBuilder />
+                <StageBuilder stage={props.currentStage} />
             );
         }
 
@@ -84,7 +104,11 @@ class Stages extends BaseComponent {
                 </div>
                 <div className="row clear top">
                     <div className="four wide computer five wide tablet column">
-                        <StagesMenu />
+                        <StagesMenu
+                            stages={props.stages}
+                            isNavigateComplete={props.isNavigateComplete}
+                            location={props.currentStage.id || 0} 
+                            isCacheModified={props.currentStage.isCacheModified} />
                     </div>
                     <div className="twelve wide computer eleven wide tablet right spaced column">
                         {stageDOM}
@@ -99,8 +123,25 @@ Stages = connectToStores(
     Stages,
     [StageStore],
     function(context, props) {
+
+        var routeStore = context.getStore('RouteStore');
+        var stageStore = context.getStore(StageStore);
+
         return {
-            isLoaded: context.getStore('RouteStore').isNavigateComplete()
+            /// Meta
+            isNavigateComplete: routeStore.isNavigateComplete(),
+
+            /// All stages
+            stages: stageStore.getStages(),
+
+            /// Current stage
+            currentStage: {
+                id: routeStore.getCurrentRoute().params.stageID || null,
+                cache: stageStore.getCache(),
+                isCacheModified: stageStore.isCacheModified(),
+                status: stageStore.getStatus(),
+                error:  stageStore.getError(),
+            }
         };
     }
 );

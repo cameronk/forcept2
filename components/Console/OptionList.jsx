@@ -194,16 +194,18 @@ class OptionList extends BaseComponent {
 
 }
 
+/*
+ * Get option shift context here
+ * so we don't have to pass it through
+ * like ten components
+ */
 OptionList = connectToStores(
     OptionList,
     [StageStore],
     function(context, props) {
-        var stageStore = context.getStore(StageStore);
-
         return {
-            optionShiftContext: stageStore.getOptionShiftContext()
+            optionShiftContext: context.getStore(StageStore).getOptionShiftContext()
         };
-
     }
 )
 

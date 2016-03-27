@@ -38,33 +38,23 @@ class SettingCheckbox extends BaseComponent {
     };
 
     render() {
+        var props = this.props,
+            { id } = props;
+
         return (
             <div className="ui toggle checkbox">
                 <input
-                    id={this.props.id}
+                    id={id}
                     type="checkbox"
                     tabIndex="0"
                     className="hidden"
-                    checked={this.props.checked}
+                    checked={props.checked}
                     onChange={this._toggle()}/>
-                <label htmlFor={this.props.id}>{this.props.label || ""}</label>
+                <label htmlFor={props.id}>{props.label || ""}</label>
             </div>
         );
     }
 
 }
-
-SettingCheckbox = connectToStores(
-    SettingCheckbox,
-    [StageStore],
-    function(context, props) {
-        var stageStore = context.getStore(StageStore);
-
-        return {
-            checked: stageStore.getCache().fields[props.field].settings[props.setting] || false
-        };
-
-    }
-)
 
 export default injectIntl(SettingCheckbox);

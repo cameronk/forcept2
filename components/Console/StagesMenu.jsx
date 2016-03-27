@@ -24,7 +24,7 @@ class StagesMenu extends BaseComponent {
 
     render() {
         var props = this.props,
-            { stages, location, isLoaded } = this.props;
+            { stages, location, isNavigateComplete } = this.props;
         return (
             <div className="ui fluid secondary vertical pointing menu">
                 {stages.map(thisStage => {
@@ -34,7 +34,7 @@ class StagesMenu extends BaseComponent {
                             key={"console-open-stage-" + thisStage.id}
                             href={'/console/stages/' + thisStage.id}
                             className="item"
-                            disabled={isCurrent || !isLoaded}>
+                            disabled={isCurrent || !isNavigateComplete}>
                             {(isCurrent && props.isCacheModified) ? (
                                 <div className="ui label">M</div>
                             ) : null}
@@ -45,7 +45,7 @@ class StagesMenu extends BaseComponent {
                 <NavLink
                     href={'/console/stages'}
                     className={((0 == location) ? "active " : "") + " blue item"}
-                    disabled={(0 == location || !isLoaded)}>
+                    disabled={(0 == location || !isNavigateComplete)}>
                     <i className="plus icon"></i>
                     Create a new stage
                 </NavLink>
@@ -54,31 +54,5 @@ class StagesMenu extends BaseComponent {
     }
 
 }
-
-StagesMenu = connectToStores(
-    StagesMenu,
-    [StageStore],
-    function(context, props) {
-
-        var location = 0;
-        var stageStore = context.getStore(StageStore);
-        var routeStore = context.getStore('RouteStore');
-
-        var stages = stageStore.getStages();
-        var params = routeStore.getCurrentRoute().params;
-
-        if(params.stageID) {
-            location = params.stageID;
-        }
-
-        return {
-            location: location,
-            error: stageStore.getError(),
-            isCacheModified: stageStore.isCacheModified(),
-            stages: stages,
-            isLoaded: routeStore.isNavigateComplete()
-        };
-    }
-)
 
 export default injectIntl(StagesMenu);

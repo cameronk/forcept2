@@ -7,10 +7,12 @@ import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import isEqual from 'lodash/isEqual';
 
 import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../Base';
 import FieldSettings from './FieldSettings';
+
 
 const __debug = debug('forcept:components:Console:Field');
 
@@ -26,7 +28,7 @@ class Field extends BaseComponent {
         $(".StageField .ui.dropdown")
             .dropdown();
     }
-
+    
     _change = (prop) => {
         return (evt) => {
             this.context.executeAction(UpdateCacheAction, {
@@ -50,17 +52,18 @@ class Field extends BaseComponent {
     }
 
     render() {
-        var props = this.props,
-            mutable   = (props.mutable === true || props.mutable === 'true');
 
-        var typeSelectDOM, removeButtonDOM;
+        var props     = this.props,
+            { field } = props,
+            mutable   = (field.mutable === true || field.mutable === 'true'),
+            typeSelectDOM, removeButtonDOM;
 
         if(mutable) {
 
             typeSelectDOM = (
                 <div className="field">
                     <label>Type:</label>
-                    <select className="ui dropdown" value={props.type} onChange={this._change('type')}>
+                    <select className="ui dropdown" value={field.type} onChange={this._change('type')}>
                         <optgroup label="Inputs">
                             <option value="text">Text input</option>
                             <option value="textarea">Textarea input</option>
@@ -98,18 +101,25 @@ class Field extends BaseComponent {
                     <div className="six wide column">
                         <div className="field">
                             <label>Name:</label>
-                            <input type="text" placeholder={"Enter a field name"} value={props.name} onChange={this._change('name')} />
+                            <input type="text" placeholder={"Enter a field name"} value={field.name} onChange={this._change('name')} />
                         </div>
                         {typeSelectDOM}
                         <div className="field">
                             <label>Description:</label>
-                            <textarea value={""} placeholder={"Enter a field description (optional)"} value={props.description} onChange={this._change('description')} ></textarea>
+                            <textarea
+                                placeholder={"Enter a field description (optional)"}
+                                value={field.description}
+                                onChange={this._change('description')}>
+                            </textarea>
                         </div>
                         {removeButtonDOM}
                     </div>
                     <div className="ten wide field">
                         <div className="ui basic segment">
-                            <FieldSettings {...props.settings} type={props.type} _key={props._key} />
+                            <FieldSettings
+                                type={field.type}
+                                settings={field.settings}
+                                _key={props._key} />
                         </div>
                     </div>
                 </div>

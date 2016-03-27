@@ -59,18 +59,20 @@ class SettingSelect extends BaseComponent {
     };
 
     render() {
-        var props = this.props;
-        var optionKeys = Object.keys(props.options || {});
+        var props = this.props,
+            { value, options, placeholder } = props,
+            optionKeys = Object.keys(options || {});
+
         return (
             <div className="field">
                 <label>{props.label || ""}</label>
-                <select multiple={props.multiple} className="ui dropdown" value={props.value} onChange={this._change()}>
-                    {props.placeholder ? (
-                        <option value="">{props.placeholder}</option>
+                <select multiple={props.multiple} className="ui dropdown" value={value} onChange={this._change()}>
+                    {placeholder ? (
+                        <option value="">{placeholder}</option>
                     ) : null}
                     {optionKeys.map((key) => {
                         return (
-                            <option key={key} value={key}>{props.options[key]}</option>
+                            <option key={key} value={key}>{options[key]}</option>
                         );
                     })}
                 </select>
@@ -79,18 +81,5 @@ class SettingSelect extends BaseComponent {
     }
 
 }
-
-SettingSelect = connectToStores(
-    SettingSelect,
-    [StageStore],
-    function(context, props) {
-        var stageStore = context.getStore(StageStore);
-
-        return {
-            value: stageStore.getCache().fields[props.field].settings[props.setting] || ""
-        };
-
-    }
-)
 
 export default injectIntl(SettingSelect);
