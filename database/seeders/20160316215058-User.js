@@ -18,7 +18,7 @@ module.exports = {
             {
                 username: 'admin',
                 password: SHA256.update('1234').digest('hex'),
-                admin: true,
+                isAdmin: true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             }

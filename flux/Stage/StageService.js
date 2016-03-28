@@ -151,6 +151,7 @@ export default {
                                     callback(null, {
                                         id: stageID
                                     }, null);
+                                    
                                 }).catch(err => {
                                     __debug("[update]: Error during final stage-record saving.");
                                     __debug(err);

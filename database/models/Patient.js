@@ -34,6 +34,8 @@ module.exports = function(sequelize, DataTypes) {
         lastModifiedBy: DataTypes.INTEGER,
         concrete: DataTypes.BOOLEAN
     }, {
+        freezeTableName: true,
+        tableName: 'stage_1',
         classMethods: {
             associate: function(models) {
                 // associations can be defined here
