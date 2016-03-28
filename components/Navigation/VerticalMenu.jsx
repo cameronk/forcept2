@@ -106,7 +106,12 @@ class VerticalMenu extends BaseComponent {
                     <div className="menu">
                         {props.stages.map((stage) => {
                             return (
-                                <div key={stage.id} className="item">{stage.name || "Untitled stage"}</div>
+                                <NavLink
+                                    href={"/visits/" + stage.id}
+                                    key={stage.id}
+                                    className="item">
+                                    {stage.name || "Untitled stage"}
+                                </NavLink>
                             );
                         })}
                     </div>

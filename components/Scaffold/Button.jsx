@@ -11,7 +11,6 @@ class ButtonScaffold extends BaseComponent {
 
     render() {
         var props = this.props;
-        console.log(props);
         return (
             <button
                 type={props.submit === true ? "submit" : "button"}

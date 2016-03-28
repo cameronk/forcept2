@@ -41,7 +41,9 @@ export default {
         handler: getPage('Home')
     },
 
-    /** Auth **/
+    /*
+     * Authentication
+     */
     logout: {
         path: '/auth/logout',
         method: 'get',
@@ -60,7 +62,9 @@ export default {
         title: "pages.login.title"
     },
 
-    /** Admin **/
+    /*
+     * Console
+     */
     console: {
         path: '/console',
         namespace: 'console',
@@ -87,5 +91,28 @@ export default {
         admin: true,
         handler: getPage('Console/Stages'),
         title: messages["pages.console.stages.stage.title"]
+    },
+
+
+    /*
+     * Visits
+     */
+    visitStage: {
+        path: '/visits/:stageID',
+        namespace: 'visit',
+        method: 'get',
+        auth: true,
+        handler: getPage('Visit/Stage'),
+        title: messages["pages.console.stages.stage.title"]
+    },
+
+    visitStageHandle: {
+       path: '/visits/:stageID/:visitID',
+       namespace: 'visit',
+       method: 'get',
+       auth: true,
+       handler: getPage('Visit/Stage'),
+       title: messages["pages.console.stages.stage.title"]
     }
+
 };

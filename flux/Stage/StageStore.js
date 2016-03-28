@@ -7,7 +7,7 @@ import BaseStore from 'fluxible/addons/BaseStore';
 import Actions from '../actions';
 import debug from 'debug';
 
-const __debug = debug('forcept:flux:Console:StageStore');
+const __debug = debug('forcept:flux:Stage:StageStore');
 
 class StageStore extends BaseStore {
 
@@ -269,7 +269,8 @@ class StageStore extends BaseStore {
         this.cache  = {
             name: "",
             type: "basic",
-            fields: {}
+            fields: {},
+            isRoot: false
         };
         this.emitChange();
     }

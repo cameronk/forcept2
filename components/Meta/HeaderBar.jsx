@@ -26,7 +26,7 @@ class HeaderBar extends BaseComponent {
             <div id="HeaderBar">
                 {this.props.message ? (
                     <div className="ui huge dividing header">
-                        {formatMessage(this.props.message)}
+                        {formatMessage(this.props.message, this.props.format || {})}
                     </div>
                 ) : null}
             </div>

@@ -24,11 +24,12 @@ export default keyMirror({
     'STAGES_LOADED': null,
     'STAGES_LOAD_ERROR': null,
     'STAGES_SET_OPTION_SHIFT_CONTEXT': null,
-
     'STAGES_UPDATE_CACHE': null,
     'STAGES_CLEAR_CACHE': null,
     'STAGES_CACHE_MODIFIED': null,
-
     'STAGES_SET_STATUS': null,
+
+    /// Visit
+    'VISIT_SET_CURRENT_TAB': null,
 
 });

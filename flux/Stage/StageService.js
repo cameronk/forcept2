@@ -140,6 +140,8 @@ export default {
                             __debug("[update]: ...done!");
                             __debug("[update]: saving fields to stage record");
 
+                            stage.set('name', body.name);
+                            stage.set('type', body.type);
                             stage.set('fields', newFields);
                             stage.save()
                                 .then((stage) => {
@@ -151,7 +153,7 @@ export default {
                                     callback(null, {
                                         id: stageID
                                     }, null);
-                                    
+
                                 }).catch(err => {
                                     __debug("[update]: Error during final stage-record saving.");
                                     __debug(err);
