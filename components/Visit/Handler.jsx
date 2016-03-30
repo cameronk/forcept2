@@ -9,7 +9,7 @@ import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
 import Editor from './Editor';
-import { SetCurrentTabAction } from '../../flux/Visit/VisitActions';
+import { SetCurrentTabAction, CreatePatientAction } from '../../flux/Visit/VisitActions';
 
 const __debug = debug('forcept:components:Visit:Handler');
 
@@ -23,16 +23,19 @@ class Handler extends BaseComponent {
 
     _setTab = (tab) => {
         return (evt) => {
-            __debug(SetCurrentTabAction);
-            __debug(tab);
             this.context.executeAction(SetCurrentTabAction, tab);
         }
+    }
+
+    _createPatient = (evt) => {
+        this.context.executeAction(CreatePatientAction);
     }
 
     render() {
 
         var props = this.props,
-            { patients, visit } = props;
+            { patients, visit } = props,
+            patientKeys = Object.keys(patients);
 
         var handlerDOM;
 
@@ -46,31 +49,47 @@ class Handler extends BaseComponent {
                     </div>
                 );
                 break;
-            case "new":
+            default:
+                __debug("Building editor for tab: %s", visit.currentTab);
+                __debug(patients);
+
                 handlerDOM = (
                     <Editor
+                        patient={patients[visit.currentTab]}
+                        visit={props.visit}
                         stage={props.stage} />
                 );
                 break;
-            default:
 
-                break;
         }
 
         return (
             <div className="row clear top">
                 <div className="four wide computer five wide tablet column">
                     <div className="ui fluid secondary vertical pointing menu">
-                        {Object.keys(patients).map(patient => {
+                        {patientKeys.map(patient => {
+                            var thisPatient = patients[patient];
                             return (
-                                <span className="item">item</span>
+                                <a className={"item" + (visit.currentTab == patient ? " active disabled" : "")} onClick={this._setTab(patient)}>
+                                    {thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient"}
+                                    <span className="ui teal label">
+                                        {thisPatient.id}
+                                    </span>
+                                </a>
                             );
                         })}
+                        <span className="item divider"></span>
                         {props.stage.isRoot ? (
-                            <span className={"item" + (visit.currentTab === "new" ? " active" : "")} onClick={this._setTab("new")}>
+                            <a className="item" onClick={this._createPatient}>
                                 <i className="plus icon"></i>
                                 Add a new patient
-                            </span>
+                            </a>
+                        ) : null}
+                        {patientKeys.length > 0 ? (
+                            <a className="green item">
+                                <i className="save icon"></i>
+                                Save visit
+                            </a>
                         ) : null}
                     </div>
                 </div>

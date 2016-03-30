@@ -4,11 +4,21 @@ var ModelHelper = require('../helper.js');
 
 module.exports = function(sequelize, DataTypes) {
     var Patient = sequelize.define('Patient', {
-        firstName: DataTypes.STRING,
-        lastName: DataTypes.STRING,
-        birthday: DataTypes.STRING,
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        birthday: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         photo: {
             type: DataTypes.TEXT,
+            allowNull: true,
             get: function() {
                 return ModelHelper.jsonGetter(
                     this.getDataValue('photo')
@@ -18,9 +28,13 @@ module.exports = function(sequelize, DataTypes) {
                 this.setDataValue('photo', ModelHelper.jsonSetter(val));
             }
         },
-        currentVisit: DataTypes.INTEGER,
+        currentVisit: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         visits: {
             type: DataTypes.TEXT,
+            defaultValue: "[]",
             get: function() {
                 return ModelHelper.jsonGetter(
                     this.getDataValue('visits')
@@ -32,10 +46,23 @@ module.exports = function(sequelize, DataTypes) {
         },
         createdBy: DataTypes.INTEGER,
         lastModifiedBy: DataTypes.INTEGER,
-        concrete: DataTypes.BOOLEAN
+        concrete: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        }
     }, {
         freezeTableName: true,
         tableName: 'stage_1',
+        getterMethods: {
+            fullName: function() {
+                let name = [];
+                if(this.firstName) name.push(this.firstName);
+                if(this.lastName)  name.push(this.lastName);
+
+                return name.join(" ");
+            }
+        },
         classMethods: {
             associate: function(models) {
                 // associations can be defined here

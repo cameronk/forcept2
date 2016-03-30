@@ -13,7 +13,8 @@ class VisitStore extends BaseStore {
 
     static storeName = 'VisitStore'
     static handlers = {
-        [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab'
+        [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
+        [Actions.VISIT_UPDATE_CACHE]: 'handleUpdateCache'
     }
 
     constructor(dispatcher) {
@@ -24,19 +25,59 @@ class VisitStore extends BaseStore {
     setInitialState() {
         this.handling = false;
         this.tab = null;
+        this.handleClearCache();
     }
 
-    handleSetCurrentTab(location) {
-        if(this.tab !== location) {
-            this.tab = location;
+    /**
+     * Clear the Visit cache.
+     */
+    handleClearCache() {
+        this.cache = {};
+    }
+
+    /**
+     * Get the current Visit cache.
+     */
+    getCache() {
+        return this.cache;
+    }
+
+    /**
+     * Systematically update cache based on passed data.
+     * @params data: Object
+     *  {
+     *      [field]: [value]
+     *  }
+     */
+    handleUpdateCache(data) {
+        __debug("Updating VisitStore cache.");
+        for(var field in data) {
+            __debug(" | %s = %s", field, data[field]);
+            this.cache[field] = data[field];
         }
         this.emitChange();
     }
 
+    /**
+     * Set the current tab.
+     */
+    handleSetCurrentTab(location) {
+        if(this.tab !== location) {
+            this.tab = location;
+            this.emitChange();
+        }
+    }
+
+    /**
+     * Get the current tab.
+     */
     getCurrentTab() {
         return this.tab;
     }
 
+    /**
+     * H20
+     */
     dehydrate() {
         return {
             handling: this.handling,

@@ -12,6 +12,7 @@ class AppStore extends BaseStore {
     static storeName = 'AppStore'
     static handlers  = {
         [Actions.NAVIGATE_SUCCESS]: 'handlePageTitle',
+        [Actions.APP_LOADING]: 'handleLoading',
         [Actions.APP_SET_LOADING_MODE]: 'handleSetLoadingMode',
         [Actions.APP_SET_LOADING_CONTAINER]: 'handleSetLoadingMode'
     }
@@ -27,11 +28,28 @@ class AppStore extends BaseStore {
             id: "meta.titles.loading",
             defaultMessage: "Loading..."
         };
-
+        this.loading = false;
         this.loadingMode = "default";
         this.loadingContainer = "#Handler";
         this.req   = {};
         this.route = {};
+    }
+
+    /*
+     *
+     */
+    isLoading() {
+        return this.loading;
+    }
+
+    /*
+     *
+     */
+    handleLoading(status) {
+        if(this.loading !== status)  {
+            this.loading = status;
+            this.emitChange();
+        }
     }
 
     /*

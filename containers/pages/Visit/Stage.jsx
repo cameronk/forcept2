@@ -11,8 +11,11 @@ import debug from 'debug';
 import BaseComponent, { grabContext } from '../../../components/Base';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Handler    from '../../../components/Visit/Handler';
+
+import AppStore   from '../../../flux/App/AppStore';
 import StageStore from '../../../flux/Stage/StageStore';
 import VisitStore from '../../../flux/Visit/VisitStore';
+import PatientStore from '../../../flux/Patient/PatientStore';
 
 const __debug = debug('forcept:containers:pages:Visit:Stage');
 const messages = defineMessages({
@@ -29,18 +32,18 @@ class Stage extends BaseComponent {
     render() {
 
         var props = this.props,
-            { stage, isNavigateComplete } = props;
+            { stage } = props;
 
         var stageDOM;
 
-        if(isNavigateComplete) {
+        if(props.isNavigateComplete && !props.isLoading) {
 
             if(stage.isRoot) {
                 stageDOM = (
                     <Handler
-                        stage={props.stage}
-                        visit={props.visit}
-                        patients={{}} />
+                        stage={stage}
+                        patients={props.patients}
+                        visit={props.currentVisit} />
                 );
             } else {
                 stageDOM = (
@@ -51,7 +54,11 @@ class Stage extends BaseComponent {
 
         } else {
             stageDOM = (
-                <div className="ui basic loading segment"></div>
+                <div className="row">
+                    <div className="sixteen wide column">
+                        <div className="ui basic loading segment"></div>
+                    </div>
+                </div>
             );
         }
 
@@ -62,7 +69,7 @@ class Stage extends BaseComponent {
                         <HeaderBar
                             message={messages['pages.stages.stage.heading']}
                             format={{
-                                name: isNavigateComplete ? stage.name : "Loading..."
+                                name: props.isNavigateComplete ? stage.name : "Loading..."
                             }} />
                     </div>
                 </div>
@@ -75,25 +82,33 @@ class Stage extends BaseComponent {
 
 Stage = connectToStores(
     Stage,
-    [StageStore, VisitStore],
+    [VisitStore, PatientStore],
     function(context, props) {
 
         let routeStore = context.getStore('RouteStore');
+        let appStore   = context.getStore(AppStore);
         let stageStore = context.getStore(StageStore);
         let visitStore = context.getStore(VisitStore);
+        let patientStore = context.getStore(PatientStore);
 
         return {
             /// Meta
             isNavigateComplete: routeStore.isNavigateComplete(),
+            isLoading: appStore.isLoading(),
 
             /// Stage
             stage: stageStore.getCache(),
 
+            /// Patients
+            patients: patientStore.getPatients(),
+
             /// Visit
-            visit: {
-                currentTab: visitStore.getCurrentTab()
+            currentVisit: {
+                currentTab: visitStore.getCurrentTab(),
+                cache: visitStore.getCache()
             }
         };
+
     }
 )
 

@@ -10,6 +10,7 @@ export default keyMirror({
     'TEST_ACTION': null,
 
     /// Application
+    'APP_LOADING': null,
     'APP_SET_LOADING_MODE': null,
     'APP_SET_LOADING_CONTAINER': null,
 
@@ -31,5 +32,9 @@ export default keyMirror({
 
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
+    'VISIT_CACHE_MODIFIED': null,
+    'VISIT_UPDATE_CACHE': null,
+
+    'PATIENT_UPDATE': null,
 
 });

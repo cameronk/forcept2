@@ -24,20 +24,29 @@ class Editor extends BaseComponent {
     render() {
 
         var props = this.props,
-            { stage } = props,
+            { stage, visit, patient } = props,
             { fields } = stage;
+
+        __debug("Render editor for patient:");
+        __debug(patient);
 
         return (
             <div className="ui form">
                 {Object.keys(fields).map(field => {
 
                     let thisField = fields[field];
+                    let thisValue = patient[field] || "";
                     let fieldDOM;
 
                     switch(thisField.type) {
                         case "text":
                             fieldDOM = (
-                                <TextField field={thisField} />
+                                <TextField
+                                    key={field}
+                                    patientKey={patient.id}
+                                    fieldKey={field}
+                                    field={thisField}
+                                    value={thisValue} />
                             );
                             break;
                     }

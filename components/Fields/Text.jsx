@@ -4,15 +4,26 @@
  */
 
 import React, { PropTypes } from 'react';
-import BaseComponent from '../Base';
+import BaseComponent, { grabContext } from '../Base';
 
 import Label from './Label';
+import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
 class TextField extends BaseComponent {
 
+    static contextTypes = grabContext(['executeAction'])
+
+    _change = (evt) => {
+        this.context.executeAction(UpdatePatientAction, {
+            [this.props.patientKey]: {
+                [this.props.fieldKey]: evt.target.value
+            }
+        })
+    }
+
     render() {
         var props = this.props,
-            { field } = props;
+            { field, value } = props;
 
         return (
             <div className="field">
@@ -20,8 +31,9 @@ class TextField extends BaseComponent {
                 <input
                     type="text"
                     autoComplete="off"
-                    placeholder={field.name + " goes here"} />
-
+                    placeholder={field.name + " goes here"}
+                    value={value}
+                    onChange={this._change} />
             </div>
         );
     }

@@ -113,7 +113,7 @@ class StageStore extends BaseStore {
      * Update cache data
      */
     handleUpdateCache(data) {
-        __debug("Updating cache.");
+        __debug("Updating StageStore cache.");
 
         for(var k in data) {
             __debug(" | %s = %s", k, data[k]);

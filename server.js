@@ -30,8 +30,11 @@ import db from './database/models';
 import UpdateStageDefinition from './database/StageDefinition';
 import { RunPageLoadActions } from './flux/App/AppActions';
 import { navigateAction } from './flux/Route/RouteActions';
+
+/// Services
 import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
+import PatientService from './flux/Patient/PatientService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -129,6 +132,7 @@ __debug("---");
         const FetchrPlugin = app.getPlugin('FetchrPlugin');
               FetchrPlugin.registerService(AuthService.attach(db));
               FetchrPlugin.registerService(StageService.attach(db));
+              FetchrPlugin.registerService(PatientService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
