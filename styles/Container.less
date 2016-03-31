@@ -46,8 +46,8 @@
 }
 
 /**
- * Sizing
- */
+* Sizing
+*/
 @media only screen and (min-width: 1145px) {
     #Container {
         #TopBar {
@@ -68,8 +68,8 @@
 }
 
 /**
- * Semantic modifications
- */
+* Semantic modifications
+*/
 .ui.grid {
     & > .row.clear.top {
         padding-top: 0;
@@ -86,8 +86,8 @@
     }
 
     /*
-     * Default is 1rem, make it 2.
-     */
+    * Default is 1rem, make it 2.
+    */
     .column.right.spaced {
         padding-right: 2rem;
     }
@@ -105,4 +105,49 @@
         padding: 0;
         margin: 0;
     }
+}
+
+.ui.secondary.vertical.pointing.menu.hoverable {
+    .item {
+        transition: all 150ms ease-out;
+    }
+    .item:not(.disabled):not([disabled]):hover {
+        padding-left: 2rem;
+        transition: all 150ms ease-out;
+    }
+    .item.active {
+        padding-left: 2rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+}
+::-webkit-scrollbar-thumb {
+    background: #777777;
+    border: 0px none #ffffff;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+::-webkit-scrollbar-thumb:active {
+    background: #000000;
+}
+::-webkit-scrollbar-track {
+    background: #e1e1e1;
+    border: 0px none #ffffff;
+}
+::-webkit-scrollbar-track:hover {
+    // background: #666666;
+}
+::-webkit-scrollbar-track:active {
+    background: #c1c1c1;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
 }

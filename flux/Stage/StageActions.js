@@ -25,7 +25,7 @@ export function LoadStagesAction(context, payload, done) {
         .params({
             where: {},
             order: ['order'],
-            attributes: ['id', 'name']
+            attributes: ['id', 'name', 'isRoot']
         }).end()
         .then(({data}) => {
             __debug("...stages fetched.");
@@ -148,5 +148,5 @@ export function SaveStageAction(context, payload, done) {
         __debug(err);
         done();
     });
-    
+
 }

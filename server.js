@@ -35,6 +35,7 @@ import { navigateAction } from './flux/Route/RouteActions';
 import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
 import PatientService from './flux/Patient/PatientService';
+import VisitService from './flux/Visit/VisitService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -60,6 +61,9 @@ __debug("---");
 
     __debug("Database synchronized.");
 
+    /*
+     * Get all stages, update Sequelize stage definitions accordingly.
+     */
     db.Stage.findAll().then(stages => {
 
         stages.map(stage => {
@@ -133,6 +137,7 @@ __debug("---");
               FetchrPlugin.registerService(AuthService.attach(db));
               FetchrPlugin.registerService(StageService.attach(db));
               FetchrPlugin.registerService(PatientService.attach(db));
+              FetchrPlugin.registerService(VisitService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 

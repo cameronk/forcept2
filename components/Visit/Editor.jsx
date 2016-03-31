@@ -9,6 +9,7 @@ import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
 import TextField from '../Fields/Text';
+import DateField from '../Fields/Date';
 import { SetCurrentTabAction } from '../../flux/Visit/VisitActions';
 
 const __debug = debug('forcept:components:Visit:Editor');
@@ -42,6 +43,39 @@ class Editor extends BaseComponent {
                         case "text":
                             fieldDOM = (
                                 <TextField
+                                    type="text"
+                                    key={field}
+                                    patientKey={patient.id}
+                                    fieldKey={field}
+                                    field={thisField}
+                                    value={thisValue} />
+                            );
+                            break;
+                        case "textarea":
+                            fieldDOM = (
+                                <TextField
+                                    type="textarea"
+                                    key={field}
+                                    patientKey={patient.id}
+                                    fieldKey={field}
+                                    field={thisField}
+                                    value={thisValue} />
+                            );
+                            break;
+                        case "number":
+                            fieldDOM = (
+                                <TextField
+                                    type="number"
+                                    key={field}
+                                    patientKey={patient.id}
+                                    fieldKey={field}
+                                    field={thisField}
+                                    value={thisValue} />
+                            );
+                            break;
+                        case "date":
+                            fieldDOM = (
+                                <DateField
                                     key={field}
                                     patientKey={patient.id}
                                     fieldKey={field}

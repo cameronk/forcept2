@@ -2,6 +2,7 @@
 
 var __debug = require('debug')('forcept:db:models:stage');
 var ModelHelper = require('../helper.js');
+var kebabCase = require('lodash/kebabCase');
 
 module.exports = function(sequelize, DataTypes) {
     var Stage = sequelize.define('Stage', {
@@ -36,6 +37,11 @@ module.exports = function(sequelize, DataTypes) {
         getterMethods: {
             tableName: function() {
                 return 'stage_' + this.id;
+            },
+            slug: function() {
+                let slug = [ this.id ];
+                if(this.name && this.name.length > 0) slug.push(kebabCase(this.name));
+                return slug.join("-");
             }
         },
         classMethods: {

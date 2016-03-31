@@ -7,8 +7,12 @@ import BaseStore from 'fluxible/addons/BaseStore';
 import Actions from '../actions';
 import debug from 'debug';
 
-const __debug = debug('forcept:flux:Stage:StageStore');
-
+const ___debug = debug('forcept:flux:Stage:StageStore');
+const __debug = (...args) => {
+    if(process.env.BROWSER) {
+        ___debug(...args);
+    }
+}
 class StageStore extends BaseStore {
 
     static storeName = 'StageStore'
@@ -202,21 +206,6 @@ class StageStore extends BaseStore {
                                                         }
                                                     }
                                                 }
-
-                                                /*for(var option in theseOptions) {
-
-                                                    var thisOption = theseOptions[option];
-
-                                                    /// null = delete
-                                                    if(thisOption === null) {
-                                                        __debug(" |--|--|--|==> #%s removed", option);
-                                                        delete this.cache.fields[f]['settings']['options'][option];
-                                                    } else {
-                                                        __debug(" |--|--|--|==> #%s = '%s'", option, thisOption.value || '');
-                                                        this.cache.fields[f]['settings']['options'][option] = thisOption;
-                                                    }
-
-                                                }*/
 
                                             }
 

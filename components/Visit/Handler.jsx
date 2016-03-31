@@ -21,23 +21,25 @@ class Handler extends BaseComponent {
         super();
     }
 
-    _setTab = (tab) => {
-        return (evt) => {
-            this.context.executeAction(SetCurrentTabAction, tab);
-        }
-    }
-
-    _createPatient = (evt) => {
-        this.context.executeAction(CreatePatientAction);
-    }
-
     render() {
 
         var props = this.props,
             { patients, visit } = props,
             patientKeys = Object.keys(patients);
 
-        var handlerDOM;
+        var handlerDOM, dividerItemDOM, saveItemDOM;
+
+        if(patientKeys.length > 0) {
+            dividerItemDOM = (
+                <span className="item divider"></span>
+            );
+            saveItemDOM = (
+                <a className="green item">
+                    <i className="save icon"></i>
+                    Save visit
+                </a>
+            );
+        }
 
         switch(visit.currentTab) {
             case null:
@@ -50,23 +52,31 @@ class Handler extends BaseComponent {
                 );
                 break;
             default:
-                __debug("Building editor for tab: %s", visit.currentTab);
-                __debug(patients);
-
-                handlerDOM = (
-                    <Editor
-                        patient={patients[visit.currentTab]}
-                        visit={props.visit}
-                        stage={props.stage} />
-                );
+                var thisPatient = patients[visit.currentTab];
+                if(thisPatient) {
+                    handlerDOM = [
+                        (
+                            <div className="ui header">
+                                <div className="ui teal label">{thisPatient.id}</div>
+                                {" "}
+                                {thisPatient.fullName || "Unnamed Patient"}
+                            </div>
+                        ),
+                        (
+                            <Editor
+                                patient={thisPatient}
+                                visit={props.visit}
+                                stage={props.stage} />
+                        )
+                    ];
+                }
                 break;
-
         }
 
         return (
-            <div className="row clear top">
+            <div id="VisitHandler">
                 <div className="four wide computer five wide tablet column">
-                    <div className="ui fluid secondary vertical pointing menu">
+                    <div className="hoverable ui fluid secondary vertical pointing menu">
                         {patientKeys.map(patient => {
                             var thisPatient = patients[patient];
                             return (
@@ -78,19 +88,14 @@ class Handler extends BaseComponent {
                                 </a>
                             );
                         })}
-                        <span className="item divider"></span>
+                        {dividerItemDOM}
                         {props.stage.isRoot ? (
                             <a className="item" onClick={this._createPatient}>
                                 <i className="plus icon"></i>
                                 Add a new patient
                             </a>
                         ) : null}
-                        {patientKeys.length > 0 ? (
-                            <a className="green item">
-                                <i className="save icon"></i>
-                                Save visit
-                            </a>
-                        ) : null}
+                        {saveItemDOM}
                     </div>
                 </div>
                 <div className="twelve wide computer eleven wide tablet column">

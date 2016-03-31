@@ -7,6 +7,7 @@ import debug from 'debug';
 
 import StageStore from '../Stage/StageStore';
 import { LoadStagesAction, GrabStageAction, ClearCacheAction } from '../Stage/StageActions';
+import { GrabVisitAction } from '../Visit/VisitActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -44,13 +45,33 @@ var RunPageLoadActions = function(context, payload, done) {
     /*
      * Automagically cache stage data if a stageID parameter is provided.
      */
-    if(payload.hasOwnProperty('params') && payload.params.hasOwnProperty('stageID')) {
+    if(payload.hasOwnProperty('params')) {
 
-        promises.push(
-            context.executeAction(GrabStageAction, {
-                id: payload.params.stageID
-            })
-        );
+        /**
+         * Load stage if stageID parameter was given.
+         */
+        if(payload.params.hasOwnProperty('stageID')) {
+
+            promises.push(
+                context.executeAction(GrabStageAction, {
+                    id: payload.params.stageID.split("-")[0]
+                })
+            );
+
+        }
+
+        /**
+         *
+         */
+        if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
+
+            promises.push(
+                context.executeAction(GrabVisitAction, {
+                    id: payload.params.visitID
+                })
+            );
+
+        }
 
     }
 

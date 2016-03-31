@@ -6,6 +6,7 @@
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
 import { LoadStagesAction } from '../Stage/StageActions';
+import { RedirectRootAction as VisitRedirectRootAction } from '../Visit/VisitActions';
 import { defineMessages } from 'react-intl';
 
 const __debug = debug('forcept:flux:Route:Routes');
@@ -102,7 +103,8 @@ export default {
         namespace: 'visit',
         method: 'get',
         auth: true,
-        handler: getPage('Visit/Stage'),
+        handler: getPage('Visit/List'),
+        action: VisitRedirectRootAction,
         title: messages["pages.console.stages.stage.title"]
     },
 
@@ -111,7 +113,7 @@ export default {
        namespace: 'visit',
        method: 'get',
        auth: true,
-       handler: getPage('Visit/Stage'),
+       handler: getPage('Visit/Handler'),
        title: messages["pages.console.stages.stage.title"]
     }
 
