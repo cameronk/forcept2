@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import dropRightWhile from 'lodash/dropRightWhile';
 
 import BaseComponent, { grabContext } from '../../../components/Base';
 import MessageScaffold from '../../../components/Scaffold/Message';
@@ -46,7 +47,9 @@ class VisitHandler extends BaseComponent {
     }
 
     _createPatient = (evt) => {
-        this.context.executeAction(CreatePatientAction);
+        this.context.executeAction(CreatePatientAction, {
+            stageID: this.props.stageID
+        });
     }
 
     _saveVisit = (evt) => {
@@ -60,112 +63,189 @@ class VisitHandler extends BaseComponent {
     render() {
 
         var props = this.props,
-            { stage, visit, patients } = props,
+            { stages, stageID, visit, patients, tab } = props,
+            stageKeys   = Object.keys(stages),
             patientKeys = Object.keys(patients);
 
-        var stageDOM = (
-            <div className="ui bottom attached segment">
-                <div className="ui basic loading segment"></div>
-            </div>
-        );
+        var rootStageID = stageKeys[0];
 
-        if(props.isNavigateComplete && !props.isLoading) {
+        __debug("Handling visit.");
+        __debug(" | stageID = %s", stageID);
+        __debug(" | stages  = ", Object.keys(stages));
+        __debug(" | patients = ", patientKeys);
 
-            if(patientKeys.length === 0) {
-                stageDOM = (
-                    <div className="ui bottom attached segment">
-                        <MessageScaffold
-                            icon="add user"
-                            header="No patients in this visit"
-                            text={stage.isRoot ? "Add some with the controls above." : "An error may have occurred."} />
-                    </div>
-                );
-            }
+        /*
+         * If the current navigateAction is complete...
+         */
+        if(props.isNavigateComplete) {
 
-            else if(!props.tab) {
-                stageDOM = (
-                    <div className="ui bottom attached segment">
-                        <MessageScaffold
-                            icon="flag"
-                            header="Choose a tab to modify a patient." />
-                    </div>
-                );
-            }
-
-            else if(!patients.hasOwnProperty(props.tab)) {
-                stageDOM = (
-                    <div className="ui bottom attached segment">
+            /*
+             * Make sure stageID is set
+             */
+            if(!stageID || !stages.hasOwnProperty(stageID)) {
+                return (
+                    <div className="ui segment">
                         <MessageScaffold
                             type="error"
                             icon="warning"
                             header="An error occurred."
-                            text="The selected patient seems to be missing." />
+                            text="Forcept is missing a stage ID." />
                     </div>
                 );
-            }
+            } else {
 
-            else {
-                var thisPatient = patients[props.tab];
-                stageDOM = (
-                    <div className="ui bottom attached segment">
-                        <div className="ui stackable grid">
-                            <div className="row clear top">
-                                <div className="four wide computer five wide tablet column">
-                                    <Overview
-                                        patient={thisPatient}
-                                        stage={stage} />
-                                </div>
-                                <div className="twelve wide computer eleven wide tablet column">
-                                    <Editor
-                                        patient={thisPatient}
-                                        visit={visit}
-                                        stage={stage} />
+                var stageDOM;
+                var thisStage   = stages[stageID];
+                var stagesBeneath = dropRightWhile(stageKeys, key => key != stageID);
+
+                __debug("Stages beneath:", stagesBeneath);
+
+                /*
+                 * Is a visit/patient action executing?
+                 */
+                if(props.isLoading) {
+                    stageDOM = (
+                        <div className="ui bottom attached segment">
+                            <div className="ui basic loading segment"></div>
+                        </div>
+                    );
+                }
+
+                /*
+                 * Stage ID is set, check other variables before rendering.
+                 */
+                else {
+
+                    /*
+                     * No patients in this visit.
+                     */
+                    if(patientKeys.length === 0) {
+                        stageDOM = (
+                            <div className="ui bottom attached segment">
+                                <MessageScaffold
+                                    icon="add user"
+                                    header="No patients in this visit"
+                                    text={thisStage.isRoot ? "Add some with the controls above." : "An error may have occurred."} />
+                            </div>
+                        );
+                    }
+
+                    /*
+                     * Tab not selected.
+                     */
+                    else if(!tab) {
+                        stageDOM = (
+                            <div className="ui bottom attached segment">
+                                <MessageScaffold
+                                    icon="flag"
+                                    header="Choose a tab to modify a patient." />
+                            </div>
+                        );
+                    }
+
+                    /*
+                     * Missing the patient stored in visit.tab
+                     */
+                    else if(!patients.hasOwnProperty(tab)) {
+                        stageDOM = (
+                            <div className="ui bottom attached segment">
+                                <MessageScaffold
+                                    type="error"
+                                    icon="warning"
+                                    header="An error occurred."
+                                    text="The selected patient seems to be missing." />
+                            </div>
+                        );
+                    }
+
+                    /*
+                     * Looks like we're good to go...
+                     */
+                    else {
+
+                        var thisPatient = patients[tab];
+
+                        stageDOM = (
+                            <div className="ui bottom attached segment">
+                                <div className="ui stackable grid">
+                                    <div className="row clear top">
+                                        <div className="four wide computer five wide tablet column">
+                                            {stagesBeneath.map(stageBeneathID => {
+                                                return (
+                                                    <Overview
+                                                    patient={thisPatient[stageBeneathID]}
+                                                    stage={stages[stageBeneathID]} />
+                                                );
+                                            })}
+                                        </div>
+                                        <div className="twelve wide computer eleven wide tablet column">
+                                            <Editor
+                                                patient={thisPatient[stageID]}
+                                                visit={visit}
+                                                stage={thisStage} />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        );
+
+                    }
+
+                } /// end !props.isLoading
+
+                return (
+                    <div>
+                        <h1 className="ui top attached header">
+                            <i className="hospital icon"></i>
+                            <div className="content">
+                                {props.intl.formatMessage(messages['pages.stages.stage.heading'], {
+                                    name: props.isNavigateComplete ? thisStage.name : "Loading..."
+                                })}
+                            </div>
+                        </h1>
+                        <Horizon>
+                            {patientKeys.map(patientID => {
+                                var thisPatient = patients[patientID][rootStageID];
+                                var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
+                                return (
+                                    <a className={"item" + (props.tab == patientID ? " active" : "")} onClick={this._setTab(patientID)}>
+                                        {fullName}
+                                        <span className="ui teal label">
+                                            {thisPatient.id}
+                                        </span>
+                                    </a>
+                                );
+                            })}
+                            {thisStage.isRoot ? (
+                                <a className="control item" onClick={this._createPatient}>
+                                    <i className="plus icon"></i>
+                                    Add a new patient
+                                </a>
+                            ) : null}
+                            {patientKeys.length > 0 ? (
+                                <a className="green control item" onClick={this._saveVisit}>
+                                    <i className="save icon"></i>
+                                    Save visit
+                                </a>
+                            ) : null}
+                        </Horizon>
+                        {stageDOM}
                     </div>
                 );
-            }
+
+            } /// end stageID check
+
+        } /// end props.isNavigateComplete
+
+        /*
+         * Page load incomplete - render only loading container
+         */
+        else {
+            return (
+                <div className="ui loading segment"></div>
+            );
         }
 
-        return (
-            <div>
-                <h1 className="ui top attached header">
-                    <i className="hospital icon"></i>
-                    <div className="content">
-                        {props.intl.formatMessage(messages['pages.stages.stage.heading'], {
-                            name: props.isNavigateComplete ? stage.name : "Loading..."
-                        })}
-                    </div>
-                </h1>
-                <Horizon>
-                    {patientKeys.map(patient => {
-                        var thisPatient = patients[patient];
-                        return (
-                            <a className={"item" + (props.tab == patient ? " active" : "")} onClick={this._setTab(patient)}>
-                                {thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient"}
-                                <span className="ui teal label">
-                                    {thisPatient.id}
-                                </span>
-                            </a>
-                        );
-                    })}
-                    {stage.isRoot ? (
-                        <a className="control item" onClick={this._createPatient}>
-                            <i className="plus icon"></i>
-                            Add a new patient
-                        </a>
-                    ) : null}
-                    {patientKeys.length > 0 ? (
-                        <a className="green control item" onClick={this._saveVisit}>
-                            <i className="save icon"></i>
-                            Save visit
-                        </a>
-                    ) : null}
-                </Horizon>
-                {stageDOM}
-            </div>
-        );
     }
 
 }
@@ -181,13 +261,16 @@ VisitHandler = connectToStores(
         let visitStore = context.getStore(VisitStore);
         let patientStore = context.getStore(PatientStore);
 
+        let params = routeStore.getCurrentRoute().params;
+
         return {
             /// Meta
             isNavigateComplete: routeStore.isNavigateComplete(),
             isLoading: appStore.isLoading(),
 
-            /// Stage
-            stage: stageStore.getCache(),
+            /// All stages
+            stages: stageStore.getStages(),
+            stageID: params.stageID ? params.stageID.split("-")[0] : null,
 
             /// Patients
             patients: patientStore.getPatients(),

@@ -26,61 +26,59 @@ class Editor extends BaseComponent {
 
         var props = this.props,
             { stage, visit, patient } = props,
-            { fields } = stage;
+            { fields } = stage,
+            baseFieldProps = {
+                stageID:    stage.id,
+                patientID:  patient.id
+            };
 
         __debug("Render editor for patient:");
         __debug(patient);
 
         return (
             <div className="ui form">
-                {Object.keys(fields).map(field => {
+                {Object.keys(fields).map(fieldID => {
 
-                    let thisField = fields[field];
-                    let thisValue = patient[field] || "";
-                    let fieldDOM;
+                    var thisField = fields[fieldID],
+                        fieldDOM;
+
+                    var thisFieldProps = {
+                        key:    fieldID,
+                        fieldID: fieldID,
+                        field:  thisField,
+                        value:  patient[fieldID] || ""
+                    };
 
                     switch(thisField.type) {
                         case "text":
                             fieldDOM = (
                                 <TextField
                                     type="text"
-                                    key={field}
-                                    patientKey={patient.id}
-                                    fieldKey={field}
-                                    field={thisField}
-                                    value={thisValue} />
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
                             );
                             break;
                         case "textarea":
                             fieldDOM = (
                                 <TextField
                                     type="textarea"
-                                    key={field}
-                                    patientKey={patient.id}
-                                    fieldKey={field}
-                                    field={thisField}
-                                    value={thisValue} />
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
                             );
                             break;
                         case "number":
                             fieldDOM = (
                                 <TextField
                                     type="number"
-                                    key={field}
-                                    patientKey={patient.id}
-                                    fieldKey={field}
-                                    field={thisField}
-                                    value={thisValue} />
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
                             );
                             break;
                         case "date":
                             fieldDOM = (
                                 <DateField
-                                    key={field}
-                                    patientKey={patient.id}
-                                    fieldKey={field}
-                                    field={thisField}
-                                    value={thisValue} />
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
                             );
                             break;
                     }

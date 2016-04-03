@@ -59,8 +59,7 @@ export function GrabStageAction(context, { id }) {
         .then(({data}) => {
             __debug("...grabbed stage #%s", id);
             if(data.length > 0) {
-                // context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
-                context.dispatch(Actions.STAGES_UPDATE_CACHE, data[0]);
+                context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
             } else {
                 throw new Error("Stage not found");
             }

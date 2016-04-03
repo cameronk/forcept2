@@ -14,9 +14,12 @@ class TextField extends BaseComponent {
     static contextTypes = grabContext(['executeAction'])
 
     _change = (evt) => {
+        var { patientID, stageID, fieldID } = this.props;
         this.context.executeAction(UpdatePatientAction, {
-            [this.props.patientKey]: {
-                [this.props.fieldKey]: evt.target.value
+            [patientID]: {
+                [stageID]: {
+                    [fieldID]: evt.target.value
+                }
             }
         })
     }
@@ -46,12 +49,14 @@ class TextField extends BaseComponent {
                 </textarea>
             )
         }
+
         return (
             <div className="field">
                 <Label field={field} />
                 {inputDOM}
             </div>
         );
+        
     }
 }
 

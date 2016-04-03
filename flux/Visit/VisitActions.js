@@ -57,8 +57,7 @@ export function SaveVisitAction(context, {id, patients, stage}, done) {
             .body({
                 stage: stage.id,
                 patients: Object.keys(patients),
-            }).end()
-            .then(({data}) => {
+            }).end().then(({data}) => {
 
             });
     }
@@ -74,8 +73,7 @@ export function GrabVisitAction(context, payload, done) {
             where: {
                 id: payload.id
             }
-        }).end()
-        .then(({data}) => {
+        }).end().then(({data}) => {
             context.dispatch(Actions.VISIT_UPDATE_CACHE, data);
             return;
         });
@@ -106,13 +104,14 @@ export function CreatePatientAction(context, payload, done) {
     context.dispatch(Actions.APP_LOADING, true);
     context.service
         .create('PatientService')
-        .end()
-        .then(({data}) => {
+        .end().then(({data}) => {
             __debug("Patient created:");
             __debug(data);
             context.dispatch(Actions.APP_LOADING, false);
             context.dispatch(Actions.PATIENT_UPDATE, {
-                [data.id]: data
+                [data.id]: {
+                    [payload.stageID]: data
+                }
             });
             context.dispatch(Actions.VISIT_SET_CURRENT_TAB, data.id);
             done();

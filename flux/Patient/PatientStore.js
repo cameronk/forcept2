@@ -44,7 +44,9 @@ class PatientStore extends BaseStore {
      * @params data: Object
      *  {
      *      [patient ID]: {
-     *          [field]: [value]
+     *          [stage ID]: {
+     *              [field ID]: [value]
+     *          }
      *      }
      *  }
      */
@@ -56,46 +58,64 @@ class PatientStore extends BaseStore {
             __debug(" | patient id #%s", patient);
 
             var thisPatient = data[patient];
-            var updateName = false;
 
             /*
              * If this patient hasn't been added yet...
              */
             if(!this.patients.hasOwnProperty(patient)) {
 
-                __debug(" |==> added");
+                __debug(" |==> Creating new patient.");
                 this.patients[patient] = thisPatient;
 
-            }
+            } else {
 
-            /*
-             * Otherwise, loop through the fields applied.
-             */
-            else {
+                for(var stageID in thisPatient) {
 
-                for(var field in thisPatient) {
+                    __debug(" |==> %s", stageID);
 
-                    __debug(" |==> %s = %s", field, thisPatient[field]);
-                    this.patients[patient][field] = thisPatient[field];
+                    var updateName = false;
+                    var thisPatientStage = thisPatient[stageID];
+
+                    /*
+                     * If the patient exists, but not with this stage...
+                     */
+                    if(!this.patients[patient].hasOwnProperty(stageID)) {
+
+                        __debug(" |--|==> pushed stage: %s", stageID);
+                        this.patients[patient][stageID] = thisPatientStage;
+
+                    }
+
+                    /*
+                     * Otherwise, loop through the fields applied.
+                     */
+                    else {
+
+                        for(var field in thisPatientStage) {
+
+                            __debug(" |--|==> %s = %s", field, thisPatientStage[field]);
+                            this.patients[patient][stageID][field] = thisPatientStage[field];
+
+                        }
+
+                    }
+
+                    /*
+                     * update fullName as necessary
+                     */
+                    if(this.patients[patient][stageID].hasOwnProperty('fullName')) {
+                        __debug(" |==> Updating name.");
+                        let name = [];
+
+                        if(this.patients[patient][stageID].firstName) name.push(this.patients[patient][stageID].firstName);
+                        if(this.patients[patient][stageID].lastName)  name.push(this.patients[patient][stageID].lastName);
+
+                        this.patients[patient][stageID].fullName = name.join(" ");
+                    }
 
                 }
 
             }
-
-            // this.updateFullName()
-
-
-            /*
-             * update fullName as necessary
-             */
-
-            __debug(" |==> Updating name.");
-            let name = [];
-            if(this.patients[patient].firstName) name.push(this.patients[patient].firstName);
-            if(this.patients[patient].lastName)  name.push(this.patients[patient].lastName);
-
-            this.patients[patient].fullName = name.join(" ");
-
         }
 
         this.emitChange();

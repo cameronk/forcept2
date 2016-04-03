@@ -31,43 +31,11 @@ class VisitList extends BaseComponent {
 
     render() {
         return (
-            <div>List
-            </div>
+            <div>List</div>
         );
     }
 
 }
 
-VisitList = connectToStores(
-    VisitList,
-    [VisitStore, PatientStore],
-    function(context, props) {
-
-        let routeStore = context.getStore('RouteStore');
-        let appStore   = context.getStore(AppStore);
-        let stageStore = context.getStore(StageStore);
-        let visitStore = context.getStore(VisitStore);
-        let patientStore = context.getStore(PatientStore);
-
-        return {
-            /// Meta
-            isNavigateComplete: routeStore.isNavigateComplete(),
-            isLoading: appStore.isLoading(),
-
-            /// Stage
-            stage: stageStore.getCache(),
-
-            /// Patients
-            patients: patientStore.getPatients(),
-
-            /// Visit
-            visit: {
-                currentTab: visitStore.getCurrentTab(),
-                cache: visitStore.getCache()
-            }
-        };
-
-    }
-)
 
 export default injectIntl(VisitList);
