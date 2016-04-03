@@ -56,5 +56,5 @@ export default function UpdateStageDefinition(stage, db) {
             tableName: tableName
         }
     );
-    
+
 }

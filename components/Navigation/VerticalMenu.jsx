@@ -59,6 +59,7 @@ class VerticalMenu extends BaseComponent {
         var props = this.props,
             ctx = this.context,
             isAuthenticated = ctx.isAuthenticated(),
+            stageKeys = Object.keys(props.stages),
             userItem, stagesItem;
 
         /// Show the user area if user is authenticated
@@ -104,13 +105,14 @@ class VerticalMenu extends BaseComponent {
                 <div className="item">
                     <div className="header">Stages</div>
                     <div className="menu">
-                        {props.stages.map((stage) => {
+                        {stageKeys.map((stageID) => {
+                            let thisStage = props.stages[stageID];
                             return (
                                 <NavLink
-                                    href={"/visits/" + stage.slug}
-                                    key={stage.id}
+                                    href={"/visits/" + thisStage.slug}
+                                    key={thisStage.id}
                                     className="item">
-                                    {stage.name || "Untitled stage"}
+                                    {thisStage.name || "Untitled stage"}
                                 </NavLink>
                             );
                         })}

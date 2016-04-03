@@ -17,6 +17,7 @@ import RouteStore from './flux/Route/RouteStore';
 import StageStore from './flux/Stage/StageStore';
 import VisitStore from './flux/Visit/VisitStore';
 import PatientStore from './flux/Patient/PatientStore';
+import TestStore from './flux/Test/TestStore';
 
 /// create new fluxible instance
 const app = new Fluxible({
@@ -132,5 +133,6 @@ app.registerStore(AuthStore);
 app.registerStore(StageStore);
 app.registerStore(VisitStore);
 app.registerStore(PatientStore);
+app.registerStore(TestStore);
 
 module.exports = app;

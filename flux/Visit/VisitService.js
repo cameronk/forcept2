@@ -28,15 +28,16 @@ export default {
             create: function(req, resource, params, body, config, callback) {
 
                 __debug("[create]: Creating a new Visit.");
-
+                __debug(body);
+                
                 /*
                  * Create Visit record.
                  */
-                (db.Visit).create({
+                (db.Visit).create(Object.assign(body, {
                     createdBy: req.user.id,
                     lastModifiedBy: req.user.id
-                }).then(Visit => {
-                    callback(null, Visit, null);
+                })).then(visit => {
+                    callback(null, visit, null);
                 }).catch(err => {
                     callback(err);
                 });

@@ -36,6 +36,7 @@ import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
 import PatientService from './flux/Patient/PatientService';
 import VisitService from './flux/Visit/VisitService';
+import TestService from './flux/Test/TestService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -64,7 +65,7 @@ __debug("---");
     /*
      * Get all stages, update Sequelize stage definitions accordingly.
      */
-    db.Stage.findAll().then(stages => {
+    db.Stage.findAll({ where: { isRoot: false } }).then(stages => {
 
         stages.map(stage => {
             UpdateStageDefinition(stage, db);
@@ -138,6 +139,7 @@ __debug("---");
               FetchrPlugin.registerService(StageService.attach(db));
               FetchrPlugin.registerService(PatientService.attach(db));
               FetchrPlugin.registerService(VisitService.attach(db));
+              FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 

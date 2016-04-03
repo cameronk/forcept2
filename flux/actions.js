@@ -37,4 +37,7 @@ export default keyMirror({
 
     'PATIENT_UPDATE': null,
 
+    /// Test
+    'TEST_PUSH_MODEL': null,
+    'TEST_UPDATE_MODEL': null,
 });

@@ -18,7 +18,8 @@ class StageStore extends BaseStore {
     static storeName = 'StageStore'
     static handlers = {
         [Actions.STAGES_LOADED]: 'handleStagesLoaded',
-        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
+        [Actions.STAGES_SET_CACHE]: 'handleSetCache',
+        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache2',
         [Actions.STAGES_LOAD_ERROR]: 'handleStageLoadError',
         [Actions.STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
         [Actions.STAGES_CLEAR_CACHE]: 'handleClearCache',
@@ -37,7 +38,7 @@ class StageStore extends BaseStore {
     setInitialState() {
         this.error  = false;
         this.optionShiftContext = false;
-        this.stages = [];
+        this.stages = {};
         this.handleClearCache();
     }
 
@@ -112,6 +113,25 @@ class StageStore extends BaseStore {
             this.emitChange();
         }
     }
+
+
+
+
+
+
+    handleSetCache(model) {
+        this.cache = model;
+    }
+
+
+    handleUpdateCache2(key, value) {
+        this.cache[key] = value;
+    }
+
+
+
+
+
 
     /*
      * Update cache data

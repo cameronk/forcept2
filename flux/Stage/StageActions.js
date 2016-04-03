@@ -4,6 +4,7 @@
  */
 
 import debug from 'debug';
+import keyBy from 'lodash/keyBy';
 
 import Actions from '../actions';
 import { navigateAction } from '../Route/RouteActions';
@@ -23,13 +24,15 @@ export function LoadStagesAction(context, payload, done) {
     return context.service
         .read("StageService")
         .params({
-            where: {},
             order: ['order'],
-            attributes: ['id', 'name', 'isRoot']
+            // attributes: ['id', 'name', 'isRoot']
         }).end()
         .then(({data}) => {
             __debug("...stages fetched.");
-            context.dispatch(Actions.STAGES_LOADED, data.map(stage => JsonModel(stage)));
+            context.dispatch(
+                Actions.STAGES_LOADED,
+                keyBy(data, "id")
+            );
             return;
         })
         .catch(err => {
@@ -56,7 +59,8 @@ export function GrabStageAction(context, { id }) {
         .then(({data}) => {
             __debug("...grabbed stage #%s", id);
             if(data.length > 0) {
-                context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
+                // context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
+                context.dispatch(Actions.STAGES_UPDATE_CACHE, data[0]);
             } else {
                 throw new Error("Stage not found");
             }

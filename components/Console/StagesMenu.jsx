@@ -24,9 +24,12 @@ class StagesMenu extends BaseComponent {
     render() {
         var props = this.props,
             { stages, location, isNavigateComplete } = this.props;
+
+        var stageKeys = Object.keys(stages);
         return (
             <div className="ui fluid secondary vertical pointing menu">
-                {stages.map(thisStage => {
+                {stageKeys.map(stageID => {
+                    var thisStage = stages[stageID];
                     var isCurrent = thisStage.id == location;
                     return (
                         <NavLink

@@ -52,8 +52,6 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         }
     }, {
-        freezeTableName: true,
-        tableName: 'stage_1',
         getterMethods: {
             fullName: function() {
                 let name = [];

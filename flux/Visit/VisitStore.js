@@ -14,7 +14,7 @@ class VisitStore extends BaseStore {
     static storeName = 'VisitStore'
     static handlers = {
         [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
-        [Actions.VISIT_UPDATE_CACHE]: 'handleUpdateCache'
+        [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit'
     }
 
     constructor(dispatcher) {
@@ -25,35 +25,35 @@ class VisitStore extends BaseStore {
     setInitialState() {
         this.handling = false;
         this.tab = null;
-        this.handleClearCache();
+        this.handleClearVisit();
     }
 
     /**
-     * Clear the Visit cache.
+     * Clear the Visit visit.
      */
-    handleClearCache() {
-        this.cache = {};
+    handleClearVisit() {
+        this.visit = {};
     }
 
     /**
-     * Get the current Visit cache.
+     * Get the current Visit visit.
      */
-    getCache() {
-        return this.cache;
+    getVisit() {
+        return this.visit;
     }
 
     /**
-     * Systematically update cache based on passed data.
+     * Systematically update visit based on passed data.
      * @params data: Object
      *  {
      *      [field]: [value]
      *  }
      */
-    handleUpdateCache(data) {
-        __debug("Updating VisitStore cache.");
+    handleUpdateVisit(data) {
+        __debug("Updating VisitStore visit.");
         for(var field in data) {
             __debug(" | %s = %s", field, data[field]);
-            this.cache[field] = data[field];
+            this.visit[field] = data[field];
         }
         this.emitChange();
     }
@@ -80,12 +80,14 @@ class VisitStore extends BaseStore {
      */
     dehydrate() {
         return {
+            visit: this.visit,
             handling: this.handling,
             tab: this.tab
         };
     }
 
     rehydrate(state) {
+        this.visit = state.visit;
         this.handling = state.handling;
         this.tab = state.tab
     }

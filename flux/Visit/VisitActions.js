@@ -38,6 +38,35 @@ export function RedirectRootAction(context, payload, done) {
 /*
  *
  */
+export function SaveVisitAction(context, {id, patients, stage}, done) {
+
+    /*
+     * If this visit has already been created
+     */
+    if(id) {
+
+    }
+
+    /*
+     * Create a new visit.
+     */
+    else {
+        __debug(stage);
+        context.service
+            .create('VisitService')
+            .body({
+                stage: stage.id,
+                patients: Object.keys(patients),
+            }).end()
+            .then(({data}) => {
+
+            });
+    }
+}
+
+/*
+ *
+ */
 export function GrabVisitAction(context, payload, done) {
     return context.service
         .read('VisitService')

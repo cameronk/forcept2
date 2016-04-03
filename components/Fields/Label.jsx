@@ -11,7 +11,7 @@ class Label extends BaseComponent {
     render() {
         var props = this.props,
             { field } = props,
-            description = field.description.length > 0 ? (
+            description = (field.hasOwnProperty('description') && field.description.length > 0) ? (
                 <span className="muted"> - {field.description}</span>
             ) : null;
 
