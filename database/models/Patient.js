@@ -41,7 +41,8 @@ module.exports = function(sequelize, DataTypes) {
                 );
             },
             set: function(val) {
-                this.setDataValue('visits', ModelHelper.jsonSetter(val));
+                var visits = this.getDataValue('visits') || [];
+                this.setDataValue('visits', ModelHelper.jsonSetter(visits.concat(val)));
             }
         },
         createdBy: DataTypes.INTEGER,

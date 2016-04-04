@@ -53,10 +53,11 @@ class VisitHandler extends BaseComponent {
     }
 
     _saveVisit = (evt) => {
+        var props = this.props;
         this.context.executeAction(SaveVisitAction, {
-            id: this.props.visit.id || null,
-            patients: this.props.patients,
-            stage: this.props.stage
+            id: props.visit.hasOwnProperty('id') ? props.id : null,
+            patients: props.patients,
+            stage: props.stages[props.stageID]
         });
     }
 
@@ -70,6 +71,7 @@ class VisitHandler extends BaseComponent {
         var rootStageID = stageKeys[0];
 
         __debug("Handling visit.");
+        __debug(" | visit = ", visit);
         __debug(" | stageID = %s", stageID);
         __debug(" | stages  = ", Object.keys(stages));
         __debug(" | patients = ", patientKeys);
@@ -173,8 +175,8 @@ class VisitHandler extends BaseComponent {
                                             {stagesBeneath.map(stageBeneathID => {
                                                 return (
                                                     <Overview
-                                                    patient={thisPatient[stageBeneathID]}
-                                                    stage={stages[stageBeneathID]} />
+                                                        patient={thisPatient[stageBeneathID]}
+                                                        stage={stages[stageBeneathID]} />
                                                 );
                                             })}
                                         </div>

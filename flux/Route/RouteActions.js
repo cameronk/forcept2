@@ -52,6 +52,8 @@ var RunPageLoadActions = function(context, payload, done) {
          */
         if(payload.params.hasOwnProperty('stageID')) {
 
+            __debug(" - loading stage: %s", payload.params.stageID);
+
             promises.push(
                 context.executeAction(GrabStageAction, {
                     id: payload.params.stageID.split("-")[0]
@@ -64,6 +66,8 @@ var RunPageLoadActions = function(context, payload, done) {
          *
          */
         if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
+
+            __debug(" - loading visit: %s", payload.params.visitID);
 
             promises.push(
                 context.executeAction(GrabVisitAction, {
