@@ -33,7 +33,7 @@ export default keyMirror({
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
     'VISIT_CACHE_MODIFIED': null,
-    'VISIT_UPDATE_CACHE': null,
+    'VISIT_UPDATE_VISIT': null,
 
     'PATIENT_UPDATE': null,
 

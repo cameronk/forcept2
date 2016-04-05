@@ -24,7 +24,7 @@ import StageStore from '../../../flux/Stage/StageStore';
 import VisitStore from '../../../flux/Visit/VisitStore';
 import PatientStore from '../../../flux/Patient/PatientStore';
 
-const __debug = debug('forcept:containers:pages:Visit:Stage');
+const __debug = debug('forcept:containers:pages:Visit:Handler');
 const messages = defineMessages({
     'pages.stages.stage.heading': {
         id: 'pages.stages.stage.heading',

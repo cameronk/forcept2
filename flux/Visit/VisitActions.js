@@ -10,6 +10,7 @@ import pick from 'lodash/pick';
 import Actions from '../actions';
 import { navigateAction } from '../Route/RouteActions';
 import StageStore from '../Stage/StageStore';
+import { JsonModel } from '../../database/helper';
 
 const __debug = debug('forcept:flux:Visit:VisitActions');
 
@@ -144,8 +145,17 @@ export function GrabVisitAction(context, payload, done) {
                 id: payload.id
             }
         }).end().then(({data}) => {
-            context.dispatch(Actions.VISIT_UPDATE_CACHE, data);
-            return;
+            var visit = JsonModel(data[0]);
+            context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
+            return context.service
+                .read('RecordService')
+                .params({
+                    patients: visit.patients,
+                    visit: visit.id
+                }).end().then(({data}) => {
+                    __debug(data);
+                    return;
+                });
         });
 }
 

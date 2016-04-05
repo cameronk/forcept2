@@ -29,7 +29,6 @@ export default {
             create: function(req, resource, params, body, config, callback) {
 
                 __debug("[create]: Creating a new stage.");
-                __debug(body);
 
                 /*
                  * Create stage record.

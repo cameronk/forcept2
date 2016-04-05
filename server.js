@@ -63,6 +63,8 @@ __debug("---");
 
     __debug("Database synchronized.");
 
+    db.ForceptStages = ["Patient"];
+
     /*
      * Get all stages, update Sequelize stage definitions accordingly.
      *

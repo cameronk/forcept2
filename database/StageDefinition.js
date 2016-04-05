@@ -25,6 +25,14 @@ export function BaseStageDefinition(db) {
         patient: {
             allowNull: false,
             type: db.Sequelize.INTEGER
+        },
+        createdAt: {
+            allowNull: false,
+            type: db.Sequelize.DATE
+        },
+        updatedAt: {
+            allowNull: false,
+            type: db.Sequelize.DATE
         }
     };
 };
@@ -46,6 +54,10 @@ export default function UpdateStageDefinition(stage, db) {
             type: db.Sequelize.INTEGER,
             allowNull: true
         }
+    }
+
+    if(db.ForceptStages.indexOf(tableName) === -1) {
+        db.ForceptStages.push(tableName);
     }
 
     db.sequelize.define(

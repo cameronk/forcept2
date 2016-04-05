@@ -13,10 +13,66 @@ export default {
             name: 'RecordService',
 
             /**
-             * Read and return Visits from the Visits table.
+             * Read and return records from all stages.
              */
             read: function(req, resource, params, config, callback) {
 
+                var promises = [];
+
+                __debug(db.sequelize.models);
+
+                db.ForceptStages.map(modelName => {
+                    __debug("[read] => %s", modelName);
+
+                    var where = {};
+
+                    /**
+                     * Stage is root, use root query structure
+                     */
+                    if(modelName === "Patient") {
+                        where = {
+                            id: {
+                                $in: params.patients
+                            },
+                            currentVisit: params.visit
+                        };
+                    }
+
+                    /**
+                     * This is some other stage
+                     */
+                    else {
+                        where = {
+                            patient: {
+                                $in: params.patients
+                            },
+                            visit: params.visit
+                        };
+                    }
+
+                    promises.push(
+                        db.sequelize.models[modelName]
+                            .findAll({
+                                where: where
+                            })
+                            .catch(err => {
+                                __debug("[read] Error while fetching %s", modelName);
+                                __debug(err);
+                            })
+                            .then(ret => {
+                                __debug(modelName);
+                                __debug(ret);
+                                return ret;
+                            })
+                    );
+
+                });
+
+                Promise.all(promises).then(data => {
+                    __debug("Got callback: ");
+                    __debug(data);
+                    callback(null, "lol", null);
+                });
             },
 
             /**
