@@ -26,7 +26,8 @@ class Overview extends BaseComponent {
     constructor() {
         super();
         this.state = {
-            visible: true
+            visible: true,
+            checklist: true
         };
     }
 
@@ -90,8 +91,15 @@ class Overview extends BaseComponent {
                         <i className="large setting icon"></i>
                         <div className="menu">
                             <div className="header">Settings</div>
-                            <div className="item">This Week</div>
-                            <div className="item">This Month</div>
+                            <div className="item">
+                                {this.state.checklist ? [
+                                    (<i className="ui hide icon"></i>),
+                                    (<span>Use compact mode</span>)
+                                ] : [
+                                    (<i className="ui unhide icon"></i>),
+                                    (<span>Use checklist mode</span>)
+                                ]}
+                            </div>
                         </div>
                     </div>
                 </div>
