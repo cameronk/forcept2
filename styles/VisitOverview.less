@@ -26,7 +26,7 @@
     /*
      * Overview list container
      */
-    .bottom.attached.segment {
+    .ListContainer {
         margin-left: -1px !important;
 
         .ui.list {
@@ -38,6 +38,18 @@
             }
         }
 
+    }
+
+    &.collapsed > .ListContainer {
+        display: none;
+    }
+
+    /*
+     *
+     */
+    .bottom.attached.segment {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 
     &.collapsed > .bottom.attached.segment {
