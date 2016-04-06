@@ -14,12 +14,25 @@ import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Visit:Overview');
 
+if(process.env.BROWSER) {
+    require('../../styles/VisitOverview.less');
+}
+
 class Overview extends BaseComponent {
 
     static contextTypes = grabContext()
 
     constructor() {
         super();
+        this.state = {
+            visible: true
+        };
+    }
+
+    _toggleVisibility = (evt) => {
+        this.setState({
+            visible: !this.state.visible
+        });
     }
 
     render() {
@@ -33,12 +46,18 @@ class Overview extends BaseComponent {
 
         if(stage.isRoot) {
             iterableFields = without(iterableFields, 'firstName', 'lastName');
+            // headerDOM = (
+            //     <div className="top attached ui header">
+            //         <div className="content">
+            //             <div className="ui sub header">{patient.fullName || "Unnamed patient"}</div>
+            //         </div>
+            //     </div>
+            // );
             headerDOM = (
-                <div className="top attached ui header">
-                    <i className="treatment icon"></i>
-                    <div className="content">
-                        <div className="ui sub header">{patient.fullName || "Unnamed patient"}</div>
-                    </div>
+                <div className="top attached ui segment" onClick={this._toggleVisibility}>
+                    <span className="teal ui ribbon label">{patient.id}</span>
+                    <span>{patient.fullName || "Unnamed patient"}</span>
+                    <i className={"large right fitted chevron icon" + (this.state.visible ? " clockwise rotated" : "")}></i>
                 </div>
             );
         } else {
@@ -52,10 +71,10 @@ class Overview extends BaseComponent {
         }
 
         return (
-            <div>
+            <div className={"VisitOverview" + (!this.state.visible ? " collapsed" : "")}>
                 {headerDOM}
-                <div className="bottom attached teal ui segment">
-                    <div className="ui very relaxed list">
+                <div className="bottom attached fully expanded ui segment">
+                    <div className="very relaxed divided ui list">
                         {iterableFields.map(field => {
                             var thisField = fields[field];
                             return (

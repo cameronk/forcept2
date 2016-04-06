@@ -170,8 +170,8 @@ class VisitHandler extends BaseComponent {
                         stageDOM = (
                             <div className="ui bottom attached segment">
                                 <div className="ui stackable grid">
-                                    <div className="row clear top">
-                                        <div className="four wide computer five wide tablet column">
+                                    <div className="row">
+                                        <div className="four wide computer five wide tablet expanded column">
                                             {stagesBeneath.map(stageBeneathID => {
                                                 return (
                                                     <Overview
@@ -210,9 +210,9 @@ class VisitHandler extends BaseComponent {
                                 var thisPatient = patients[patientID][rootStageID];
                                 var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
                                 return (
-                                    <a className={"item" + (props.tab == patientID ? " active" : "")} onClick={this._setTab(patientID)}>
+                                    <a className={"item" + (props.tab == patientID ? " teal active" : "")} onClick={this._setTab(patientID)}>
                                         {fullName}
-                                        <span className="ui teal label">
+                                        <span className="teal ui label">
                                             {thisPatient.id}
                                         </span>
                                     </a>
@@ -225,7 +225,7 @@ class VisitHandler extends BaseComponent {
                                 </a>
                             ) : null}
                             {patientKeys.length > 0 ? (
-                                <a className="green control item" onClick={this._saveVisit}>
+                                <a className="control item" onClick={this._saveVisit}>
                                     <i className="save icon"></i>
                                     Save visit
                                 </a>

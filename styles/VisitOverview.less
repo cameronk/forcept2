@@ -1,0 +1,53 @@
+/**
+ *
+ */
+
+.VisitOverview {
+
+    /*
+     * Overview header
+     */
+    .top.attached.segment {
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        .icon {
+            transition: 200ms all ease;
+            float: right;
+        }
+    }
+
+    &.collapsed > .top.attached.segment {
+        border-radius: 4px;
+    }
+
+    /*
+     * Overview list container
+     */
+    .bottom.attached.segment {
+        margin-left: -1px !important;
+
+        .ui.list {
+            .item {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+    }
+
+    &.collapsed > .bottom.attached.segment {
+        display: none;
+    }
+
+}
+
+@media only screen and (min-width: 1145px) {
+    .VisitOverview {
+        padding-left: 1rem;
+    }
+}

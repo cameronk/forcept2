@@ -6,16 +6,35 @@
 
     overflow-x: auto;
     overflow-y: hidden;
+    border-left: none;
+    border-right: none;
 
     .item {
 
+        border-radius: 0;
+        // padding-bottom: 10px;
+        // border-bottom: 4px solid transparent;
+
+        & > .label {
+            float: right !important;
+        }
+
         &:not(.control) {
+
             opacity: 0.5;
 
             &.active {
                 opacity: 1;
             }
 
+        }
+
+        /*
+         * Colors
+         */
+        &.teal {
+            color: #444 !important;
+            // border-bottom: 4px solid #00B5AD;
         }
 
     }
