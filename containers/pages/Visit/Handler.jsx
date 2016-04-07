@@ -8,6 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import dropRightWhile from 'lodash/dropRightWhile';
+import reverse from 'lodash/reverse';
 
 import BaseComponent, { grabContext } from '../../../components/Base';
 import MessageScaffold from '../../../components/Scaffold/Message';
@@ -40,25 +41,44 @@ class VisitHandler extends BaseComponent {
 
     static contextTypes = grabContext()
 
+    componentDidMount() {
+        this.componentDidUpdate();
+    }
+
+    componentDidUpdate() {
+        var moveStage = $("#Dropdown-MoveStage");
+        if(moveStage.length) {
+            moveStage.dropdown();
+        }
+    }
+
     _setTab = (tab) => {
         return (evt) => {
             this.context.executeAction(SetCurrentTabAction, tab);
         }
     }
 
-    _createPatient = (evt) => {
+    _createPatient = () => {
         this.context.executeAction(CreatePatientAction, {
             stageID: this.props.stageID
         });
     }
 
-    _saveVisit = (evt) => {
+    _saveVisit = () => {
         var props = this.props;
         this.context.executeAction(SaveVisitAction, {
             id: props.visit.hasOwnProperty('id') ? props.id : null,
             patients: props.patients,
             stage: props.stages[props.stageID]
         });
+    }
+
+    _moveVisitModal = () => {
+        $("#Modal-MoveVisit")
+            .modal({
+                blurring: false
+            })
+            .modal('show');
     }
 
     render() {
@@ -221,19 +241,46 @@ class VisitHandler extends BaseComponent {
                             {thisStage.isRoot ? (
                                 <a className="control item" onClick={this._createPatient}>
                                     <i className="plus icon"></i>
-                                    Add a new patient
+                                    New patient
                                 </a>
                             ) : null}
-                            {patientKeys.length > 0 ? (
-                                <a className="control item" onClick={this._saveVisit}>
-                                    <i className="save icon"></i>
-                                    Save visit
-                                </a>
-                            ) : null}
+                            {patientKeys.length > 0 ? [
+                                (
+                                    <a className="control item" onClick={this._saveVisit}>
+                                        <i className="save icon"></i>
+                                        Save visit
+                                    </a>
+                                ), (
+                                    <div id="Dropdown-MoveStage" className="right inline ui dropdown link item">
+                                        Move visit {" "} <i className="long right arrow icon"></i>
+                                        <div className="text">(choose a stage)</div>
+                                        <i className="dropdown icon"></i>
+                                        <div className="menu">
+                                            {reverse(stageKeys).map(stageID => {
+                                                var thisStage = stages[stageID];
+                                                return (
+                                                    <div className="item">
+                                                        {thisStage.name}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ), (
+                                    <a className="control item">
+                                        <i className="level up icon"></i>
+                                    </a>
+                                )
+                            ] : null}
                         </Horizon>
                         {stageDOM}
                     </div>
                 );
+
+                // <a className="control item" onClick={this._moveVisitModal}>
+                //     <i className="level up icon"></i>
+                //     Move visit
+                // </a>
 
             } /// end stageID check
 

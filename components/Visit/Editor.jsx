@@ -8,8 +8,6 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
-import { SetCurrentTabAction } from '../../flux/Visit/VisitActions';
-
 import TextField from '../Fields/Text';
 import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
