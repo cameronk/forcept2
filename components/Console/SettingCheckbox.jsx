@@ -24,12 +24,22 @@ class SettingCheckbox extends BaseComponent {
 
     _toggle = () => {
         return (evt) => {
+            var { props } = this,
+                value = !props.checked,
+                inversions = {};
+
+            if(props.hasOwnProperty('invert') && value === true) {
+                props.invert.map(setting => {
+                    inversions[setting] = false;
+                });
+            }
+
             this.context.executeAction(UpdateCacheAction, {
                 fields: {
                     [this.props.field]: {
-                        settings: {
-                            [this.props.setting]: !this.props.checked
-                        }
+                        settings: Object.assign({
+                            [this.props.setting]: value
+                        }, inversions)
                     }
                 }
             });

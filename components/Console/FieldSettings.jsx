@@ -79,28 +79,31 @@ class FieldSettings extends BaseComponent {
                 break;
             case "select":
             case "multiselect":
+                var settingsDOM;
+                if(type === "select") {
+                    settingsDOM = (
+                        <div className="Controls">
+                            {settingsHeader}
+                            <SettingCheckbox
+                                id="FieldSettings-customizable"
+                                label="Allow custom field data"
+                                field={props._key}
+                                checked={settings.customizable || false}
+                                setting="customizable"
+                                invert={["searchable"]} />
+                            <SettingCheckbox
+                                id="FieldSettings-searchable"
+                                label="Enable searching through options"
+                                field={props._key}
+                                checked={settings.searchable || false}
+                                setting="searchable"
+                                invert={["customizable"]} />
+                        </div>
+                    )
+                }
                 return (
                     <div className="FieldSettings">
-                        {type === "select" ? [
-                            settingsHeader,
-                            (
-                                <SettingCheckbox
-                                    id="FieldSettings-customizable"
-                                    label="Allow custom field data"
-                                    field={props._key}
-                                    setting="customizable" />
-                            ),
-                            (
-                                <SettingCheckbox
-                                    id="FieldSettings-searchable"
-                                    label="Enable searching through options"
-                                    field={props._key}
-                                    setting="searchable" />
-                            ),
-                            (
-                                <div className="ui hidden divider"></div>
-                            )
-                        ]: null}
+                        {settingsDOM}
                         <OptionList
                             field={props._key}
                             options={settings.options || {}} />

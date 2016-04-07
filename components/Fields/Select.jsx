@@ -22,16 +22,17 @@ class SelectField extends BaseComponent {
             .dropdown();
     }
 
-    _change = (evt) => {
-        var { patientID, stageID, fieldID } = this.props;
-        __debug(evt);
-        // this.context.executeAction(UpdatePatientAction, {
-        //     [patientID]: {
-        //         [stageID]: {
-        //             [fieldID]: evt.target.value
-        //         }
-        //     }
-        // })
+    _change = () => {
+        return evt => {
+            var { patientID, stageID, fieldID } = this.props;
+            this.context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: evt.target.value
+                    }
+                }
+            })
+        }
     }
 
     render() {
@@ -44,19 +45,20 @@ class SelectField extends BaseComponent {
         optionsDOM = Object.keys(settings.options).map(optionKey => {
             var thisOption = settings.options[optionKey];
             return (
-                <div className="item" data-value={thisOption.value}>
+                <option value={thisOption.value}>
                     {thisOption.value}
-                </div>
+                </option>
             );
         });
 
         selectDOM = (
-            <div className="ui selection dropdown" id={"FieldDropdown-" + props.fieldID}>
-                <input type="hidden" onChange={this._change} />
-                <i className="dropdown icon"></i>
-                <div className="default text">{field.name} goes here</div>
-                <div className="menu">{optionsDOM}</div>
-            </div>
+            <select
+                className={["ui", (settings.searchable ? "search" : null), "selection dropdown"].join(" ")}
+                id={"FieldDropdown-" + props.fieldID}
+                onChange={this._change()}>
+                    <option value="">Choose an option for {field.name.toLowerCase()}</option>
+                    {optionsDOM}
+            </select>
         );
 
         return (
