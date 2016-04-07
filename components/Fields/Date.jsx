@@ -5,13 +5,16 @@
 
 import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
+import debug from 'debug';
 
 import Label from './Label';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
+const __debug = debug('forcept:components:Fields:Date');
+
 class DateField extends BaseComponent {
 
-    static conDateTypes = grabContext(['executeAction'])
+    static contextTypes = grabContext(['executeAction'])
 
     /*
 	 * Convert date from HTML standard format to Forcept slash format
@@ -38,11 +41,19 @@ class DateField extends BaseComponent {
      *
      */
     _change = (evt) => {
+        var { patientID, stageID, fieldID } = this.props;
+
+        __debug("Current val: %s", this.props.value);
+        __debug("New val    : %s", evt.target.value);
+
         this.context.executeAction(UpdatePatientAction, {
-            [this.props.patientKey]: {
-                [this.props.fieldKey]: this.dashesToSlashes(evt.target.value)
+            [patientID]: {
+                [stageID]: {
+                    [fieldID]: this.dashesToSlashes(evt.target.value)
+                }
             }
-        })
+        });
+
     }
 
     /*
@@ -58,8 +69,8 @@ class DateField extends BaseComponent {
         inputDOM = (
             <input type="date"
                 autoComplete="off"
+                defaultValue={this.slashesToDashes(value)}
                 placeholder={field.name + " goes here"}
-                value={this.slashesToDashes(value)}
                 onChange={this._change} />
         );
 

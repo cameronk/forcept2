@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         getterMethods: {
             tableName: function() {
-                return 'stage_' + this.id;
+                return this.isRoot ? 'Patients' : 'stage_' + this.id;
             },
             slug: function() {
                 let slug = [ this.id ];

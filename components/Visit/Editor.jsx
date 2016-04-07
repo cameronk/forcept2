@@ -8,9 +8,11 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
+import { SetCurrentTabAction } from '../../flux/Visit/VisitActions';
+
 import TextField from '../Fields/Text';
 import DateField from '../Fields/Date';
-import { SetCurrentTabAction } from '../../flux/Visit/VisitActions';
+import SelectField from '../Fields/Select';
 
 const __debug = debug('forcept:components:Visit:Editor');
 
@@ -77,6 +79,13 @@ class Editor extends BaseComponent {
                         case "date":
                             fieldDOM = (
                                 <DateField
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
+                            break;
+                        case "select":
+                            fieldDOM = (
+                                <SelectField
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

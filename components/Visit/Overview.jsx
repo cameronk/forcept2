@@ -41,6 +41,27 @@ class Overview extends BaseComponent {
         });
     }
 
+    _toggleChecklist = (evt) => {
+        this.setState({
+            checklist: !this.state.checklist
+        });
+    }
+
+    isEmpty = (field) => {
+        switch(typeof field) {
+            case "string":
+            case "array":
+                return field.length === 0;
+                break;
+            case "object":
+                return Object.keys(field).length === 0;
+                break;
+            default:
+                return true;
+                break;
+        }
+    }
+
     render() {
 
         var props = this.props,
@@ -54,8 +75,8 @@ class Overview extends BaseComponent {
             iterableFields = without(iterableFields, 'firstName', 'lastName');
             headerDOM = (
                 <div className="top attached ui segment" onClick={this._toggleVisibility}>
-                    <span className="teal ui ribbon label">{patient.id}</span>
-                    <span>{patient.fullName || "Unnamed patient"}</span>
+                    <span className="tiny teal ui ribbon label">{patient.id}</span>
+                    <strong>{patient.fullName || "Unnamed patient"}</strong>
                     <i className={"large right fitted chevron icon" + (this.state.visible ? " clockwise rotated" : "")}></i>
                 </div>
             );
@@ -76,22 +97,27 @@ class Overview extends BaseComponent {
                     <div className="very relaxed divided ui list">
                         {iterableFields.map(field => {
                             var thisField = fields[field];
-                            return (
-                                <OverviewField
-                                    key={field}
-                                    type={thisField.type}
-                                    name={thisField.name}
-                                    value={patient[field] || ""} />
-                            );
+                            var thisValue = patient[field] || "";
+
+                            if(this.state.checklist === true || !this.isEmpty(thisValue)) {
+                                return (
+                                    <OverviewField
+                                        key={field}
+                                        type={thisField.type}
+                                        name={thisField.name}
+                                        value={thisValue} />
+                                );
+                            }
+
                         })}
                     </div>
                 </div>
                 <div className="bottom attached ui segment">
                     <div className="ui dropdown">
-                        <i className="large setting icon"></i>
+                        <i className="setting icon"></i>
                         <div className="menu">
                             <div className="header">Settings</div>
-                            <div className="item">
+                            <div className="item" onClick={this._toggleChecklist}>
                                 {this.state.checklist ? [
                                     (<i className="ui hide icon"></i>),
                                     (<span>Use compact mode</span>)

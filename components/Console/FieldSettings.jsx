@@ -85,10 +85,17 @@ class FieldSettings extends BaseComponent {
                             settingsHeader,
                             (
                                 <SettingCheckbox
-                                    id="FieldSettings-custom"
+                                    id="FieldSettings-customizable"
                                     label="Allow custom field data"
                                     field={props._key}
-                                    setting="allowCustomData" />
+                                    setting="customizable" />
+                            ),
+                            (
+                                <SettingCheckbox
+                                    id="FieldSettings-searchable"
+                                    label="Enable searching through options"
+                                    field={props._key}
+                                    setting="searchable" />
                             ),
                             (
                                 <div className="ui hidden divider"></div>
