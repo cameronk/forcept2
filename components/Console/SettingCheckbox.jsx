@@ -53,13 +53,13 @@ class SettingCheckbox extends BaseComponent {
         return (
             <div className="ui toggle checkbox">
                 <input
-                    id={id}
+                    id={id + "-" + props.field}
                     type="checkbox"
                     tabIndex="0"
                     className="hidden"
                     checked={props.checked}
                     onChange={this._toggle()}/>
-                <label htmlFor={props.id}>{props.label || ""}</label>
+                <label htmlFor={id + "-" + props.field}>{props.label || ""}</label>
             </div>
         );
     }

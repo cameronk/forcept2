@@ -37,12 +37,12 @@ class StageBuilder extends BaseComponent {
     }
 
     componentDidMount() {
-        $("#StageBuilder .ui.dropdown")
-            .dropdown();
         this.componentDidUpdate();
     }
 
     componentDidUpdate() {
+        $("#StageBuilder .ui.dropdown")
+            .dropdown();
         $("#StageBuilder .ui.accordion")
             .accordion();
     }

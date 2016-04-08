@@ -67,7 +67,7 @@ class VisitHandler extends BaseComponent {
     _saveVisit = () => {
         var props = this.props;
         this.context.executeAction(SaveVisitAction, {
-            id: props.visit.hasOwnProperty('id') ? props.id : null,
+            id: props.visit.hasOwnProperty('id') ? props.visit.id : null,
             patients: props.patients,
             stage: props.stages[props.stageID]
         });
@@ -251,7 +251,7 @@ class VisitHandler extends BaseComponent {
                                         Save visit
                                     </a>
                                 ), (
-                                    <div id="Dropdown-MoveStage" className="right inline ui dropdown link item">
+                                    <div id="Dropdown-MoveStage" className="right inline ui dropdown control link item">
                                         Move visit {" "} <i className="long right arrow icon"></i>
                                         <div className="text">(choose a stage)</div>
                                         <i className="dropdown icon"></i>
@@ -268,6 +268,7 @@ class VisitHandler extends BaseComponent {
                                     </div>
                                 ), (
                                     <a className="control item">
+                                        Go
                                         <i className="level up icon"></i>
                                     </a>
                                 )
