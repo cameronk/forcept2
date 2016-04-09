@@ -90,14 +90,14 @@ class FieldSettings extends BaseComponent {
                                 field={props._key}
                                 checked={settings.customizable || false}
                                 setting="customizable"
-                                invert={["searchable"]} />
+                                imply={["searchable"]} />
                             <SettingCheckbox
                                 id="FieldSettings-searchable"
                                 label="Enable searching through options"
                                 field={props._key}
                                 checked={settings.searchable || false}
-                                setting="searchable"
-                                invert={["customizable"]} />
+                                disabled={settings.customizable === true}
+                                setting="searchable" />
                         </div>
                     )
                 }

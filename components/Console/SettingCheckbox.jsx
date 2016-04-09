@@ -26,11 +26,18 @@ class SettingCheckbox extends BaseComponent {
         return (evt) => {
             var { props } = this,
                 value = !props.checked,
-                inversions = {};
+                inversions = {},
+                implications = {};
 
             if(props.hasOwnProperty('invert') && value === true) {
                 props.invert.map(setting => {
                     inversions[setting] = false;
+                });
+            }
+
+            if(props.hasOwnProperty('imply')) {
+                props.imply.map(setting => {
+                    implications[setting] = value;
                 });
             }
 
@@ -39,7 +46,7 @@ class SettingCheckbox extends BaseComponent {
                     [this.props.field]: {
                         settings: Object.assign({
                             [this.props.setting]: value
-                        }, inversions)
+                        }, inversions, implications)
                     }
                 }
             });
@@ -58,6 +65,7 @@ class SettingCheckbox extends BaseComponent {
                     tabIndex="0"
                     className="hidden"
                     checked={props.checked}
+                    disabled={props.disabled || false}
                     onChange={this._toggle()}/>
                 <label htmlFor={id + "-" + props.field}>{props.label || ""}</label>
             </div>
