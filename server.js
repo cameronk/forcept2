@@ -43,7 +43,7 @@ import RecordService from './flux/Record/RecordService';
 import HtmlContainer from './containers/Html';
 
 /// Constants
-const env = process.env.NODE_ENV;
+const env = process.env.NODE_ENV || "development";
 const port = process.env.PORT || 3000;
 const debugNamespace = process.env.DEBUG || "none";
 const __debug = debug('forcept:server');
@@ -59,17 +59,27 @@ __debug("---");
 /*
  * Synchronise models before setting up express server.
  */
-(db.sequelize).sync().then(function() {
+(db.sequelize).sync().then(() => {
 
     __debug("Database synchronized.");
 
-    db.ForceptStages = ["Patient"];
+    db.RecordModels = []; // "Patient"
+    db.Record  = (function(model) {
+        __debug(this.sequelize.models);
+        __debug(this.RecordModels);
+        if(this.RecordModels.indexOf(model) > -1) {
+            return this.sequelize.models[model];
+        } else {
+            throw new Error(`Record ${model} not defined.`);
+            return;
+        }
+    }.bind(db));
 
     /*
      * Get all stages, update Sequelize stage definitions accordingly.
      *
      */
-    db.Stage.findAll({ where: { isRoot: false } }).then(stages => {
+    db.Stage.findAll().then(stages => {
 
         stages.map(stage => {
             UpdateStageDefinition(stage, db);
@@ -77,6 +87,7 @@ __debug("---");
 
         __debug("Available models:");
         __debug(Object.keys(db.sequelize.models));
+        __debug(db.RecordModels);
 
         /*
          * Configure Passport local strategy.
@@ -170,7 +181,7 @@ __debug("---");
                     url: req.url,
                     method: req.method,
                 }
-                
+
             });
 
             const thisContext   = context.getActionContext();

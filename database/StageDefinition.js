@@ -4,38 +4,95 @@
  */
 
 import debug from 'debug';
+import ModelHelper from './helper';
 
 const __debug = debug('forcept:database:StageDefinition');
 
 /**
- *
+ * Build the base definition object for a stage based on stage.isRoot
+ * @param isRoot
+ * @param db
  */
-export function BaseStageDefinition(db) {
-    return {
-        id: {
-            allowNull: false,
-            autoIncrement: true,
-            primaryKey: true,
-            type: db.Sequelize.INTEGER
-        },
-        visit: {
-            allowNull: false,
-            type: db.Sequelize.INTEGER
-        },
-        patient: {
-            allowNull: false,
-            type: db.Sequelize.INTEGER
-        },
-        createdAt: {
-            allowNull: false,
-            type: db.Sequelize.DATE
-        },
-        updatedAt: {
-            allowNull: false,
-            type: db.Sequelize.DATE
-        }
-    };
+export function BaseStageDefinition(isRoot, db) {
+
+    var meta = {};
+    var DataTypes = db.Sequelize;
+
+    if(isRoot) {
+        meta = {
+            currentVisit: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            visits: {
+                type: DataTypes.TEXT,
+                allowNull: false,
+                defaultValue: "[]",
+                get: function() {
+                    return ModelHelper.jsonGetter(
+                        this.getDataValue('visits')
+                    );
+                },
+                set: function(val) {
+                    var visits = this.getDataValue('visits') || [];
+                    this.setDataValue('visits', ModelHelper.jsonSetter(visits.concat(val)));
+                }
+            },
+            concrete: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            createdBy: DataTypes.INTEGER,
+            lastModifiedBy: DataTypes.INTEGER,
+        };
+    } else {
+        meta = {
+            visit: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            patient: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            }
+        };
+    }
+
+    return Object.assign(meta, {
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
+    });
+
 };
+
+/**
+ * Apply custom options (such as getter methods) based on stage.isRoot
+ * @param isRoot
+ * @param tableName
+ * @param db
+ */
+export function BaseStageOptions(isRoot, tableName, db) {
+    var meta = {};
+
+    if(isRoot) {
+        meta = {
+            getterMethods: {
+                fullName: function() {
+                    let name = [];
+                    if(this.firstName) name.push(this.firstName);
+                    if(this.lastName)  name.push(this.lastName);
+                    return name.join(" ");
+                }
+            }
+        };
+    }
+
+    return Object.assign(meta, {
+        freezeTableName: true,
+        tableName: tableName
+    });
+}
 
 /**
  * Update Sequelize model definition for a particular stage.
@@ -44,29 +101,39 @@ export function BaseStageDefinition(db) {
  */
 export default function UpdateStageDefinition(stage, db) {
 
-    __debug("Updating stage definition for %s @ %s", stage.get('name'), stage.get('tableName'));
+    var fields = {};
+    var tableName = stage.get('tableName');
+    var modelName = stage.get('modelName');
 
-    let fields = {};
-    let tableName = stage.get('tableName');
+    __debug("> Updating stage definition for %s @ %s", stage.get('name'), modelName);
 
     for(var field in stage.get('fields')) {
-        fields[field] = {
-            type: db.Sequelize.INTEGER,
+
+        __debug("| %s", field);
+
+        /*
+         * Add a definition for this field.
+         */
+        fields[field] =  {
+            type: db.Sequelize.TEXT,
             allowNull: true
-        }
+        };
+
     }
 
-    if(db.ForceptStages.indexOf(tableName) === -1) {
-        db.ForceptStages.push(tableName);
+    /*
+     * Push back to available record models
+     * if this model has not yet been defined
+     * (occurs at startup OR during stage creation)
+     */
+    if(db.RecordModels.indexOf(modelName) === -1) {
+        db.RecordModels.push(modelName);
     }
 
     db.sequelize.define(
-        tableName,
-        Object.assign({}, BaseStageDefinition(db), fields),
-        {
-            freezeTableName: true,
-            tableName: tableName
-        }
+        modelName,
+        Object.assign({}, BaseStageDefinition(stage.get('isRoot') || false, db), fields),
+        Object.assign({}, BaseStageOptions   (stage.get('isRoot') || false, tableName, db))
     );
 
 }

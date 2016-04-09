@@ -35,6 +35,9 @@ module.exports = function(sequelize, DataTypes) {
         }
     }, {
         getterMethods: {
+            modelName: function() {
+                return this.isRoot ? 'Patient' : 'stage_' + this.id;
+            },
             tableName: function() {
                 return this.isRoot ? 'Patients' : 'stage_' + this.id;
             },

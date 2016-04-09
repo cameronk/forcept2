@@ -19,9 +19,7 @@ export default {
 
                 var promises = [];
 
-                __debug(db.sequelize.models);
-
-                db.ForceptStages.map(modelName => {
+                db.RecordModels.map(modelName => {
                     __debug("[read] => %s", modelName);
 
                     var where = {};
@@ -51,7 +49,7 @@ export default {
                     }
 
                     promises.push(
-                        db.sequelize.models[modelName]
+                        db.Record(modelName)
                             .findAll({
                                 where: where
                             })
@@ -80,6 +78,7 @@ export default {
              */
             update: function(req, resource, params, body, config, callback) {
                 __debug("[update]: Updating a record => %s", params.model);
+                __debug(body);
                 (db.sequelize.models[params.model]).upsert(body).then(record => {
                     __debug("[update]: ...done.");
                     __debug("[update]: response: %s", record);

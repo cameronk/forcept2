@@ -32,7 +32,7 @@ export default {
                 /*
                  * Create patient record.
                  */
-                (db.Patient).create({
+                (db.Record('Patient')).create({
                     createdBy: req.user.id,
                     lastModifiedBy: req.user.id
                 }).then(patient => {
