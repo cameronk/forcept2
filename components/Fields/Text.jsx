@@ -13,6 +13,17 @@ class TextField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
 
+
+    /**
+     *
+     */
+    shouldComponentUpdate(newProps) {
+        return newProps.value !== this.props.value;
+    }
+
+    /**
+     *
+     */
     _change = (evt) => {
         var { patientID, stageID, fieldID } = this.props;
         this.context.executeAction(UpdatePatientAction, {
@@ -24,6 +35,9 @@ class TextField extends BaseComponent {
         })
     }
 
+    /**
+     *
+     */
     render() {
         var props = this.props,
             { field, value } = props;
@@ -56,7 +70,7 @@ class TextField extends BaseComponent {
                 {inputDOM}
             </div>
         );
-        
+
     }
 }
 

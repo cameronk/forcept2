@@ -11,33 +11,63 @@ import $ from 'jquery';
 import Label from './Label';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
-const __debug = debug('forcept:components:Fields:Date');
+const __debug = debug('forcept:components:Fields:Select');
 
 class SelectField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
 
+    /**
+     *
+     */
     componentDidMount() {
-        $("#FieldDropdown-" + this.props.fieldID)
-            .dropdown();
+        var { props } = this;
+        $("#FieldDropdown-" + props.fieldID)
+            .dropdown({
+                allowAdditions: (props.field.settings.customizable || false),
+                onChange: this._change
+            });
     }
 
-    _change = () => {
-        return evt => {
-            var { patientID, stageID, fieldID } = this.props;
-            this.context.executeAction(UpdatePatientAction, {
-                [patientID]: {
-                    [stageID]: {
-                        [fieldID]: evt.target.value
-                    }
-                }
-            })
+    /**
+     * Update component if value changed.
+     */
+    shouldComponentUpdate(newProps) {
+        return newProps.value !== this.props.value;
+    }
+
+    /**
+     * If a value was passed to the select field, change selected value.
+     * Otherwise, clear the dropdown.
+     */
+    componentDidUpdate() {
+        var { props } = this;
+        if(props.hasOwnProperty('value') && props.value.length > 0) {
+            $("#FieldDropdown-" + this.props.fieldID)
+                .dropdown('set selected', this.props.value);
+        } else {
+            $("#FieldDropdown-" + this.props.fieldID)
+                .dropdown('clear');
         }
+    }
+
+    /**
+     *
+     */
+    _change = (value) => {
+        var { patientID, stageID, fieldID } = this.props;
+        this.context.executeAction(UpdatePatientAction, {
+            [patientID]: {
+                [stageID]: {
+                    [fieldID]: value
+                }
+            }
+        })
     }
 
     render() {
         var props = this.props,
-            { field, value } = props,
+            { field, fieldID, value } = props,
             { settings } = field;
 
         var selectDOM, optionsDOM;
@@ -45,20 +75,30 @@ class SelectField extends BaseComponent {
         optionsDOM = Object.keys(settings.options).map(optionKey => {
             var thisOption = settings.options[optionKey];
             return (
-                <option value={thisOption.value}>
+                <div
+                    className={"item" + (thisOption.value === props.value ? " active" : "")}
+                    key={fieldID + "-" + optionKey}
+                    data-value={thisOption.value}>
                     {thisOption.value}
-                </option>
+                </div>
             );
         });
 
         selectDOM = (
-            <select
-                className={["ui", (settings.searchable ? "search" : null), "selection dropdown"].join(" ")}
-                id={"FieldDropdown-" + props.fieldID}
-                onChange={this._change()}>
-                    <option value="">Choose an option for {field.name.toLowerCase()}</option>
-                    {optionsDOM}
-            </select>
+            <div
+                id={"FieldDropdown-" + fieldID}
+                className={[
+                    "ui",
+                    (settings.searchable || settings.customizable ? "search" : null),
+                    "selection dropdown"
+                ].join(" ")}>
+                    <i className="dropdown icon"></i>
+                    <input type="hidden" name="gender" />
+                    <div className="default text">Select an option for {field.name.toLowerCase()}</div>
+                    <div className="menu">
+                        {optionsDOM}
+                    </div>
+            </div>
         );
 
         return (
