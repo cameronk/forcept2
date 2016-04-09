@@ -56,13 +56,22 @@ class SelectField extends BaseComponent {
      */
     _change = (value) => {
         var { patientID, stageID, fieldID } = this.props;
-        this.context.executeAction(UpdatePatientAction, {
-            [patientID]: {
-                [stageID]: {
-                    [fieldID]: value
+
+        /*
+         * _change() fires when using Semantic's 'set selected',
+         * so we get cascading updates during tab changes.
+         * Check to make sure the value of _change differs from
+         * the value passed to the field to prevent this.
+         */
+        if(value !== this.props.value) {
+            this.context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: value
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     render() {

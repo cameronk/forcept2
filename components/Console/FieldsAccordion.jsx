@@ -62,7 +62,7 @@ class FieldsAccordion extends BaseComponent {
                                                 {" "}
                                                 <div className="tiny ui teal label">
                                                     {key}
-                                                    {(thisField.mutable === "false") ? (
+                                                    {(thisField.mutable === false) ? (
                                                         <div className="detail">
                                                             <i className="lock icon"></i>
                                                         </div>

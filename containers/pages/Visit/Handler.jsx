@@ -90,7 +90,7 @@ class VisitHandler extends BaseComponent {
 
         var rootStageID = stageKeys[0];
 
-        __debug("Handling visit.");
+        __debug("render() visit handler");
         __debug(" | visit = ", visit);
         __debug(" | stageID = %s", stageID);
         __debug(" | stages  = ", Object.keys(stages));

@@ -23,23 +23,23 @@ module.exports = {
                     "firstName": {
                         "name": "First name",
                         "type": "text",
-                        "mutable": "false",
+                        "mutable": false,
                         "settings": "",
                         "description": ""
                     },
                     "lastName": {
                         "name": "Last name",
                         "type": "text",
-                        "mutable": "false",
+                        "mutable": false,
                         "settings": "",
                         "description": ""
                     },
                     "birthday": {
                         "name": "Birthday",
                         "type": "date",
-                        "mutable": "false",
+                        "mutable": false,
                         "settings": {
-                            "useBroadMonthSelector": "false"
+                            "useBroadMonthSelector": false
                         },
                         "description": ""
                     },
@@ -57,7 +57,7 @@ module.exports = {
                     "priority": {
                         "name": "Priority",
                         "type": "select",
-                        "mutable": "false",
+                        "mutable": false,
                         "settings": {
                             "options": {
                                 "1452365165801": {

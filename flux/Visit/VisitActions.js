@@ -142,6 +142,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
                  */
                 context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
                 complete(visit);
+                
             });
     }
 }

@@ -8,6 +8,10 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
+
+            /*
+             * Immutable fields in root stage
+             */
             firstName: {
                 type: Sequelize.STRING
             },
@@ -20,21 +24,28 @@ module.exports = {
             photo: {
                 type: Sequelize.TEXT
             },
+            priority: {
+                type: Sequelize.STRING
+            },
+
+            /*
+             * Meta
+             */
             currentVisit: {
                 type: Sequelize.INTEGER
             },
             visits: {
                 type: Sequelize.TEXT
             },
+            concrete: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
             createdBy: {
                 type: Sequelize.INTEGER
             },
             lastModifiedBy: {
                 type: Sequelize.INTEGER
-            },
-            concrete: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: false
             },
             createdAt: {
                 allowNull: false,
@@ -47,6 +58,6 @@ module.exports = {
         });
     },
     down: function(queryInterface, Sequelize) {
-        return queryInterface.dropTable('stage_1');
+        return queryInterface.dropTable('Patients');
     }
 };

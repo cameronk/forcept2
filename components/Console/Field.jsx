@@ -54,7 +54,7 @@ class Field extends BaseComponent {
 
         var props     = this.props,
             { field } = props,
-            mutable   = (field.mutable === true || field.mutable === 'true'),
+            mutable   = (field.mutable === true),
             typeSelectDOM, removeButtonDOM;
 
         if(mutable) {
