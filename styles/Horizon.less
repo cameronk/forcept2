@@ -4,20 +4,36 @@
 
 #Horizon {
 
-    overflow-x: auto;
-    // overflow-y: hidden;
+    overflow-x: visible;
+    overflow-y: visible;
     border-left: none;
     border-right: none;
 
-    .item {
+    & > .item {
 
         border-radius: 0;
-        // padding-bottom: 10px;
-        // border-bottom: 4px solid transparent;
 
         &#Dropdown-MoveStage {
             .icon {
                 margin-left: 0.5rem;
+            }
+            .item {
+                zoom: 1;
+                .label {
+                    float: right;
+                    margin: 0;
+                }
+                &.disabled {
+                    opacity: 1;
+                }
+            }
+            .item:before,
+            .item:after {
+                content: "";
+                display: table;
+            }
+            .item:after {
+                clear:both;
             }
         }
 
@@ -40,7 +56,6 @@
          */
         &.teal {
             color: #444 !important;
-            // border-bottom: 4px solid #00B5AD;
         }
 
     }

@@ -21,12 +21,30 @@ class Horizon extends BaseComponent {
         super(props);
     }
 
+    /**
+     *
+     */
+    componentDidMount() {
+        this.componentDidUpdate();
+    }
+
+    /**
+     *
+     */
+    componentDidUpdate() {
+        // var elem = document.getElementById("Horizon");
+        // if(elem.offsetWidth < elem.scrollWidth) {
+        //
+        // }
+    }
+
     render() {
         return (
             <div id="Horizon" className="attached ui stackable menu">
                 {this.props.children}
             </div>
         );
+
     }
 
 }

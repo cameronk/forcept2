@@ -30,6 +30,17 @@ const messages = defineMessages({
     'pages.stages.stage.heading': {
         id: 'pages.stages.stage.heading',
         defaultMessage: '{name}'
+    },
+    'pages.visit.handler.moveStage.nthStage': {
+        id: 'pages.visit.handler.moveStage.nthStage',
+        defaultMessage: `{
+            index,
+            selectordinal,
+            one {#st}
+            two {#nd}
+            few {#rd}
+            other {#th}
+        }`
     }
 });
 
@@ -251,16 +262,28 @@ class VisitHandler extends BaseComponent {
                                         Save visit
                                     </a>
                                 ), (
-                                    <div id="Dropdown-MoveStage" className="right inline ui dropdown control link item">
+                                    <div id="Dropdown-MoveStage" className="inline ui dropdown control link item">
                                         Move visit {" "} <i className="long right arrow icon"></i>
                                         <div className="text">(choose a stage)</div>
                                         <i className="dropdown icon"></i>
                                         <div className="menu">
-                                            {reverse(stageKeys).map(stageID => {
-                                                var thisStage = stages[stageID];
+                                            {reverse(stageKeys).map(thisStageID => {
+                                                var thisStage = stages[thisStageID];
+                                                var isCurrent = stageID === thisStageID;
                                                 return (
-                                                    <div className="item">
-                                                        {thisStage.name}
+                                                    <div key={thisStageID} className={"item" + (isCurrent ? " disabled" : "")}>
+                                                        {isCurrent ? (
+                                                            <div className="empty circular ui olive label"></div>
+                                                        ) : (
+                                                            <div className="small ui teal label">
+                                                                {props.intl.formatMessage(messages['pages.visit.handler.moveStage.nthStage'], {
+                                                                    index: thisStage.order + 1
+                                                                })}
+                                                            </div>
+                                                        )}
+                                                        {isCurrent ? (
+                                                            <em>{thisStage.name}</em>
+                                                        ) : thisStage.name}
                                                     </div>
                                                 );
                                             })}

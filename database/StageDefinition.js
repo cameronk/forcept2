@@ -132,8 +132,15 @@ export default function UpdateStageDefinition(stage, db) {
 
     db.sequelize.define(
         modelName,
-        Object.assign({}, BaseStageDefinition(stage.get('isRoot') || false, db), fields),
-        Object.assign({}, BaseStageOptions   (stage.get('isRoot') || false, tableName, db))
+        Object.assign(
+            {},
+            BaseStageDefinition(stage.get('isRoot') || false, db),
+            fields
+        ),
+        Object.assign(
+            {},
+            BaseStageOptions(stage.get('isRoot') || false, tableName, db)
+        )
     );
 
 }

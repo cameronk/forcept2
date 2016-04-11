@@ -47,7 +47,7 @@ export default {
                     /*
                      * Create stage-specific table with default columns.
                      */
-                    schema.createTable(tableName, BaseStageDefinition(db)).then(() => {
+                    schema.createTable(tableName, BaseStageDefinition(false, db)).then(() => {
                         __debug("[create]: Created!");
                         callback(null, {
                             id: stageID

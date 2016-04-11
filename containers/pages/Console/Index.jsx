@@ -32,6 +32,10 @@ class Index extends BaseComponent {
         super();
     }
 
+    componentDidMount() {
+        $("#Horizon .ui.dropdown").dropdown();
+    }
+
     _updateTestModel = (evt) => {
         this.context.executeAction(UpdateModelAction, {
             'name': 'test'
@@ -54,6 +58,15 @@ class Index extends BaseComponent {
                     <a className="item" onClick={this._updateTestModel}>
                     Update model name
                     </a>
+                    <div className="ui pointing dropdown link item">
+                        <span className="text">text</span><i className="dropdown icon"></i>
+                        <div className="menu">
+                            <div className="item">Test</div>
+                            <div className="item">Test</div>
+                            <div className="item">Test</div>
+                            <div className="item">Test</div>
+                        </div>
+                    </div>
                 </Horizon>
                 <h1>TestStore::getModel()</h1>
                 <pre>{JSON.stringify(props.testModel, null, '  ')}</pre>
