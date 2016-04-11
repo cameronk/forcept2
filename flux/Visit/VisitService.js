@@ -22,8 +22,7 @@ export default {
             },
 
             /**
-             * Create a stage record in `stages`.
-             * Create a stage-specific table
+             *
              */
             create: function(req, resource, params, body, config, callback) {
 
@@ -42,10 +41,34 @@ export default {
             },
 
             /**
-             * Upsert a Stage.
+             *
              */
             update: function(req, resource, params, body, config, callback) {
 
+                __debug("[update]: Moving visit #%s -> %s", params.id, body.stage);
+
+                (db.Visit).findOne({
+                    where: {
+                        id: params.id
+                    }
+                }).then((visit) => {
+                    if(!visit) {
+                        callback(
+                            BuildError('Requested visit not found.', {
+                                output: {
+                                    message: 'Requested visit not found.'
+                                },
+                                statusCode: HttpStatus.NOT_FOUND
+                            })
+                        );
+                    } else {
+                        visit.set('stage', body.stage);
+                        visit.save()
+                            .then((visit) => {
+                                callback(null, true, null);
+                            });
+                    }
+                });
             }
 
         }

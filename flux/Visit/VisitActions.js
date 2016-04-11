@@ -142,7 +142,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
                  */
                 context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
                 complete(visit);
-                
+
             });
     }
 }
@@ -172,15 +172,6 @@ export function GrabVisitAction(context, payload, done) {
         });
 }
 
-/*
- * Update the stage cache via payload.
- */
-export function UpdateCacheAction(context, payload, done) {
-    // context.dispatch(Actions.VISIT_CACHE_MODIFIED);
-    // context.dispatch(Actions.VISIT_UPDATE_CACHE, payload);
-    done();
-}
-
 /**
  *
  */
@@ -188,7 +179,6 @@ export function SetCurrentTabAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_CURRENT_TAB, payload);
     done();
 }
-
 
 /**
  *
@@ -209,4 +199,38 @@ export function CreatePatientAction(context, payload, done) {
             context.dispatch(Actions.VISIT_SET_CURRENT_TAB, data.id);
             done();
         });
+}
+
+/**
+ *
+ */
+export function SetDestinationAction(context, payload, done) {
+    context.dispatch(Actions.VISIT_SET_DESTINATION, payload.stageID);
+    done();
+}
+
+/**
+ *
+ */
+export function MoveVisitAction(context, { id, destination }, done) {
+
+    __debug("MoveVisitAction");
+
+    if(!id || !destination) {
+        done();
+        return;
+    }
+
+    context.dispatch(Actions.APP_LOADING, true);
+    context.service
+        .update('VisitService')
+        .params({
+            id: id
+        })
+        .body({
+            stage: destination
+        }).end().then(() => {
+            context.dispatch(Actions.APP_LOADING, false);
+            done();
+        })
 }

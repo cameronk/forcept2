@@ -14,7 +14,8 @@ class VisitStore extends BaseStore {
     static storeName = 'VisitStore'
     static handlers = {
         [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
-        [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit'
+        [Actions.VISIT_SET_DESTINATION]: 'handleSetDestination',
+        [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
     }
 
     constructor(dispatcher) {
@@ -25,6 +26,7 @@ class VisitStore extends BaseStore {
     setInitialState() {
         this.handling = false;
         this.tab = null;
+        this.destination = null;
         this.handleClearVisit();
     }
 
@@ -76,11 +78,29 @@ class VisitStore extends BaseStore {
     }
 
     /**
+     *
+     */
+    getDestination() {
+        return this.destination;
+    }
+
+    /**
+     *
+     */
+    handleSetDestination(destination) {
+        if(this.destination !== destination) {
+            this.destination = destination;
+            this.emitChange();
+        }
+    }
+
+    /**
      * H20
      */
     dehydrate() {
         return {
             visit: this.visit,
+            destination: this.destination,
             handling: this.handling,
             tab: this.tab
         };
@@ -88,6 +108,7 @@ class VisitStore extends BaseStore {
 
     rehydrate(state) {
         this.visit = state.visit;
+        this.destination = state.destination;
         this.handling = state.handling;
         this.tab = state.tab
     }

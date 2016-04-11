@@ -18,7 +18,8 @@ import Editor     from '../../../components/Visit/Editor';
 import Overview   from '../../../components/Visit/Overview';
 import { SetCurrentTabAction,
     CreatePatientAction,
-    SaveVisitAction } from '../../../flux/Visit/VisitActions';
+    SaveVisitAction, MoveVisitAction,
+    SetDestinationAction } from '../../../flux/Visit/VisitActions';
 
 import AppStore   from '../../../flux/App/AppStore';
 import StageStore from '../../../flux/Stage/StageStore';
@@ -59,7 +60,13 @@ class VisitHandler extends BaseComponent {
     componentDidUpdate() {
         var moveStage = $("#Dropdown-MoveStage");
         if(moveStage.length) {
-            moveStage.dropdown();
+            moveStage.dropdown({
+                onChange: (val) => {
+                    this.context.executeAction(SetDestinationAction, {
+                        stageID: val
+                    });
+                }
+            });
         }
     }
 
@@ -84,12 +91,12 @@ class VisitHandler extends BaseComponent {
         });
     }
 
-    _moveVisitModal = () => {
-        $("#Modal-MoveVisit")
-            .modal({
-                blurring: false
-            })
-            .modal('show');
+    _moveVisit = () => {
+        var props = this.props;
+        this.context.executeAction(MoveVisitAction, {
+            id: props.visit.hasOwnProperty('id') ? props.visit.id : null,
+            destination: props.destination
+        });
     }
 
     render() {
@@ -252,12 +259,11 @@ class VisitHandler extends BaseComponent {
                             {thisStage.isRoot ? (
                                 <a className="control item" onClick={this._createPatient}>
                                     <i className="plus icon"></i>
-                                    New patient
                                 </a>
                             ) : null}
                             {patientKeys.length > 0 ? [
                                 (
-                                    <a className="control item" onClick={this._saveVisit}>
+                                    <a className="right control item" onClick={this._saveVisit}>
                                         <i className="save icon"></i>
                                         Save visit
                                     </a>
@@ -271,7 +277,7 @@ class VisitHandler extends BaseComponent {
                                                 var thisStage = stages[thisStageID];
                                                 var isCurrent = stageID === thisStageID;
                                                 return (
-                                                    <div key={thisStageID} className={"item" + (isCurrent ? " disabled" : "")}>
+                                                    <div key={thisStageID} data-value={thisStageID} className={"item" + (isCurrent ? " disabled" : "")}>
                                                         {isCurrent ? (
                                                             <div className="empty circular ui olive label"></div>
                                                         ) : (
@@ -290,7 +296,7 @@ class VisitHandler extends BaseComponent {
                                         </div>
                                     </div>
                                 ), (
-                                    <a className="control item">
+                                    <a className={"control item" + (props.destination === null ? " disabled" : "")} disabled={props.destination === null} onClick={this._moveVisit}>
                                         Go
                                         <i className="level up icon"></i>
                                     </a>
@@ -300,11 +306,6 @@ class VisitHandler extends BaseComponent {
                         {stageDOM}
                     </div>
                 );
-
-                // <a className="control item" onClick={this._moveVisitModal}>
-                //     <i className="level up icon"></i>
-                //     Move visit
-                // </a>
 
             } /// end stageID check
 
@@ -350,6 +351,7 @@ VisitHandler = connectToStores(
 
             /// Visit
             visit: visitStore.getVisit(),
+            destination: visitStore.getDestination(),
             tab: visitStore.getCurrentTab(),
         };
 
