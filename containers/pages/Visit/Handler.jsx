@@ -114,6 +114,7 @@ class VisitHandler extends BaseComponent {
         __debug(" | stageID = %s", stageID);
         __debug(" | stages  = ", Object.keys(stages));
         __debug(" | patients = ", patientKeys);
+        __debug(" | recent destination = ", props.recentData);
 
         /*
          * If the current navigateAction is complete...
@@ -141,6 +142,7 @@ class VisitHandler extends BaseComponent {
 
                 __debug("Stages beneath:", stagesBeneath);
 
+
                 /*
                  * Is a visit/patient action executing?
                  */
@@ -158,9 +160,25 @@ class VisitHandler extends BaseComponent {
                 else {
 
                     /*
+                     *
+                     */
+                    if(props.recentData !== null && visit.id === null) {
+                        var stageRecentlyMovedTo = stages[props.recentData.stage];
+                        stageDOM = (
+                            <div className="ui bottom attached segment">
+                                <MessageScaffold
+                                    type="success"
+                                    icon="check mark"
+                                    header="Visit moved!"
+                                    text={(<span><a href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</a></span>)} />
+                            </div>
+                        );
+                    }
+
+                    /*
                      * No patients in this visit.
                      */
-                    if(patientKeys.length === 0) {
+                    else if(patientKeys.length === 0) {
                         stageDOM = (
                             <div className="ui bottom attached segment">
                                 <MessageScaffold
@@ -358,6 +376,7 @@ VisitHandler = connectToStores(
             visit: visitStore.getVisit(),
             isModified: visitStore.isModified(),
             destination: visitStore.getDestination(),
+            recentData: visitStore.getRecentData(),
             tab: visitStore.getCurrentTab(),
         };
 

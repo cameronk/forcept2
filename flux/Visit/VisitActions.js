@@ -113,6 +113,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
             context.dispatch(Actions.APP_LOADING, false);
             done();
         });
+
     };
 
     /*
@@ -146,6 +147,36 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
 
             });
     }
+}
+
+/**
+ *
+ */
+export function MoveVisitAction(context, { id, destination }, done) {
+
+    if(!id || !destination) {
+        done();
+        return;
+    }
+
+    context.dispatch(Actions.APP_LOADING, true);
+    context.service
+        .update('VisitService')
+        .params({
+            id: id
+        })
+        .body({
+            stage: destination
+        }).end().then(() => {
+            context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
+                visit: id,
+                stage: destination
+            });
+            context.dispatch(Actions.VISIT_CLEAR);
+            context.dispatch(Actions.PATIENT_CLEAR_ALL);
+            context.dispatch(Actions.APP_LOADING, false);
+            done();
+        });
 }
 
 /*
@@ -186,6 +217,7 @@ export function SetCurrentTabAction(context, payload, done) {
  */
 export function CreatePatientAction(context, payload, done) {
     context.dispatch(Actions.APP_LOADING, true);
+    context.dispatch(Actions.VISIT_SET_RECENT_DATA, null);
     context.service
         .create('PatientService')
         .end().then(({data}) => {
@@ -208,32 +240,4 @@ export function CreatePatientAction(context, payload, done) {
 export function SetDestinationAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_DESTINATION, payload.stageID);
     done();
-}
-
-/**
- *
- */
-export function MoveVisitAction(context, { id, destination }, done) {
-
-    __debug("MoveVisitAction");
-
-    if(!id || !destination) {
-        done();
-        return;
-    }
-
-    context.dispatch(Actions.APP_LOADING, true);
-    context.service
-        .update('VisitService')
-        .params({
-            id: id
-        })
-        .body({
-            stage: destination
-        }).end().then(() => {
-            context.dispatch(Actions.VISIT_CLEAR);
-            context.dispatch(Actions.PATIENT_CLEAR_ALL);
-            context.dispatch(Actions.APP_LOADING, false);
-            done();
-        })
 }

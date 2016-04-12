@@ -33,6 +33,7 @@ export default keyMirror({
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
     'VISIT_SET_DESTINATION': null,
+    'VISIT_SET_RECENT_DATA': null,
     'VISIT_SET_MODIFIED': null,
     'VISIT_UPDATE_VISIT': null,
     'VISIT_CLEAR': null,

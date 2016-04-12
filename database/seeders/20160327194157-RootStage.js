@@ -15,7 +15,7 @@ module.exports = {
         return queryInterface.bulkInsert('Stages', [
             {
                 id: 1,
-                order: 0,
+                order: 1,
                 name: "Check in",
                 type: "basic",
                 isRoot: true,

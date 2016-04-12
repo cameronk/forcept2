@@ -15,6 +15,7 @@ class VisitStore extends BaseStore {
     static handlers = {
         [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
         [Actions.VISIT_SET_DESTINATION]: 'handleSetDestination',
+        [Actions.VISIT_SET_RECENT_DATA]: 'handleSetRecentData',
         [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
         [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
         [Actions.VISIT_CLEAR]: 'handleClearVisit'
@@ -28,10 +29,18 @@ class VisitStore extends BaseStore {
     }
 
     setInitialState() {
+        this.recentData = null;
         this.handleClearVisit();
     }
 
     // =============================== \\
+
+    /**
+     * Get the current Visit visit.
+     */
+    getVisit() {
+        return this.visit;
+    }
 
     /**
      * Clear the visit.
@@ -40,17 +49,8 @@ class VisitStore extends BaseStore {
         this.tab = null;
         this.modified = false;
         this.destination = null;
-        this.visit = {
-            id: null
-        };
+        this.visit = { id: null };
         this.emitChange();
-    }
-
-    /**
-     * Get the current Visit visit.
-     */
-    getVisit() {
-        return this.visit;
     }
 
     /**
@@ -67,6 +67,30 @@ class VisitStore extends BaseStore {
             this.visit[field] = data[field];
         }
         this.emitChange();
+    }
+
+    // =============================== \\
+
+    /**
+     *
+     */
+    handleSetRecentData(data) {
+        if(data === null) {
+            if(this.recentData !== null) {
+                this.recentData = null;
+                this.emitChange();
+            }
+        } else {
+            this.recentData = data;
+            this.emitChange();
+        }
+    }
+
+    /**
+     *
+     */
+    getRecentData() {
+        return this.recentData;
     }
 
     // =============================== \\
@@ -130,14 +154,16 @@ class VisitStore extends BaseStore {
             visit: this.visit,
             modified: this.modified,
             destination: this.destination,
+            recentData: this.recentData,
             tab: this.tab
         };
     }
 
     rehydrate(state) {
         this.visit = state.visit;
-        this.modified = stage.modified;
+        this.modified = state.modified;
         this.destination = state.destination;
+        this.recentData = state.recentData;
         this.tab = state.tab
     }
 
