@@ -240,7 +240,7 @@ class VisitHandler extends BaseComponent {
                                         </div>
                                         <div className="twelve wide computer eleven wide tablet column">
                                             <Editor
-                                                patient={thisPatient[stageID] || {}}
+                                                patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
                                                 visit={visit}
                                                 stage={thisStage} />
                                         </div>

@@ -33,6 +33,13 @@ class OverviewField extends BaseComponent {
         var valueDOM;
 
         switch(props.type) {
+            case "header":
+                return (
+                    <div className="item grey">
+                        <h5 className="right">{props.name}</h5>
+                    </div>
+                );
+                break;
             case "file":
                 valueDOM = "File";
                 break;

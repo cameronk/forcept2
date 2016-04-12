@@ -60,65 +60,70 @@ class PatientStore extends BaseStore {
         for(var patient in data) {
             __debug(" | patient id #%s", patient);
 
-            var thisPatient = data[patient];
+            if(!isNaN(patient)) {
 
-            /*
-             * If this patient hasn't been added yet...
-             */
-            if(!this.patients.hasOwnProperty(patient)) {
+                var thisPatient = data[patient];
 
-                __debug(" |==> Creating new patient.");
-                this.patients[patient] = thisPatient;
+                /*
+                 * If this patient hasn't been added yet...
+                 */
+                if(!this.patients.hasOwnProperty(patient)) {
 
-            } else {
+                    __debug(" |==> Creating new patient.");
+                    this.patients[patient] = thisPatient;
 
-                for(var stageID in thisPatient) {
+                } else {
 
-                    __debug(" |==> %s", stageID);
+                    for(var stageID in thisPatient) {
 
-                    var updateName = false;
-                    var thisPatientStage = thisPatient[stageID];
+                        __debug(" |==> %s", stageID);
 
-                    /*
-                     * If the patient exists, but not with this stage...
-                     */
-                    if(!this.patients[patient].hasOwnProperty(stageID)) {
+                        var updateName = false;
+                        var thisPatientStage = thisPatient[stageID];
 
-                        __debug(" |--|==> pushed stage: %s", stageID);
-                        this.patients[patient][stageID] = thisPatientStage;
+                        /*
+                         * If the patient exists, but not with this stage...
+                         */
+                        if(!this.patients[patient].hasOwnProperty(stageID)) {
 
-                    }
-
-                    /*
-                     * Otherwise, loop through the fields applied.
-                     */
-                    else {
-
-                        for(var field in thisPatientStage) {
-
-                            __debug(" |--|==> %s = %s", field, thisPatientStage[field]);
-                            this.patients[patient][stageID][field] = thisPatientStage[field];
+                            __debug(" |--|==> pushed stage: %s", stageID);
+                            this.patients[patient][stageID] = thisPatientStage;
 
                         }
 
-                    }
+                        /*
+                         * Otherwise, loop through the fields applied.
+                         */
+                        else {
 
-                    /*
-                     * update fullName as necessary
-                     */
-                    if(this.patients[patient][stageID].hasOwnProperty('fullName')) {
-                        __debug(" |==> Updating name.");
-                        let name = [];
+                            for(var field in thisPatientStage) {
 
-                        if(this.patients[patient][stageID].firstName) name.push(this.patients[patient][stageID].firstName);
-                        if(this.patients[patient][stageID].lastName)  name.push(this.patients[patient][stageID].lastName);
+                                __debug(" |--|==> %s = %s", field, thisPatientStage[field]);
+                                this.patients[patient][stageID][field] = thisPatientStage[field];
 
-                        this.patients[patient][stageID].fullName = name.join(" ");
+                            }
+
+                        }
+
+                        /*
+                         * update fullName as necessary
+                         */
+                        if(this.patients[patient][stageID].hasOwnProperty('fullName')) {
+                            __debug(" |==> Updating name.");
+                            let name = [];
+
+                            if(this.patients[patient][stageID].firstName) name.push(this.patients[patient][stageID].firstName);
+                            if(this.patients[patient][stageID].lastName)  name.push(this.patients[patient][stageID].lastName);
+
+                            this.patients[patient][stageID].fullName = name.join(" ");
+                        }
+
                     }
 
                 }
 
             }
+
         }
 
         this.emitChange();

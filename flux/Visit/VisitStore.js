@@ -46,6 +46,7 @@ class VisitStore extends BaseStore {
      * Clear the visit.
      */
     handleClearVisit() {
+        __debug("Clearing visit");
         this.tab = null;
         this.modified = false;
         this.destination = null;

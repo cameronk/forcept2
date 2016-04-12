@@ -5,6 +5,7 @@
 
 import debug from 'debug';
 
+import Actions from '../actions';
 import StageStore from '../Stage/StageStore';
 import { LoadStagesAction, GrabStageAction, ClearCacheAction } from '../Stage/StageActions';
 import { GrabVisitAction } from '../Visit/VisitActions';
@@ -68,6 +69,9 @@ var RunPageLoadActions = function(context, payload, done) {
         if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
 
             __debug(" - loading visit: %s", payload.params.visitID);
+
+            context.dispatch(Actions.VISIT_CLEAR);
+            context.dispatch(Actions.PATIENT_CLEAR_ALL);
 
             promises.push(
                 context.executeAction(GrabVisitAction, {
