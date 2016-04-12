@@ -13,7 +13,8 @@ class PatientStore extends BaseStore {
 
     static storeName = 'PatientStore'
     static handlers = {
-        [Actions.PATIENT_UPDATE]: 'handleUpdatePatient'
+        [Actions.PATIENT_UPDATE]: 'handleUpdatePatient',
+        [Actions.PATIENT_CLEAR_ALL]: 'handleClearPatients'
     }
 
     constructor(dispatcher) {
@@ -29,7 +30,9 @@ class PatientStore extends BaseStore {
      * Clear out the patients cache.
      */
     handleClearPatients() {
+        __debug("Clearing patients");
         this.patients = {};
+        this.emitChange();
     }
 
     /**

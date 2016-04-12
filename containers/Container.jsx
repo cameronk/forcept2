@@ -20,6 +20,7 @@ const __debug = debug('forcept:containers:Container')
 
 if(process.env.BROWSER) {
     require('../semantic/dist/semantic.css');
+    require('../styles/Global.less');
     require('../styles/Container.less');
 }
 

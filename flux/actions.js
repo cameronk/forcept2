@@ -32,10 +32,14 @@ export default keyMirror({
 
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
-    'VISIT_UPDATE_VISIT': null,
     'VISIT_SET_DESTINATION': null,
+    'VISIT_SET_MODIFIED': null,
+    'VISIT_UPDATE_VISIT': null,
+    'VISIT_CLEAR': null,
 
+    /// Patient
     'PATIENT_UPDATE': null,
+    'PATIENT_CLEAR_ALL': null,
 
     /// Test
     'TEST_PUSH_MODEL': null,

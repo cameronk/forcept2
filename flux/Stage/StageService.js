@@ -37,26 +37,33 @@ export default {
                     fields: ['name', 'type']
                 }).then(stage => {
 
-                    let stageID   = stage.get('id');
-                    let tableName = stage.get('tableName');
-                    let schema    = db.sequelize.getQueryInterface();
+                    var stageID   = stage.get('id');
 
-                    __debug("[create]: Created new stage record with ID: %s", stageID);
-                    __debug("[create]: Now creating stage-specific table: %s", tableName);
+                    stage.set('order', stageID);
+                    stage.save().then(() => {
 
-                    /*
-                     * Create stage-specific table with default columns.
-                     */
-                    schema.createTable(tableName, BaseStageDefinition(false, db)).then(() => {
-                        __debug("[create]: Created!");
-                        callback(null, {
-                            id: stageID
-                        }, null);
-                    }).catch(err => {
-                        __debug("[create]: Error :(");
-                        __debug(err);
-                        callback(err);
+                        let tableName = stage.get('tableName');
+                        let schema    = db.sequelize.getQueryInterface();
+
+                        __debug("[create]: Created new stage record with ID: %s", stageID);
+                        __debug("[create]: Now creating stage-specific table: %s", tableName);
+
+                        /*
+                         * Create stage-specific table with default columns.
+                         */
+                        schema.createTable(tableName, BaseStageDefinition(false, db)).then(() => {
+                            __debug("[create]: Created!");
+                            callback(null, {
+                                id: stageID
+                            }, null);
+                        }).catch(err => {
+                            __debug("[create]: Error :(");
+                            __debug(err);
+                            callback(err);
+                        });
+
                     });
+
                 });
 
             },

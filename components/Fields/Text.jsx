@@ -13,7 +13,6 @@ class TextField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
 
-
     /**
      *
      */

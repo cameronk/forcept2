@@ -10,5 +10,6 @@ const __debug = debug('forcept:flux:Patient:PatientActions');
 
 export function UpdatePatientAction(context, payload, done) {
     context.dispatch(Actions.PATIENT_UPDATE, payload);
+    context.dispatch(Actions.VISIT_SET_MODIFIED, true);
     done();
 }

@@ -109,6 +109,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
 
         Promise.all(promises).then(() => {
             __debug("Promises completed.");
+            context.dispatch(Actions.VISIT_SET_MODIFIED, false);
             context.dispatch(Actions.APP_LOADING, false);
             done();
         });
@@ -230,6 +231,8 @@ export function MoveVisitAction(context, { id, destination }, done) {
         .body({
             stage: destination
         }).end().then(() => {
+            context.dispatch(Actions.VISIT_CLEAR);
+            context.dispatch(Actions.PATIENT_CLEAR_ALL);
             context.dispatch(Actions.APP_LOADING, false);
             done();
         })

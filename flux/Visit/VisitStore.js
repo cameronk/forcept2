@@ -15,8 +15,12 @@ class VisitStore extends BaseStore {
     static handlers = {
         [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
         [Actions.VISIT_SET_DESTINATION]: 'handleSetDestination',
+        [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
         [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
+        [Actions.VISIT_CLEAR]: 'handleClearVisit'
     }
+
+    // =============================== \\
 
     constructor(dispatcher) {
        super(dispatcher);
@@ -24,17 +28,22 @@ class VisitStore extends BaseStore {
     }
 
     setInitialState() {
-        this.handling = false;
-        this.tab = null;
-        this.destination = null;
         this.handleClearVisit();
     }
 
+    // =============================== \\
+
     /**
-     * Clear the Visit visit.
+     * Clear the visit.
      */
     handleClearVisit() {
-        this.visit = {};
+        this.tab = null;
+        this.modified = false;
+        this.destination = null;
+        this.visit = {
+            id: null
+        };
+        this.emitChange();
     }
 
     /**
@@ -60,6 +69,28 @@ class VisitStore extends BaseStore {
         this.emitChange();
     }
 
+    // =============================== \\
+
+    handleSetModified(state) {
+        if(this.modified !== state) {
+            this.modified = state;
+            this.emitChange();
+        }
+    }
+
+    isModified() {
+        return this.modified;
+    }
+
+    // =============================== \\
+
+    /**
+     * Get the current tab.
+     */
+    getCurrentTab() {
+        return this.tab;
+    }
+
     /**
      * Set the current tab.
      */
@@ -70,12 +101,7 @@ class VisitStore extends BaseStore {
         }
     }
 
-    /**
-     * Get the current tab.
-     */
-    getCurrentTab() {
-        return this.tab;
-    }
+    // =============================== \\
 
     /**
      *
@@ -94,22 +120,24 @@ class VisitStore extends BaseStore {
         }
     }
 
+    // =============================== \\
+
     /**
      * H20
      */
     dehydrate() {
         return {
             visit: this.visit,
+            modified: this.modified,
             destination: this.destination,
-            handling: this.handling,
             tab: this.tab
         };
     }
 
     rehydrate(state) {
         this.visit = state.visit;
+        this.modified = stage.modified;
         this.destination = state.destination;
-        this.handling = state.handling;
         this.tab = state.tab
     }
 
