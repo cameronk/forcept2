@@ -110,10 +110,11 @@ class VisitHandler extends BaseComponent {
         var rootStageID = stageKeys[0];
 
         __debug("render() visit handler");
+        __debug(" | current tab = %s", tab);
         __debug(" | visit = ", visit);
         __debug(" | stageID = %s", stageID);
         __debug(" | stages  = ", Object.keys(stages));
-        __debug(" | patients = ", patientKeys);
+        __debug(" | patients = ", patients);
         __debug(" | recent destination = ", props.recentData);
 
         /*
@@ -232,14 +233,14 @@ class VisitHandler extends BaseComponent {
                                             {stagesBeneath.map(stageBeneathID => {
                                                 return (
                                                     <Overview
-                                                        patient={thisPatient[stageBeneathID]}
+                                                        patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
                                                         stage={stages[stageBeneathID]} />
                                                 );
                                             })}
                                         </div>
                                         <div className="twelve wide computer eleven wide tablet column">
                                             <Editor
-                                                patient={thisPatient[stageID]}
+                                                patient={thisPatient[stageID] || {}}
                                                 visit={visit}
                                                 stage={thisStage} />
                                         </div>

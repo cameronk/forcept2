@@ -46,7 +46,7 @@ class Editor extends BaseComponent {
                         key:    fieldID,
                         fieldID: fieldID,
                         field:  thisField,
-                        value:  patient[fieldID] || ""
+                        value:  patient.hasOwnProperty(fieldID) ? patient[fieldID] : ""
                     };
 
                     switch(thisField.type) {

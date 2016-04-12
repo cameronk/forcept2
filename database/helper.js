@@ -46,4 +46,5 @@ module.exports = {
         if(model.toJSON) return model.toJSON();
         else return model;
     }
+    
 };

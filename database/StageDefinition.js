@@ -48,6 +48,12 @@ export function BaseStageDefinition(isRoot, db) {
         };
     } else {
         meta = {
+            id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+            },
             visit: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -126,8 +132,8 @@ export default function UpdateStageDefinition(stage, db) {
      * if this model has not yet been defined
      * (occurs at startup OR during stage creation)
      */
-    if(db.RecordModels.indexOf(modelName) === -1) {
-        db.RecordModels.push(modelName);
+    if(!db.RecordModels.hasOwnProperty(modelName)) {
+        db.RecordModels[modelName] = stage.get('id');
     }
 
     db.sequelize.define(

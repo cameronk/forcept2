@@ -198,7 +198,8 @@ export function GrabVisitAction(context, payload, done) {
                     patients: visit.patients,
                     visit: visit.id
                 }).end().then(({data}) => {
-                    __debug(data);
+                    context.dispatch(Actions.PATIENT_UPDATE, data);
+                    done();
                     return;
                 });
         });

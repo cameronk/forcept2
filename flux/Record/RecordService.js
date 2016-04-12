@@ -4,6 +4,8 @@
  */
 
 import HttpStatus from 'http-status-codes';
+import flatten from 'lodash/flatten';
+import { JsonModel } from '../../database/helper';
 import BuildError from '../../utils/BuildError';
 const __debug = require('debug')('forcept:flux:Record:RecordService')
 
@@ -16,10 +18,11 @@ export default {
              * Read and return records from all stages.
              */
             read: function(req, resource, params, config, callback) {
+                __debug("[read]: ...");
 
                 var promises = [];
 
-                db.RecordModels.map(modelName => {
+                for(let modelName in db.RecordModels) {
                     __debug("[read] => %s", modelName);
 
                     var where = {};
@@ -57,20 +60,36 @@ export default {
                                 __debug("[read] Error while fetching %s", modelName);
                                 __debug(err);
                             })
-                            .then(ret => {
-                                __debug(modelName);
-                                __debug(ret);
-                                return ret;
+                            .then(records => {
+                                __debug("[read] Found %s record(s) in %s", records.length, modelName);
+                                return {
+                                    [db.RecordModels[modelName]]: records
+                                };
                             })
                     );
 
-                });
+                }
 
                 Promise.all(promises).then(data => {
-                    __debug("Got callback: ");
-                    __debug(data);
-                    callback(null, "lol", null);
+
+                    var collapsed = Object.assign(...data);
+                    var patients = {};
+
+                    for(let stageID in collapsed) {
+                        collapsed[stageID].map((record) => {
+                            var patientID = stageID == 1 ? record.get('id') : record.get('patient');
+
+                            if(!patients.hasOwnProperty(patientID)) {
+                                patients[patientID] = {};
+                            }
+
+                            patients[patientID][stageID] = JsonModel(record);
+                        });
+                    }
+
+                    callback(null, patients, null);
                 });
+
             },
 
             /**

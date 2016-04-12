@@ -10,6 +10,7 @@ import upperFirst from 'lodash/upperFirst';
 import without from 'lodash/without';
 import $ from 'jquery';
 
+import MessageScaffold from '../Scaffold/Message';
 import OverviewField from './OverviewField';
 import BaseComponent, { grabContext } from '../Base';
 
@@ -63,13 +64,25 @@ class Overview extends BaseComponent {
     }
 
     render() {
-
         var props = this.props,
             { stage, visit, patient } = props,
             { fields } = stage;
 
         var iterableFields = Object.keys(fields);
         var headerDOM;
+
+        __debug("render() overview for %s", stage.name);
+
+        if(!patient) {
+            return (
+                <div className="ui segment">
+                    <MessageScaffold
+                        type="error"
+                        header="An error occurred."
+                        text="Missing patient information." />
+                </div>
+            );
+        }
 
         if(stage.isRoot) {
             iterableFields = without(iterableFields, 'firstName', 'lastName');

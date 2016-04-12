@@ -63,11 +63,9 @@ __debug("---");
 
     __debug("Database synchronized.");
 
-    db.RecordModels = []; // "Patient"
+    db.RecordModels = {}; // "Patient" => 1
     db.Record  = (function(model) {
-        __debug(this.sequelize.models);
-        __debug(this.RecordModels);
-        if(this.RecordModels.indexOf(model) > -1) {
+        if(this.RecordModels.hasOwnProperty(model)) {
             return this.sequelize.models[model];
         } else {
             throw new Error(`Record ${model} not defined.`);
