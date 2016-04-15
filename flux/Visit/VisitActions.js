@@ -39,7 +39,8 @@ export function RedirectRootAction(context, payload, done) {
 }
 
 /*
- *
+ * Create and/or update a visit record with patient data.
+ * Update records with patient data as necessary.
  */
 export function SaveVisitAction(context, { id, patients, stage }, done) {
 
@@ -117,7 +118,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
     };
 
     /*
-     * If this visit has already been created
+     * If this visit has already been created...
      */
     if(id) {
         __debug("Saving visit ID: %s", id);
@@ -168,7 +169,10 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
  */
 export function MoveVisitAction(context, { id, destination }, done) {
 
+    __debug("Moving visit.");
+
     if(!id || !destination) {
+        __debug("...missing visit ID / destination stage ID. Aborting.");
         done();
         return;
     }
@@ -182,6 +186,7 @@ export function MoveVisitAction(context, { id, destination }, done) {
         .body({
             stage: destination
         }).end().then(() => {
+            __debug("...update complete.");
             context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
                 visit: id,
                 stage: destination

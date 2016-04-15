@@ -85,7 +85,7 @@ class VerticalMenu extends BaseComponent {
                 </div>
             );
 
-            //ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console" 
+            // ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console" 
 
             userItem = (
                 <div className="item">

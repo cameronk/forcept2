@@ -22,12 +22,16 @@ export default {
 
                 var promises = [];
 
+                /*
+                 * Loop through record models and check 
+                 * each table for records for this patient.
+                 */
                 for(let modelName in db.RecordModels) {
                     __debug("[read] => %s", modelName);
 
                     var where = {};
 
-                    /**
+                    /*
                      * Stage is root, use root query structure
                      */
                     if(modelName === "Patient") {
@@ -39,7 +43,7 @@ export default {
                         };
                     }
 
-                    /**
+                    /*
                      * This is some other stage
                      */
                     else {
@@ -70,6 +74,9 @@ export default {
 
                 }
 
+                /*
+                 *
+                 */
                 Promise.all(promises).then(data => {
 
                     var collapsed = Object.assign(...data);
@@ -99,8 +106,8 @@ export default {
                 __debug("[update]: Updating a record => %s", params.model);
                 __debug(body);
                 (db.sequelize.models[params.model]).upsert(body).then(record => {
-                    __debug("[update]: ...done.");
-                    __debug("[update]: response: %s", record);
+                    __debug("[update]: ...done updating record.");
+                    __debug("[update]: | response: %s", record);
                     callback(null, record, null);
                 }).catch(err => {
                     callback(err);

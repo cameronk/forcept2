@@ -63,19 +63,23 @@ export default {
                         );
                     } else {
 
-                        for(var field in body) {
-                            __debug("[update] -> visit.%s = %s", field, body[field]);
-                            visit.set(field, body.field);
+                        /*
+                         * Apply fields passed to body to the Visit record.
+                         */
+                        for(let field in body) {
+                            __debug("[update]: |==> %s = %s", field, body[field]);
+                            visit.set(field, body[field]);
                         }
 
                         visit.save()
                             .then((visit) => {
                                 callback(null, true, null);
                             });
+
                     }
+
                 });
             }
-
         }
     }
 }
