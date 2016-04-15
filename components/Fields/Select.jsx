@@ -9,6 +9,7 @@ import debug from 'debug';
 import $ from 'jquery';
 
 import Label from './Label';
+import MessageScaffold from '../Scaffold/Message';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
 const __debug = debug('forcept:components:Fields:Select');
@@ -81,42 +82,62 @@ class SelectField extends BaseComponent {
 
         var selectDOM, optionsDOM;
 
-        optionsDOM = Object.keys(settings.options).map(optionKey => {
-            var thisOption = settings.options[optionKey];
+        /*
+         * Ensure this field has a defined options property.
+         */
+        if(!settings || !settings.hasOwnProperty("options")) {
             return (
-                <div
-                    className={"item" + (thisOption.value === props.value ? " active" : "")}
-                    key={fieldID + "-" + optionKey}
-                    data-value={thisOption.value}>
-                    {thisOption.value}
+                <div>
+                    <MessageScaffold
+                        type="active error"
+                        icon="warning"
+                        header="An error occurred."
+                        text={`'${field.name}' has no defined options`} />
                 </div>
             );
-        });
+        }
 
-        selectDOM = (
-            <div
-                id={"FieldDropdown-" + fieldID}
-                className={[
-                    "ui",
-                    (settings.searchable || settings.customizable ? "search" : null),
-                    "selection dropdown"
-                ].join(" ")}>
-                    <i className="dropdown icon"></i>
-                    <input type="hidden" name="gender" />
-                    <div className="default text">Select an option for {field.name.toLowerCase()}</div>
-                    <div className="menu">
-                        {optionsDOM}
+        /*
+         *
+         */
+        else {
+            optionsDOM = Object.keys(settings.options).map(optionKey => {
+                var thisOption = settings.options[optionKey];
+                return (
+                    <div
+                        className={"item" + (thisOption.value === props.value ? " active" : "")}
+                        key={fieldID + "-" + optionKey}
+                        data-value={thisOption.value}>
+                        {thisOption.value}
                     </div>
-            </div>
-        );
+                );
+            });
 
-        return (
-            <div className="field">
-                <Label field={field} />
-                {selectDOM}
-            </div>
-        );
+            selectDOM = (
+                <div
+                    id={"FieldDropdown-" + fieldID}
+                    className={[
+                        "ui",
+                        (settings.searchable || settings.customizable ? "search" : null),
+                        "selection dropdown"
+                    ].join(" ")}>
+                        <i className="dropdown icon"></i>
+                        <input type="hidden" name="gender" />
+                        <div className="default text">Select an option for {field.name}</div>
+                        <div className="menu">
+                            {optionsDOM}
+                        </div>
+                </div>
+            );
 
+            return (
+                <div className="field">
+                    <Label field={field} />
+                    {selectDOM}
+                </div>
+            );
+
+        }
     }
 }
 

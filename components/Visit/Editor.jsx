@@ -27,17 +27,19 @@ class Editor extends BaseComponent {
         var props = this.props,
             { stage, visit, patient } = props,
             { fields } = stage,
+            fieldKeys = Object.keys(fields),
             baseFieldProps = {
                 stageID:    stage.id,
                 patientID:  patient.id
             };
 
-        __debug("Render editor for patient:");
+        __debug("render() editor for patient:");
         __debug(patient);
+        __debug(fieldKeys)
 
         return (
             <div className="ui form">
-                {Object.keys(fields).map(fieldID => {
+                {fieldKeys.map(fieldID => {
 
                     var thisField = fields[fieldID],
                         fieldDOM;
