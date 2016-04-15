@@ -121,7 +121,21 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
      */
     if(id) {
         __debug("Saving visit ID: %s", id);
-        complete(context.getStore(VisitStore).getVisit());
+
+        /*
+         * Update the patient array in Visit record.
+         */
+        context.service
+            .update('VisitService')
+            .params({
+                id: id
+            })
+            .body({
+                patients: patientKeys
+            }).end().then(() => {
+                complete(context.getStore(VisitStore).getVisit());
+            });
+
     }
 
     /*

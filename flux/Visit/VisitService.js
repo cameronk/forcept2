@@ -62,7 +62,12 @@ export default {
                             })
                         );
                     } else {
-                        visit.set('stage', body.stage);
+
+                        for(var field in body) {
+                            __debug("[update] -> visit.%s = %s", field, body[field]);
+                            visit.set(field, body.field);
+                        }
+
                         visit.save()
                             .then((visit) => {
                                 callback(null, true, null);

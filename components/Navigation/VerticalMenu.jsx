@@ -54,52 +54,17 @@ class VerticalMenu extends BaseComponent {
 
     render() {
 
-        let { formatMessage } = this.props.intl;
-
         var props = this.props,
             ctx = this.context,
+            { formatMessage } = this.props.intl,
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
-            userItem, stagesItem;
+            stagesItem, userItem;
 
-        /// Show the user area if user is authenticated
+        /*
+         * Show the user area if user is authenticated
+         */
         if(isAuthenticated) {
-
-            var consoleLink,
-                consoleHeirarchy;
-
-            if(ctx.getUser("isAdmin") === true) {
-                consoleLink = (
-                    <NavLink href={"/console"} className="item">
-                        <i className="lock icon"></i> {formatMessage(messages.consoleItem)}
-                    </NavLink>
-                );
-
-                if(ctx.getStore('RouteStore').getCurrentRoute().namespace === "console") {
-                    consoleHeirarchy = (
-                        <div className="sub menu">
-                            <NavLink href={"/console/field-data"} className="item">
-                                <i className="database icon"></i> {formatMessage(messages.consoleFieldDataItem)}
-                            </NavLink>
-                            <NavLink href={"/console/stages"} className="item">
-                                <i className="list icon"></i> {formatMessage(messages.consoleStageItem)}
-                            </NavLink>
-                        </div>
-                    );
-                }
-            }
-
-            userItem = (
-                <div className="item">
-                    <div className="header">{formatMessage(messages.userPronoun)} {"\u2014"} {ctx.getUser("username")}</div>
-                    <div className="menu">
-                        {consoleLink}
-                        {consoleHeirarchy}
-                        <a className="item"><i className="globe icon"></i> {formatMessage(messages.chooseLanguage)}</a>
-                        <NavLink routeName={"logout"} className="item"><i className="sign out icon"></i> {formatMessage(messages.logout)}</NavLink>
-                    </div>
-                </div>
-            );
 
             stagesItem = (
                 <div className="item">
@@ -119,10 +84,43 @@ class VerticalMenu extends BaseComponent {
                     </div>
                 </div>
             );
+
+            //ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console" 
+
+            userItem = (
+                <div className="item">
+                    <div className="header">Header</div>
+                    <div className="menu">
+                        <NavLink key="console" className="item" href="/console">
+                            <i className="lock icon"></i>
+                            {formatMessage(messages.consoleItem)}
+                        </NavLink>
+                        <div className="sub menu">
+                            <NavLink href="/console/field-data" key="field-data" className="item">
+                                <i className="database icon"></i>
+                                {formatMessage(messages.consoleFieldDataItem)}
+                            </NavLink>
+                            <NavLink href="/console/stages" key="stages" className="item">
+                                <i className="list icon"></i>
+                                {formatMessage(messages.consoleStageItem)}
+                            </NavLink>
+                        </div>
+                        <a key="chooseLanguage" className="item">
+                            <i className="globe icon"></i>
+                            {formatMessage(messages.chooseLanguage)}
+                        </a>
+                        <NavLink key="logout" routeName="logout" className="item">
+                            <i className="sign out icon"></i>
+                            {formatMessage(messages.logout)}
+                        </NavLink>
+                    </div>
+                </div>
+            );
+
         }
 
         return (
-            <div id={this.props.id} className={["ui large inverted vertical menu", this.props.className].join(" ")}>
+            <div id={props.id} className={["ui large inverted vertical menu", props.className].join(" ")}>
                 <span className="ui left corner label">
                     <i className={!isAuthenticated ? "sign in icon" : "sign out icon"}></i>
                 </span>
@@ -134,13 +132,6 @@ class VerticalMenu extends BaseComponent {
                         <div className="label">
                             <h2>Forcept</h2>
                         </div>
-                    </div>
-                </div>
-                <div className="item">
-                    <div className="header">Data</div>
-                    <div className="menu">
-                        <div className="item">New visit</div>
-                        <div className="item">Triage</div>
                     </div>
                 </div>
                 {stagesItem}
