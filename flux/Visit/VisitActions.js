@@ -66,7 +66,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
              */
             var patientID = patientKeys[i];
             var thisPatientWritableFields = pick(patients[patientID][stage.id], writableFieldKeys);
-            var metaFields, modelName;
+            var identifierFields, modelName;
 
             __debug(" |==> ID #%s", patientID);
             __debug(" |--|==> fields: %s", JSON.stringify(Object.keys(thisPatientWritableFields)));
@@ -77,33 +77,48 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
              * Also, update the current visit with the new visit's ID.
              */
             if(stage.isRoot) {
+
+                /*
+                 * Identify patient by patient ID alone.
+                 */
                 modelName = "Patient";
-                metaFields = {
+                identifierFields = {
                     id: patientID,
+                };
+
+                /*
+                 * Apply a few extra fields to the patient record.
+                 */
+                thisPatientWritableFields = Object.assign(thisPatientWritableFields, {
                     visits: [visit.id],
                     concrete: true,
                     currentVisit: visit.id
-                };
+                });
+
             } else {
+
+                /*
+                 * Identify patient by matrix [patientID, visitID]
+                 */
                 modelName = stage.tableName;
-                metaFields = {
+                identifierFields = {
                     patient: patientID,
                     visit: visit.id
                 };
+
             }
 
-            var body = Object.assign(thisPatientWritableFields, metaFields);
-
-            __debug(" |--|==> meta: %s", JSON.stringify(metaFields));
-            __debug(" |--|==> body: %s", JSON.stringify(body));
+            __debug(" |--|==> identify:", identifierFields);
+            __debug(" |--|==> body:", thisPatientWritableFields);
 
             promises.push(
                 context.service
                     .update('RecordService')
                     .params({
-                        model: modelName
+                        model: modelName,
+                        identify: identifierFields
                     })
-                    .body( body ).end()
+                    .body( thisPatientWritableFields ).end()
             );
 
         }

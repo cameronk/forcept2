@@ -34,8 +34,24 @@ export function BaseStageDefinition(isRoot, db) {
                     );
                 },
                 set: function(val) {
+
                     var visits = this.getDataValue('visits') || [];
-                    this.setDataValue('visits', ModelHelper.jsonSetter(visits.concat(val)));
+
+                    if(typeof visits === "string") {
+                        if(visits == "[]") {
+                            visits = [];
+                        } else {
+                            visits = ModelHelper.jsonGetter(visits);
+                        }
+                    }
+
+                    val.map(visitID => {
+                        if(visits.indexOf(visitID) == -1) {
+                            visits.push(visitID);
+                        }
+                    });
+
+                    this.setDataValue('visits', ModelHelper.jsonSetter(visits));
                 }
             },
             concrete: {

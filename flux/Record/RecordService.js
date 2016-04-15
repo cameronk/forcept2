@@ -5,6 +5,9 @@
 
 import HttpStatus from 'http-status-codes';
 import flatten from 'lodash/flatten';
+import omitBy from 'lodash/omitBy';
+import isNil from 'lodash/isNil';
+
 import { JsonModel } from '../../database/helper';
 import BuildError from '../../utils/BuildError';
 const __debug = require('debug')('forcept:flux:Record:RecordService')
@@ -23,7 +26,7 @@ export default {
                 var promises = [];
 
                 /*
-                 * Loop through record models and check 
+                 * Loop through record models and check
                  * each table for records for this patient.
                  */
                 for(let modelName in db.RecordModels) {
@@ -90,7 +93,10 @@ export default {
                                 patients[patientID] = {};
                             }
 
-                            patients[patientID][stageID] = JsonModel(record);
+                            /*
+                             * Omit null values from object.
+                             */
+                            patients[patientID][stageID] = omitBy(JsonModel(record), isNil);
                         });
                     }
 
@@ -103,15 +109,38 @@ export default {
              * Upsert a Stage.
              */
             update: function(req, resource, params, body, config, callback) {
-                __debug("[update]: Updating a record => %s", params.model);
-                __debug(body);
-                (db.sequelize.models[params.model]).upsert(body).then(record => {
-                    __debug("[update]: ...done updating record.");
-                    __debug("[update]: | response: %s", record);
-                    callback(null, record, null);
+                __debug("[update]: Updating %s fields on record %s", Object.keys(body).length, params.model);
+
+                var model = db.Record(params.model);
+
+                var complete = (record) => {
+                    for(let field in body) {
+                        record.set(field, body[field]);
+                    }
+                    record.save()
+                        .then(record => {
+                            callback(null, record, null);
+                        })
+                        .catch((err) => {
+                            callback(err);
+                        })
+                };
+
+                model.findOne({
+                    where: params.identify
+                }).then(record => {
+                    if(!record) {
+                        model.create(params.identify)
+                            .then(newRecord => {
+                                complete(newRecord);
+                            });
+                    } else {
+                        complete(record);
+                    }
                 }).catch(err => {
                     callback(err);
                 });
+
             }
         }
     }

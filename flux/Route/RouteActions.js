@@ -53,6 +53,13 @@ var RunPageLoadActions = function(context, payload, done) {
          */
         if(payload.params.hasOwnProperty('stageID')) {
 
+            /*
+             * Clear visit/patient data here instead of under the visitID check
+             * because the latter doesn't fire for new visits.
+             */
+            context.dispatch(Actions.VISIT_CLEAR);
+            context.dispatch(Actions.PATIENT_CLEAR_ALL);
+
             __debug(" - loading stage: %s", payload.params.stageID);
 
             promises.push(
@@ -70,9 +77,6 @@ var RunPageLoadActions = function(context, payload, done) {
 
             __debug(" - loading visit: %s", payload.params.visitID);
 
-            context.dispatch(Actions.VISIT_CLEAR);
-            context.dispatch(Actions.PATIENT_CLEAR_ALL);
-
             promises.push(
                 context.executeAction(GrabVisitAction, {
                     id: payload.params.visitID
@@ -89,6 +93,9 @@ var RunPageLoadActions = function(context, payload, done) {
      * Run all promises before returning done()
      */
     Promise.all(promises).then(() => {
+        done();
+    }).catch(err => {
+        // TODO: dispatch error and continue loading
         done();
     });
 
