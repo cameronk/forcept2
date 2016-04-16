@@ -43,24 +43,27 @@ class TextField extends BaseComponent {
 
         var inputDOM;
 
-        if(props.type !== "textarea") {
-            inputDOM = (
-                <input
-                    type={props.type || "text"}
-                    autoComplete="off"
-                    placeholder={field.name + " goes here"}
-                    value={value}
-                    onChange={this._change} />
-            );
-        } else {
-            inputDOM = (
-                <textarea
-                    autoComplete="off"
-                    placeholder={field.name + " goes here"}
-                    value={value}
-                    onChange={this._change}>
-                </textarea>
-            )
+        switch(props.type) {
+            case "textarea":
+                inputDOM = (
+                    <textarea
+                        autoComplete="off"
+                        placeholder={field.name + " goes here"}
+                        value={value}
+                        onChange={this._change}>
+                    </textarea>
+                );
+                break;
+            default:
+                inputDOM = (
+                    <input
+                        type={props.type || "text"}
+                        autoComplete="off"
+                        placeholder={field.name + " goes here"}
+                        value={value}
+                        onChange={this._change} />
+                );
+                break;
         }
 
         return (

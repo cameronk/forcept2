@@ -1,16 +1,24 @@
 /**
  * forcept - components/Fields/Date.jsx
  * @author Azuru Technology
+ *
+ * https://www.npmjs.com/package/react-date-picker
  */
 
 import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
 import debug from 'debug';
+import DatePicker from 'react-date-picker';
 
 import Label from './Label';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
 const __debug = debug('forcept:components:Fields:Date');
+
+if(process.env.BROWSER) {
+    require('react-date-picker/index.css');
+    require('../../styles/DatePicker.less');
+}
 
 class DateField extends BaseComponent {
 
@@ -40,16 +48,13 @@ class DateField extends BaseComponent {
      *
      *
      */
-    _change = (evt) => {
+    _change = (date, moment) => {
         var { patientID, stageID, fieldID } = this.props;
-
-        __debug("Current val: %s", this.props.value);
-        __debug("New val    : %s", evt.target.value);
 
         this.context.executeAction(UpdatePatientAction, {
             [patientID]: {
                 [stageID]: {
-                    [fieldID]: this.dashesToSlashes(evt.target.value)
+                    [fieldID]: date
                 }
             }
         });
@@ -67,10 +72,8 @@ class DateField extends BaseComponent {
         var inputDOM;
 
         inputDOM = (
-            <input type="date"
-                autoComplete="off"
-                defaultValue={this.slashesToDashes(value)}
-                placeholder={field.name + " goes here"}
+            <DatePicker
+                date={value}
                 onChange={this._change} />
         );
 

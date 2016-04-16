@@ -57,6 +57,7 @@
     "prompt": "^1.0.0",
     "react": "^0.14.0",
     "react-addons-linked-state-mixin": "^0.14.7",
+    "react-date-picker": "^4.0.10",
     "react-dom": "^0.14.0",
     "react-intl": "^2.0.0-rc-1",
     "react-mixin": "^2.0.2",

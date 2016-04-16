@@ -28,6 +28,7 @@ class SelectField extends BaseComponent {
                 allowAdditions: (props.field.settings.customizable || false),
                 onChange: this._change
             });
+        this.componentDidUpdate();
     }
 
     /**
