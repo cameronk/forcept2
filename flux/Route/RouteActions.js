@@ -26,6 +26,8 @@ var RunPageLoadActions = function(context, payload, done) {
     /*
      * Clear stage cache every page load.
      */
+    context.dispatch(Actions.APP_FLASH, false);
+    context.dispatch(Actions.VISIT_SET_RECENT_DATA, null);
     // promises.push(
         context.executeAction(ClearCacheAction);
     // );

@@ -12,7 +12,8 @@ import reverse from 'lodash/reverse';
 
 import BaseComponent, { grabContext } from '../../../components/Base';
 import { BuildDOMClass } from '../../../utils/CSSClassHelper';
-import MessageScaffold from '../../../components/Scaffold/Message';
+import MessageScaffold   from '../../../components/Scaffold/Message';
+import NavLink    from '../../../components/Navigation/NavLink';
 import Horizon    from '../../../components/Meta/Horizon';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Editor     from '../../../components/Visit/Editor';
@@ -171,7 +172,7 @@ class VisitHandler extends BaseComponent {
                                     type="success"
                                     icon="check mark"
                                     header="Visit moved!"
-                                    text={(<span><a href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</a></span>)} />
+                                    text={(<NavLink href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</NavLink>)} />
                             </div>
                         );
                     }
@@ -230,6 +231,13 @@ class VisitHandler extends BaseComponent {
                                 <div className="ui stackable grid">
                                     <div className="row">
                                         <div className="four wide computer five wide tablet expanded column">
+                                            {(() => {
+                                                if(props.flash) {
+                                                    return (
+                                                        <MessageScaffold {...props.flash} />
+                                                    );
+                                                }
+                                            })()}
                                             {stagesBeneath.map(stageBeneathID => {
                                                 return (
                                                     <Overview
@@ -365,6 +373,7 @@ VisitHandler = connectToStores(
             /// Meta
             isNavigateComplete: routeStore.isNavigateComplete(),
             isLoading: appStore.isLoading(),
+            flash: appStore.getFlash(),
 
             /// All stages
             stages: stageStore.getStages(),

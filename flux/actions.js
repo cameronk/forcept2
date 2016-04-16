@@ -11,8 +11,7 @@ export default keyMirror({
 
     /// Application
     'APP_LOADING': null,
-    'APP_SET_LOADING_MODE': null,
-    'APP_SET_LOADING_CONTAINER': null,
+    'APP_FLASH': null,
 
     /// Authentication
     'AUTH_LOGOUT': null,

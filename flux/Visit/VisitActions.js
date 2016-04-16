@@ -126,6 +126,12 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
         Promise.all(promises).then(() => {
             __debug("Promises completed.");
             context.dispatch(Actions.VISIT_SET_MODIFIED, false);
+            context.dispatch(Actions.APP_FLASH, {
+                className: "small",
+                type: "success",
+                icon: "check mark",
+                header: "Visit saved."
+            });
             context.dispatch(Actions.APP_LOADING, false);
             done();
         });

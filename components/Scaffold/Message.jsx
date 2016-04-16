@@ -7,6 +7,13 @@ import React, { PropTypes } from 'react';
 import BaseComponent from '../Base';
 import { omit } from "lodash";
 
+/**
+ * Properties:
+ * - type
+ * - icon
+ * - header
+ * - text
+ */
 class MessageScaffold extends BaseComponent {
 
     render() {

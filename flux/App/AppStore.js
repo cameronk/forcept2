@@ -13,8 +13,7 @@ class AppStore extends BaseStore {
     static handlers  = {
         [Actions.NAVIGATE_SUCCESS]: 'handlePageTitle',
         [Actions.APP_LOADING]: 'handleLoading',
-        [Actions.APP_SET_LOADING_MODE]: 'handleSetLoadingMode',
-        [Actions.APP_SET_LOADING_CONTAINER]: 'handleSetLoadingMode'
+        [Actions.APP_FLASH]: 'handleFlash',
     }
 
     constructor(dispatcher) {
@@ -29,11 +28,12 @@ class AppStore extends BaseStore {
             defaultMessage: "Loading..."
         };
         this.loading = false;
-        this.loadingMode = "default";
-        this.loadingContainer = "#Handler";
+        this.flash   = false;
         this.req   = {};
         this.route = {};
     }
+
+    // =============================== \\
 
     /*
      *
@@ -52,36 +52,33 @@ class AppStore extends BaseStore {
         }
     }
 
+    // =============================== \\
+
     /*
-     * Set the current loading mode.
+     *
      */
-    handleSetLoadingMode(mode) {
-        if(["default", "container"].indexOf(mode) > -1) {
-            this.loadingMode = mode;
-            this.emitChange();
+    getFlash() {
+        return this.flash;
+    }
+
+    /*
+     *
+     */
+    handleFlash(flash) {
+        if(typeof flash === "boolean") {
+            if(this.flash !== flash) {
+                this.flash = flash;
+                this.emitChange();
+            }
+        } else {
+            if(typeof flash === "object") {
+                this.flash = flash;
+                this.emitChange();
+            }
         }
     }
 
-    /*
-     * Get the current loading mode.
-     */
-    getLoadingMode() {
-        return this.loadingMode;
-    }
-
-    /*
-     * Set the loading container.
-     */
-    setLoadingContainer(container) {
-        this.loadingContainer = container;
-    }
-
-    /*
-     * get the loading container
-     */
-    getLoadingContainer() {
-        return this.loadingContainer;
-    }
+    // =============================== \\
 
     /*
      * Update current page title.
@@ -103,18 +100,22 @@ class AppStore extends BaseStore {
         return this.pageTitle;
     }
 
+    // =============================== \\
+
     /*
      * H20
      */
     dehydrate() {
         return {
             pageTitle: this.pageTitle,
-            loadingMode: this.loadingMode
+            loading: this.loading,
+            flash: this.flash
         };
     }
     rehydrate(state) {
         this.pageTitle = state.pageTitle;
-        this.loadingMode = state.loadingMode;
+        this.loading = state.loading;
+        this.flash = state.flash;
     }
 }
 
