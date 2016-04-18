@@ -7,7 +7,9 @@ import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
 import debug from 'debug';
 import $ from 'jquery';
+import difference from 'lodash/difference';
 
+import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import Label from './Label';
 import MessageScaffold from '../Scaffold/Message';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
@@ -26,7 +28,8 @@ class SelectField extends BaseComponent {
         $("#FieldDropdown-" + props.fieldID)
             .dropdown({
                 allowAdditions: (props.field.settings.customizable || false),
-                onChange: this._change
+                onChange: this._change("change"),
+                onRemove: this._change("remove"),
             });
         this.componentDidUpdate();
     }
@@ -56,24 +59,55 @@ class SelectField extends BaseComponent {
     /**
      *
      */
-    _change = (value) => {
-        var { patientID, stageID, fieldID } = this.props;
+    _change = (type) => {
 
-        /*
-         * _change() fires when using Semantic's 'set selected',
-         * so we get cascading updates during tab changes.
-         * Check to make sure the value of _change differs from
-         * the value passed to the field to prevent this.
-         */
-        if(value !== this.props.value) {
-            this.context.executeAction(UpdatePatientAction, {
-                [patientID]: {
-                    [stageID]: {
-                        [fieldID]: value
+        return (value) => {
+            var { patientID, stageID, fieldID } = this.props;
+
+            var bump = (val) => {
+                this.context.executeAction(UpdatePatientAction, {
+                    [patientID]: {
+                        [stageID]: {
+                            [fieldID]: val
+                        }
                     }
+                })
+            };
+
+            /*
+             * Does this field allow multiple entries?
+             */
+            if(this.props.field.settings.multiple) {
+                value = value.split(",");
+
+                if(type === "remove") {
+                    bump(value);
+                } else {
+
+                    /*
+                     * Check to see if we have new values.
+                     */
+                    if(difference(value, this.props.value).length > 0) {
+                        bump(value);
+                    }
+
                 }
-            })
+
+            } else {
+
+                /*
+                 * _change() fires when using Semantic's 'set selected',
+                 * so we get cascading updates during tab changes.
+                 * Check to make sure the value of _change differs from
+                 * the value passed to the field to prevent this.
+                 */
+                if(value !== this.props.value) {
+                    bump();
+                }
+
+            }
         }
+
     }
 
     render() {
@@ -117,11 +151,11 @@ class SelectField extends BaseComponent {
             selectDOM = (
                 <div
                     id={"FieldDropdown-" + fieldID}
-                    className={[
-                        "ui",
-                        (settings.searchable || settings.customizable ? "search" : null),
-                        "selection dropdown"
-                    ].join(" ")}>
+                    className={BuildDOMClass("ui", {
+                        "search": settings.searchable,
+                        "multiple": settings.multiple,
+                        "selection dropdown": true,
+                    })}>
                         <i className="dropdown icon"></i>
                         <input type="hidden" name="gender" />
                         <div className="default text">Select an option for {field.name}</div>

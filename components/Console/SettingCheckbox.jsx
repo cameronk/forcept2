@@ -35,9 +35,9 @@ class SettingCheckbox extends BaseComponent {
                 });
             }
 
-            if(props.hasOwnProperty('imply')) {
+            if(props.hasOwnProperty('imply') && value === true) {
                 props.imply.map(setting => {
-                    implications[setting] = value;
+                    implications[setting] = true;
                 });
             }
 

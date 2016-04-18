@@ -78,29 +78,32 @@ class FieldSettings extends BaseComponent {
                 );
                 break;
             case "select":
-            case "multiselect":
-                var settingsDOM;
-                if(type === "select") {
-                    settingsDOM = (
-                        <div className="Controls">
-                            {settingsHeader}
-                            <SettingCheckbox
-                                id="FieldSettings-customizable"
-                                label="Allow custom field data"
-                                field={props._key}
-                                checked={settings.customizable || false}
-                                setting="customizable"
-                                imply={["searchable"]} />
-                            <SettingCheckbox
-                                id="FieldSettings-searchable"
-                                label="Enable searching through options"
-                                field={props._key}
-                                checked={settings.searchable || false}
-                                disabled={settings.customizable === true}
-                                setting="searchable" />
-                        </div>
-                    )
-                }
+                var settingsDOM = (
+                    <div className="Controls">
+                        {settingsHeader}
+                        <SettingCheckbox
+                            id="FieldSettings-multiple"
+                            label="Allow multiple selections"
+                            field={props._key}
+                            checked={settings.multiple || false}
+                            setting="multiple"
+                            imply={["searchable"]} />
+                        <SettingCheckbox
+                            id="FieldSettings-customizable"
+                            label="Allow custom field data"
+                            field={props._key}
+                            checked={settings.customizable || false}
+                            setting="customizable"
+                            imply={["searchable"]} />
+                        <SettingCheckbox
+                            id="FieldSettings-searchable"
+                            label="Enable searching through options"
+                            field={props._key}
+                            checked={settings.searchable || false}
+                            disabled={settings.customizable || settings.multiple}
+                            setting="searchable" />
+                    </div>
+                );
                 return (
                     <div className="FieldSettings">
                         {settingsDOM}
