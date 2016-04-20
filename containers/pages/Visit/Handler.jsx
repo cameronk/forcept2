@@ -238,10 +238,11 @@ class VisitHandler extends BaseComponent {
                                                     );
                                                 }
                                             })()}
-                                            {stagesBeneath.map(stageBeneathID => {
+                                            {stagesBeneath.map((stageBeneathID, index) => {
                                                 return (
                                                     <Overview
                                                         key={stageBeneathID}
+                                                        isLast={(index === (stagesBeneath.length - 1))}
                                                         patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
                                                         stage={stages[stageBeneathID]} />
                                                 );

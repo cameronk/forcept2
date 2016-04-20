@@ -3,11 +3,23 @@
  *
  */
 
-export function BuildDOMClass(baseString, classes={}) {
-    for(var key in classes) {
-        if(classes[key] === true) {
-            baseString += (" " + key);
+export function BuildDOMClass(...props) {
+    var baseString = "";
+
+    props.forEach((prop) => {
+        switch(typeof prop) {
+            case "string":
+                baseString += (" " + prop);
+                break;
+            case "object":
+                for(var key in prop) {
+                    if(prop[key] === true) {
+                        baseString += (" " + key);
+                    }
+                }
+                break;
         }
-    }
-    return baseString;
+    });
+
+    return baseString.trim();
 }

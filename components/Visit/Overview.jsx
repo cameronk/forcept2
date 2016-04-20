@@ -10,6 +10,7 @@ import upperFirst from 'lodash/upperFirst';
 import without from 'lodash/without';
 import $ from 'jquery';
 
+import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import MessageScaffold from '../Scaffold/Message';
 import OverviewField from './OverviewField';
 import BaseComponent, { grabContext } from '../Base';
@@ -95,13 +96,14 @@ class Overview extends BaseComponent {
             );
         } else {
             headerDOM = (
-                <div className="top attached ui header">
-                    <div className="content">
-                        <div className="ui sub header">{stage.name || "Untitled stage"}</div>
-                    </div>
+                <div className="top attached ui header" onClick={this._toggleVisibility}>
+                    <div className="content">{stage.name || "Untitled stage"}</div>
+                    <i className={"large right fitted chevron icon" + (this.state.visible ? " clockwise rotated" : "")}></i>
                 </div>
             );
         }
+
+        var hasAValue = false;
 
         return (
             <div className={"VisitOverview" + (!this.state.visible ? " collapsed" : "")}>
@@ -111,8 +113,8 @@ class Overview extends BaseComponent {
                         {iterableFields.map(field => {
                             var thisField = fields[field];
                             var thisValue = patient[field] || "";
-
                             if(this.state.checklist === true || !this.isEmpty(thisValue)) {
+                                hasAValue = true;
                                 return (
                                     <OverviewField
                                         key={field}
@@ -121,11 +123,22 @@ class Overview extends BaseComponent {
                                         value={thisValue} />
                                 );
                             }
-
                         })}
+                        {() => {
+                            if(!hasAValue) {
+                                return (
+                                    <div className="item">
+                                        <i className="red remove circle icon"></i>
+                                        <div className="content">
+                                            <span className="header">No data available.</span>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        }()}
                     </div>
                 </div>
-                <div className="bottom attached ui segment">
+                <div className={BuildDOMClass({ "bottom": props.isLast === true }, "attached secondary ui segment Forcept-OverviewSettings")}>
                     <div className="ui dropdown">
                         <i className="setting icon"></i>
                         <div className="menu">
