@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
 
 import Label from './Label';
+import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 
 class TextField extends BaseComponent {
@@ -62,8 +63,9 @@ class TextField extends BaseComponent {
                 );
                 break;
             case "number":
+                var hasUnit = (field.settings.unit && field.settings.unit.length > 0);
                 inputDOM = (
-                    <div className="ui right labeled input">
+                    <div className={BuildDOMClass("ui", { "right labeled": hasUnit }, "input")}>
                         <input
                             type="number"
                             autoComplete="off"
@@ -71,7 +73,7 @@ class TextField extends BaseComponent {
                             value={value}
                             onChange={this._change} />
                         {() => {
-                            if(field.settings.unit) {
+                            if(hasUnit) {
                                 return (
                                     <div className="ui basic label">
                                         {field.settings.unit}
