@@ -26,7 +26,9 @@ class Field extends BaseComponent {
     /*
      *
      */
-    shouldComponentUpdate = () => {}
+    shouldComponentUpdate = () => {
+        return true;
+    }
 
     componentDidMount() {
         $(".StageField .ui.dropdown")

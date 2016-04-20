@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/Field.jsx
+ * forcept - components/Console/Setting/Select.jsx
  * @author Azuru Technology
  */
 
@@ -8,11 +8,11 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import $ from 'jquery';
 
-import StageStore from '../../flux/Stage/StageStore';
-import { UpdateCacheAction } from '../../flux/Stage/StageActions';
-import BaseComponent, { grabContext } from '../Base';
+import StageStore from '../../../flux/Stage/StageStore';
+import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
+import BaseComponent, { grabContext } from '../../Base';
 
-const __debug = debug('forcept:components:Console:SettingSelect');
+const __debug = debug('forcept:components:Console:Setting:Select');
 
 class SettingSelect extends BaseComponent {
 

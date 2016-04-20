@@ -61,6 +61,27 @@ class TextField extends BaseComponent {
                     </textarea>
                 );
                 break;
+            case "number":
+                inputDOM = (
+                    <div className="ui right labeled input">
+                        <input
+                            type="number"
+                            autoComplete="off"
+                            placeholder={field.name + " goes here"}
+                            value={value}
+                            onChange={this._change} />
+                        {() => {
+                            if(field.settings.unit) {
+                                return (
+                                    <div className="ui basic label">
+                                        {field.settings.unit}
+                                    </div>
+                                );
+                            }
+                        }()}
+                    </div>
+                );
+                break;
             default:
                 inputDOM = (
                     <input

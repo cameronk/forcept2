@@ -10,8 +10,9 @@ import isEqual from 'lodash/isEqual';
 
 import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import OptionList from './OptionList';
-import SettingCheckbox from './SettingCheckbox';
-import SettingSelect from './SettingSelect';
+import SettingText      from './Setting/Text';
+import SettingCheckbox  from './Setting/Checkbox';
+import SettingSelect    from './Setting/Select';
 import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Console:FieldSettings');
@@ -52,7 +53,6 @@ class FieldSettings extends BaseComponent {
         switch(type) {
             case "text":
 			case "textarea":
-			case "number":
 			case "yesno":
 			case "header":
 			case "pharmacy":
@@ -61,6 +61,20 @@ class FieldSettings extends BaseComponent {
                         <div className="header">
                             No configuration is required for {type} fields.
                         </div>
+                    </div>
+                );
+                break;
+			case "number":
+                return (
+                    <div className="NumberSettings">
+                        {settingsHeader}
+                        <SettingText
+                            id="NumberSettings-unit"
+                            label="Unit of measurement"
+                            placeholder="Example: meters, seconds"
+                            field={props._key}
+                            setting="unit"
+                            value={settings.unit || ""} />
                     </div>
                 );
                 break;

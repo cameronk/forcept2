@@ -157,6 +157,10 @@ class StageStore extends BaseStore {
                                     /// Loop through settings if we've already stored them
                                     if(prop === "settings" && this.cache.fields[f].hasOwnProperty('settings')) {
 
+                                        if(!this.cache.fields[f].hasOwnProperty('settings') || typeof this.cache.fields[f].settings !== "object") {
+                                            this.cache.fields[f].settings = {};
+                                        }
+
                                         __debug(" |--|==> %s", prop);
 
                                         /// If the passed settings are null, reset settings object
