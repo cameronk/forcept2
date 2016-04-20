@@ -1,8 +1,6 @@
 /**
  *
  */
-
-
 .VisitOverview {
 
     /*
@@ -26,6 +24,20 @@
         }
     }
 
+    &:last-child {
+
+        .top.attached.segment, .top.attached.header {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        &.collapsed {
+            .top.attached.segment, .top.attached.header {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+        }
+    }
     &:last-child.collapsed {
         .top.attached.segment, .top.attached.header {
             border-bottom-left-radius: 4px;
@@ -45,6 +57,15 @@
                 padding-bottom: 10px;
                 padding-left: 14px;
                 padding-right: 14px;
+            }
+            ul {
+                padding: 0;
+                margin: 0;
+                margin-top: 5px;
+                margin-left: -5px;
+                li {
+                    padding-left: 8px;
+                }
             }
         }
 

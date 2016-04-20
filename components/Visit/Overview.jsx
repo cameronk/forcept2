@@ -120,6 +120,7 @@ class Overview extends BaseComponent {
                                     <OverviewField
                                         key={field}
                                         type={thisField.type}
+                                        settings={thisField.settings || null}
                                         name={thisField.name}
                                         value={thisValue} />
                                 );

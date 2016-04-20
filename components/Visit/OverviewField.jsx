@@ -26,13 +26,27 @@ class OverviewField extends BaseComponent {
 
     render() {
 
-        var { props } = this;
-        var { value } = props;
-
-        var iconClass = ((value && value.length > 0) ? "green check mark" : "red close");
-        var valueDOM;
+        var { props } = this,
+            { value } = props,
+            iconClass = ((value && value.length > 0) ? "green check mark" : "red close"),
+            valueDOM;
 
         switch(props.type) {
+            case "select":
+                if(props.settings && props.settings.multiple) {
+                    valueDOM = (
+                        <ul>
+                            {value.split(',').map((item) => {
+                                return (
+                                    <li>{item}</li>
+                                );
+                            })}
+                        </ul>
+                    );
+                } else {
+                    valueDOM = value.toString();
+                }
+                break;
             case "header":
                 return (
                     <div className="item grey">

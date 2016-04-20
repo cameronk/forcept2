@@ -48,8 +48,8 @@ class SelectField extends BaseComponent {
     componentDidUpdate() {
         var { props } = this;
         if(props.hasOwnProperty('value') && props.value.length > 0) {
-            $("#FieldDropdown-" + this.props.fieldID)
-                .dropdown('set selected', this.props.value);
+            // $("#FieldDropdown-" + this.props.fieldID)
+                // .dropdown('set selected', this.props.value.split(','));
         } else {
             $("#FieldDropdown-" + this.props.fieldID)
                 .dropdown('clear');
@@ -69,7 +69,7 @@ class SelectField extends BaseComponent {
                 this.context.executeAction(UpdatePatientAction, {
                     [patientID]: {
                         [stageID]: {
-                            [fieldID]: val
+                            [fieldID]: val.toString()
                         }
                     }
                 })
@@ -106,7 +106,7 @@ class SelectField extends BaseComponent {
                  * the value passed to the field to prevent this.
                  */
                 if(value !== this.props.value) {
-                    bump();
+                    bump(value);
                 }
 
             }
