@@ -11,6 +11,7 @@ import without from 'lodash/without';
 import $ from 'jquery';
 
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
+import { SetOverviewModeAction } from '../../flux/Visit/VisitActions';
 import MessageScaffold from '../Scaffold/Message';
 import OverviewField from './OverviewField';
 import BaseComponent, { grabContext } from '../Base';
@@ -23,13 +24,12 @@ if(process.env.BROWSER) {
 
 class Overview extends BaseComponent {
 
-    static contextTypes = grabContext()
+    static contextTypes = grabContext(['executeAction'])
 
     constructor() {
         super();
         this.state = {
             visible: true,
-            checklist: true
         };
     }
 
@@ -44,8 +44,9 @@ class Overview extends BaseComponent {
     }
 
     _toggleChecklist = (evt) => {
-        this.setState({
-            checklist: !this.state.checklist
+        var { props } = this;
+        this.context.executeAction(SetOverviewModeAction, {
+            [props.stage.id]: (props.mode === "checklist" ? "compact" : "checklist")
         });
     }
 
@@ -113,7 +114,7 @@ class Overview extends BaseComponent {
                         {iterableFields.map(field => {
                             var thisField = fields[field];
                             var thisValue = patient[field] || "";
-                            if(this.state.checklist === true || !this.isEmpty(thisValue)) {
+                            if(props.mode === "checklist" || !this.isEmpty(thisValue)) {
                                 hasAValue = true;
                                 return (
                                     <OverviewField
@@ -144,7 +145,7 @@ class Overview extends BaseComponent {
                         <div className="menu">
                             <div className="header">Settings</div>
                             <div className="item" onClick={this._toggleChecklist}>
-                                {this.state.checklist ? [
+                                {props.mode === "checklist" ? [
                                     (<i key="icon" className="ui hide icon"></i>),
                                     (<span key="msg">Use compact mode</span>)
                                 ] : [

@@ -16,7 +16,7 @@ class Label extends BaseComponent {
             ) : null;
 
         return (
-            <label>{field.name}{description}</label>
+            <label>{field.name || "Untitled field"}{description}</label>
         );
     }
 }

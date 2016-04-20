@@ -36,7 +36,7 @@ class OverviewField extends BaseComponent {
             case "header":
                 return (
                     <div className="item grey">
-                        <h5 className="right">{props.name}</h5>
+                        <h5 className="right">{props.name || "Untitled header"}</h5>
                     </div>
                 );
                 break;
@@ -52,7 +52,7 @@ class OverviewField extends BaseComponent {
             <div className="item">
                 <i className={iconClass + " icon"}></i>
                 <div className="content">
-                    <span className="header">{upperFirst(props.name)}</span>
+                    <span className="header">{upperFirst(props.name || "Untitled field")}</span>
                     <div className="description">{valueDOM}</div>
                 </div>
             </div>

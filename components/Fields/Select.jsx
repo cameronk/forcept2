@@ -87,7 +87,7 @@ class SelectField extends BaseComponent {
                     __debug(value);
                     __debug(this.props.value);
                     __debug(difference(value, this.props.value));
-                    
+
                     /*
                      * Check to see if we have new values.
                      */
@@ -162,7 +162,7 @@ class SelectField extends BaseComponent {
                     })}>
                         <i className="dropdown icon"></i>
                         <input type="hidden" name="gender" />
-                        <div className="default text">Select an option for {field.name}</div>
+                        <div className="default text">Select an option for {field.name || "untitled field"}</div>
                         <div className="menu">
                             {optionsDOM}
                         </div>

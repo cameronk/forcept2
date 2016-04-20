@@ -242,6 +242,7 @@ class VisitHandler extends BaseComponent {
                                                 return (
                                                     <Overview
                                                         key={stageBeneathID}
+                                                        mode={props.overviewModes[stageBeneathID] || "checklist"}
                                                         isLast={(index === (stagesBeneath.length - 1))}
                                                         patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
                                                         stage={stages[stageBeneathID]} />
@@ -405,6 +406,7 @@ VisitHandler = connectToStores(
 
             /// Visit
             visit: visitStore.getVisit(),
+            overviewModes: visitStore.getOverviewModes(),
             isModified: visitStore.isModified(),
             destination: visitStore.getDestination(),
             recentData: visitStore.getRecentData(),

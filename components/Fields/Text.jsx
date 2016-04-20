@@ -56,7 +56,7 @@ class TextField extends BaseComponent {
                 inputDOM = (
                     <textarea
                         autoComplete="off"
-                        placeholder={field.name + " goes here"}
+                        placeholder={(field.name || "Untitled field") + " goes here"}
                         value={value}
                         onChange={this._change}>
                     </textarea>
@@ -69,7 +69,7 @@ class TextField extends BaseComponent {
                         <input
                             type="number"
                             autoComplete="off"
-                            placeholder={field.name + " goes here"}
+                            placeholder={(field.name || "Untitled field") + " goes here"}
                             value={value}
                             onChange={this._change} />
                         {() => {
@@ -89,7 +89,7 @@ class TextField extends BaseComponent {
                     <input
                         type={props.type || "text"}
                         autoComplete="off"
-                        placeholder={field.name + " goes here"}
+                        placeholder={(field.name || "Untitled field") + " goes here"}
                         value={value}
                         onChange={this._change} />
                 );

@@ -282,3 +282,11 @@ export function SetDestinationAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_DESTINATION, payload.stageID);
     done();
 }
+
+/**
+ *
+ */
+export function SetOverviewModeAction(context, payload, done) {
+    context.dispatch(Actions.VISIT_SET_OVERVIEW_MODE, payload);
+    done();
+}

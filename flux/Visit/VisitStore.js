@@ -18,7 +18,8 @@ class VisitStore extends BaseStore {
         [Actions.VISIT_SET_RECENT_DATA]: 'handleSetRecentData',
         [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
         [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
-        [Actions.VISIT_CLEAR]: 'handleClearVisit'
+        [Actions.VISIT_CLEAR]: 'handleClearVisit',
+        [Actions.VISIT_SET_OVERVIEW_MODE]: 'handleSetOverviewMode'
     }
 
     // =============================== \\
@@ -30,6 +31,7 @@ class VisitStore extends BaseStore {
 
     setInitialState() {
         this.recentData = null;
+        this.overviewModes = {};
         this.handleClearVisit();
     }
 
@@ -147,6 +149,24 @@ class VisitStore extends BaseStore {
 
     // =============================== \\
 
+    handleSetOverviewMode(payload) {
+        var changed = false;
+        for(var stage in payload) {
+            if(this.overviewModes[stage] !== payload[stage]) {
+                changed = true;
+                this.overviewModes[stage] = payload[stage];
+            }
+        }
+
+        if(changed) this.emitChange();
+    }
+
+    getOverviewModes() {
+        return this.overviewModes;
+    }
+
+    // =============================== \\
+
     /**
      * H20
      */
@@ -156,6 +176,7 @@ class VisitStore extends BaseStore {
             modified: this.modified,
             destination: this.destination,
             recentData: this.recentData,
+            overviewModes: this.overviewModes,
             tab: this.tab
         };
     }
@@ -165,6 +186,7 @@ class VisitStore extends BaseStore {
         this.modified = state.modified;
         this.destination = state.destination;
         this.recentData = state.recentData;
+        this.overviewModes = state.overviewModes;
         this.tab = state.tab
     }
 
