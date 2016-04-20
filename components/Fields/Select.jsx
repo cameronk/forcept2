@@ -29,7 +29,7 @@ class SelectField extends BaseComponent {
             .dropdown({
                 allowAdditions: (props.field.settings.customizable || false),
                 onChange: this._change("change"),
-                onRemove: this._change("remove"),
+                // onRemove: this._change("remove"),
             });
         this.componentDidUpdate();
     }
@@ -60,11 +60,12 @@ class SelectField extends BaseComponent {
      *
      */
     _change = (type) => {
-
         return (value) => {
+            __debug("change" + type);
             var { patientID, stageID, fieldID } = this.props;
 
             var bump = (val) => {
+                __debug("Bumping: " + val);
                 this.context.executeAction(UpdatePatientAction, {
                     [patientID]: {
                         [stageID]: {
@@ -81,9 +82,12 @@ class SelectField extends BaseComponent {
                 value = value.split(",");
 
                 if(type === "remove") {
-                    bump(value);
+                    bump($(`#FieldDropdown-${fieldID}`).dropdown('get value'));
                 } else {
-
+                    __debug(value);
+                    __debug(this.props.value);
+                    __debug(difference(value, this.props.value));
+                    
                     /*
                      * Check to see if we have new values.
                      */

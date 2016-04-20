@@ -132,11 +132,11 @@ class Overview extends BaseComponent {
                             <div className="header">Settings</div>
                             <div className="item" onClick={this._toggleChecklist}>
                                 {this.state.checklist ? [
-                                    (<i className="ui hide icon"></i>),
-                                    (<span>Use compact mode</span>)
+                                    (<i key="icon" className="ui hide icon"></i>),
+                                    (<span key="msg">Use compact mode</span>)
                                 ] : [
-                                    (<i className="ui unhide icon"></i>),
-                                    (<span>Use checklist mode</span>)
+                                    (<i key="icon" className="ui unhide icon"></i>),
+                                    (<span key="msg">Use checklist mode</span>)
                                 ]}
                             </div>
                         </div>

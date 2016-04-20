@@ -54,6 +54,14 @@ class PatientStore extends BaseStore {
      *  }
      */
     handleUpdatePatient(data) {
+
+        this.dispatcher.waitFor([this], () => {
+            this._update(data);
+        });
+
+    }
+
+    _update(data) {
         __debug("Updating PatientStore cache.");
         __debug(data);
 
@@ -128,7 +136,6 @@ class PatientStore extends BaseStore {
 
         this.emitChange();
     }
-
 
     /**
      * H20

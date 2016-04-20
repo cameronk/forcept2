@@ -16,6 +16,13 @@ class TextField extends BaseComponent {
     /**
      *
      */
+    constructor() {
+        super();
+    }
+
+    /**
+     *
+     */
     shouldComponentUpdate(newProps) {
         return newProps.value !== this.props.value;
     }
@@ -31,7 +38,7 @@ class TextField extends BaseComponent {
                     [fieldID]: evt.target.value
                 }
             }
-        })
+        });
     }
 
     /**

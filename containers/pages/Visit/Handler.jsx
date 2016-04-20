@@ -241,6 +241,7 @@ class VisitHandler extends BaseComponent {
                                             {stagesBeneath.map(stageBeneathID => {
                                                 return (
                                                     <Overview
+                                                        key={stageBeneathID}
                                                         patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
                                                         stage={stages[stageBeneathID]} />
                                                 );
@@ -276,7 +277,11 @@ class VisitHandler extends BaseComponent {
                                 var thisPatient = patients[patientID][rootStageID];
                                 var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
                                 return (
-                                    <a className={BuildDOMClass("item", { "teal active": props.tab == patientID })} onClick={this._setTab(patientID)}>
+                                    <a  key={patientID}
+                                        className={BuildDOMClass("item", {
+                                            "teal active": props.tab == patientID
+                                        })}
+                                        onClick={this._setTab(patientID)}>
                                         {fullName}
                                         <span className="teal ui label">
                                             {thisPatient.id}
@@ -292,12 +297,22 @@ class VisitHandler extends BaseComponent {
                             ) : null}
                             {patientKeys.length > 0 ? [
                                 (
-                                    <a className={BuildDOMClass("right control item", { disabled: !props.isModified || props.isLoading })} disabled={!props.isModified} onClick={props.isModified ? this._saveVisit : null}>
+                                    <a  key="save"
+                                        className={BuildDOMClass("right control item", {
+                                            disabled: !props.isModified || props.isLoading
+                                        })}
+                                        disabled={!props.isModified}
+                                        onClick={props.isModified ? this._saveVisit : null}>
                                         <i className="save icon"></i>
                                         Save visit
                                     </a>
                                 ), (
-                                    <div id="Dropdown-MoveStage" className={BuildDOMClass("inline ui dropdown control link item", { disabled: visit.id === null || props.isLoading })} disabled={visit.id === null}>
+                                    <div key="destination"
+                                        id="Dropdown-MoveStage"
+                                        className={BuildDOMClass("inline ui dropdown control link item", {
+                                            disabled: visit.id === null || props.isLoading
+                                        })}
+                                        disabled={visit.id === null}>
                                         Destination {" "} <i className="long right arrow icon"></i>
                                         <div className="text">(choose a stage)</div>
                                         <i className="dropdown icon"></i>
@@ -328,7 +343,12 @@ class VisitHandler extends BaseComponent {
                                         </div>
                                     </div>
                                 ), (
-                                    <a className={BuildDOMClass("control item", { disabled: props.destination === null || props.isLoading })} disabled={props.destination === null} onClick={this._moveVisit}>
+                                    <a  key="move"
+                                        className={BuildDOMClass("control item", {
+                                            disabled: props.destination === null || props.isLoading
+                                        })}
+                                        disabled={props.destination === null}
+                                        onClick={this._moveVisit}>
                                         <i className="level up icon"></i>
                                         Move visit
                                     </a>

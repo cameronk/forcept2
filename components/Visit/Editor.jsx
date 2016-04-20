@@ -33,10 +33,6 @@ class Editor extends BaseComponent {
                 patientID:  patient.id
             };
 
-        __debug("render() editor for patient:");
-        __debug(patient);
-        __debug(fieldKeys)
-
         return (
             <div className="ui form">
                 {fieldKeys.map(fieldID => {

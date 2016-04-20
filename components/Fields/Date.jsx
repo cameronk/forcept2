@@ -69,18 +69,12 @@ class DateField extends BaseComponent {
         var props = this.props,
             { field, value } = props;
 
-        var inputDOM;
-
-        inputDOM = (
-            <DatePicker
-                date={value}
-                onChange={this._change} />
-        );
-
         return (
             <div className="field">
                 <Label field={field} />
-                {inputDOM}
+                <DatePicker
+                    date={value}
+                    onChange={this._change} />
             </div>
         );
     }
