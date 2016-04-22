@@ -165,14 +165,24 @@ class VisitHandler extends BaseComponent {
                      *
                      */
                     if(props.recentData !== null && visit.id === null) {
-                        var stageRecentlyMovedTo = stages[props.recentData.stage];
+
+                        var stageLink;
+                        if(props.recentData.stage !== "checkout") {
+                            var stageRecentlyMovedTo = stages[props.recentData.stage];
+                            stageLink = (
+                                <NavLink href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</NavLink>
+                            );
+                        } else {
+                            stageLink = "Check-out complete."
+                        }
+
                         stageDOM = (
                             <div className="ui bottom attached segment">
                                 <MessageScaffold
                                     type="success"
                                     icon="check mark"
                                     header="Visit moved!"
-                                    text={(<NavLink href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</NavLink>)} />
+                                    text={stageLink} />
                             </div>
                         );
                     }
@@ -319,6 +329,14 @@ class VisitHandler extends BaseComponent {
                                         <div className="text">(choose a stage)</div>
                                         <i className="dropdown icon"></i>
                                         <div className="menu">
+                                            <div data-value={"checkout"} className="item">
+                                                <div className="small ui teal label">
+                                                    {props.intl.formatMessage(messages['pages.visit.handler.moveStage.nthStage'], {
+                                                        order: stageKeys.length + 1
+                                                    })}
+                                                </div>
+                                                Checkout
+                                            </div>
                                             {reverse(stageKeys).map(thisMenuStageID => {
                                                 var thisMenuStage = stages[thisMenuStageID];
                                                 var isCurrent = stageID === thisMenuStageID;
