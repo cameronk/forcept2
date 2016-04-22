@@ -51,8 +51,10 @@ class OptionList extends BaseComponent {
 
             for(var k in options) {
 
-                /// If this key is the one that was initially
-                /// clicked, swap it for option passed to _shift
+                /*
+                 * If this key is the one that was initially
+                 * clicked, swap it for option passed to _shift
+                 */
                 if(k === shiftCtx.option) {
                     newOptions[option] = options[option];
                 }

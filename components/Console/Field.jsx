@@ -32,7 +32,9 @@ class Field extends BaseComponent {
 
     componentDidMount() {
         $(".StageField .ui.dropdown")
-            .dropdown();
+            .dropdown({
+                onChange: this._change()
+            });
     }
 
     _change = (prop) => {
@@ -71,16 +73,15 @@ class Field extends BaseComponent {
                     <label>Type:</label>
                     <select className="ui dropdown" value={field.type} onChange={this._change('type')}>
                         <optgroup label="Inputs">
-                            <option value="text">Text input</option>
-                            <option value="textarea">Textarea input</option>
-                            <option value="number">Number input</option>
-                            <option value="date">Date input</option>
+                            <option value="text">Text field</option>
+                            <option value="textarea">Textarea field</option>
+                            <option value="number">Number field</option>
+                            <option value="date">Date field</option>
                         </optgroup>
                         <optgroup label="Multiple-option fields">
-                            <option value="select">Select input with options</option>
-                            <option value="multiselect">Multi-select input with options</option>
-                            <option value="file">File input</option>
-                            <option value="yesno">Yes or no buttons</option>
+                            <option value="radio">Radio/button field</option>
+                            <option value="select">Select field</option>
+                            <option value="file">File field</option>
                         </optgroup>
                         <optgroup label="Other">
                             <option value="header">Group fields with a header</option>

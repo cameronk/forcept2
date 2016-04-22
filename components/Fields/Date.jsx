@@ -74,6 +74,7 @@ class DateField extends BaseComponent {
                 <Label field={field} />
                 <DatePicker
                     date={value}
+                    defaultView={field.settings && field.settings.view ? field.settings.view : "month"}
                     onChange={this._change} />
             </div>
         );

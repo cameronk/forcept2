@@ -9,6 +9,7 @@ import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
 import TextField from '../Fields/Text';
+import RadioField from '../Fields/Radio';
 import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
 
@@ -75,6 +76,13 @@ class Editor extends BaseComponent {
                         case "date":
                             fieldDOM = (
                                 <DateField
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
+                            break;
+                        case "radio":
+                            fieldDOM = (
+                                <RadioField
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

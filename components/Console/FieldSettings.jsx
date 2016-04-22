@@ -53,7 +53,6 @@ class FieldSettings extends BaseComponent {
         switch(type) {
             case "text":
 			case "textarea":
-			case "yesno":
 			case "header":
 			case "pharmacy":
                 return (
@@ -64,15 +63,36 @@ class FieldSettings extends BaseComponent {
                     </div>
                 );
                 break;
+            case "radio":
+                var settingsDOM = (
+                    <div className="Controls">
+                        {settingsHeader}
+                        <SettingCheckbox
+                            field={props._key}
+                            id="RadioSettings-buttons"
+                            label="Display buttons instead of radio inputs"
+                            setting="buttons"
+                            checked={settings.buttons || false} />
+                    </div>
+                );
+                return (
+                    <div className="FieldSettings">
+                        {settingsDOM}
+                        <OptionList
+                            field={props._key}
+                            options={settings.options || {}} />
+                    </div>
+                );
+                break;
 			case "number":
                 return (
                     <div className="NumberSettings">
                         {settingsHeader}
                         <SettingText
+                            field={props._key}
                             id="NumberSettings-unit"
                             label="Unit of measurement"
                             placeholder="Example: meters, seconds"
-                            field={props._key}
                             setting="unit"
                             value={settings.unit || ""} />
                     </div>
@@ -83,11 +103,22 @@ class FieldSettings extends BaseComponent {
                     <div className="DateSettings">
                         {settingsHeader}
                         <SettingCheckbox
+                            field={props._key}
                             id="DateSettings-broad"
                             label="Use broad date selector"
-                            field={props._key}
                             setting="useBroadSelector"
                             checked={settings.useBroadSelector || false} />
+                        <SettingSelect
+                            field={props._key}
+                            label="Default view"
+                            placeholder="Choose a default view"
+                            setting="view"
+                            options={{
+                                "month": "Month",
+                                "year": "Year",
+                                "decade": "Decade"
+                            }}
+                            value={settings.view || ""} />
                     </div>
                 );
                 break;
@@ -96,23 +127,23 @@ class FieldSettings extends BaseComponent {
                     <div className="Controls">
                         {settingsHeader}
                         <SettingCheckbox
+                            field={props._key}
                             id="FieldSettings-multiple"
                             label="Allow multiple selections"
-                            field={props._key}
                             checked={settings.multiple || false}
                             setting="multiple"
                             imply={["searchable"]} />
                         <SettingCheckbox
+                            field={props._key}
                             id="FieldSettings-customizable"
                             label="Allow custom field data"
-                            field={props._key}
                             checked={settings.customizable || false}
                             setting="customizable"
                             imply={["searchable"]} />
                         <SettingCheckbox
+                            field={props._key}
                             id="FieldSettings-searchable"
                             label="Enable searching through options"
-                            field={props._key}
                             checked={settings.searchable || false}
                             disabled={settings.customizable || settings.multiple}
                             setting="searchable" />

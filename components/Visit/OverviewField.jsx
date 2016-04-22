@@ -34,15 +34,18 @@ class OverviewField extends BaseComponent {
         switch(props.type) {
             case "select":
                 if(props.settings && props.settings.multiple) {
-                    valueDOM = (
-                        <ul>
-                            {value.split(',').map((item) => {
-                                return (
-                                    <li>{item}</li>
-                                );
-                            })}
-                        </ul>
-                    );
+                    var items = value !== "" ? value.split(',') : [];
+                    if(items.length > 0) {
+                        valueDOM = (
+                            <ul>
+                                {items.map((item) => {
+                                    return (
+                                        <li>{item}</li>
+                                    );
+                                })}
+                            </ul>
+                        );
+                    }
                 } else {
                     valueDOM = value.toString();
                 }
