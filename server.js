@@ -38,6 +38,7 @@ import PatientService from './flux/Patient/PatientService';
 import VisitService from './flux/Visit/VisitService';
 import TestService from './flux/Test/TestService';
 import RecordService from './flux/Record/RecordService';
+import ResourceService from './flux/Resource/ResourceService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -129,6 +130,7 @@ __debug("---");
 
         server.use('/public', express['static'](path.join(__dirname, '/dist')));
         server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
+        server.use('/resources', express['static'](path.join(__dirname, '/storage/resources')));
         server.use(compression());
         server.use(cookieParser());
         server.use(bodyParser.json());
@@ -153,6 +155,7 @@ __debug("---");
               FetchrPlugin.registerService(PatientService.attach(db));
               FetchrPlugin.registerService(VisitService.attach(db));
               FetchrPlugin.registerService(RecordService.attach(db));
+              FetchrPlugin.registerService(ResourceService.attach(db));
               FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());

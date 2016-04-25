@@ -27,6 +27,7 @@ import AppStore   from '../../../flux/App/AppStore';
 import StageStore from '../../../flux/Stage/StageStore';
 import VisitStore from '../../../flux/Visit/VisitStore';
 import PatientStore from '../../../flux/Patient/PatientStore';
+import ResourceStore from '../../../flux/Resource/ResourceStore';
 
 const __debug = debug('forcept:containers:pages:Visit:Handler');
 const messages = defineMessages({
@@ -263,7 +264,9 @@ class VisitHandler extends BaseComponent {
                                             <Editor
                                                 patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
                                                 visit={visit}
-                                                stage={thisStage} />
+                                                stage={thisStage}
+                                                resourceCache={props.resourceCache}
+                                                resourceUpload={props.resourceUpload} />
                                         </div>
                                     </div>
                                 </div>
@@ -398,7 +401,7 @@ class VisitHandler extends BaseComponent {
 
 VisitHandler = connectToStores(
     VisitHandler,
-    [VisitStore, PatientStore],
+    [VisitStore, PatientStore, ResourceStore],
     function(context, props) {
 
         let routeStore = context.getStore('RouteStore');
@@ -406,6 +409,7 @@ VisitHandler = connectToStores(
         let stageStore = context.getStore(StageStore);
         let visitStore = context.getStore(VisitStore);
         let patientStore = context.getStore(PatientStore);
+        let resourceStore = context.getStore(ResourceStore);
 
         let params = routeStore.getCurrentRoute().params;
 
@@ -429,6 +433,13 @@ VisitHandler = connectToStores(
             destination: visitStore.getDestination(),
             recentData: visitStore.getRecentData(),
             tab: visitStore.getCurrentTab(),
+
+            /// Resources
+            resourceCache: resourceStore.getCache(),
+            resourceUpload: {
+                context: resourceStore.getUploadContext(),
+                progress: resourceStore.getUploadProgress(),
+            }
         };
 
     }

@@ -51,7 +51,8 @@ var webpackConfig = {
         ]
     },
     node: {
-        setImmediate: false
+        setImmediate: ,
+        fs: "empty"
     },
     plugins: [
         // css files from the extract-text-plugin loader

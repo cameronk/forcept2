@@ -12,6 +12,7 @@ import PatientStore     from '../../../flux/Patient/PatientStore';
 import StageStore       from '../../../flux/Stage/StageStore';
 import VisitStore       from '../../../flux/Visit/VisitStore';
 import TestStore        from '../../../flux/Test/TestStore';
+import ResourceStore    from '../../../flux/Resource/ResourceStore';
 import { LoginAction, CredentialChangeAction }  from '../../../flux/Auth/AuthActions';
 import { PushModelAction, UpdateModelAction }  from '../../../flux/Test/TestActions';
 import BaseComponent    from '../../../components/Base';
@@ -68,9 +69,13 @@ class Index extends BaseComponent {
                         </div>
                     </div>
                 </Horizon>
-                <h1>TestStore::getModel()</h1>
-                <pre>{JSON.stringify(props.testModel, null, '  ')}</pre>
+                <h1>ResourceStore::getCache()</h1>
+                <pre>{JSON.stringify(props.resourceCache, null, '  ')}</pre>
                 <div className="ui divider"></div>
+                <h1>ResourceStore upload</h1>
+                <pre>{JSON.stringify(props.resourceUpload, null, '  ')}</pre>
+                <div className="ui divider"></div>
+
                 <h1>VisitStore::getVisit()</h1>
                 <pre>{JSON.stringify(props.visit, null, '  ')}</pre>
                 <div className="ui divider"></div>
@@ -90,10 +95,15 @@ class Index extends BaseComponent {
 
 Index = connectToStores(
     Index,
-    [PatientStore, TestStore],
+    [ResourceStore, PatientStore, TestStore],
     (context, props) => {
+        let resourceStore = context.getStore(ResourceStore);
         return {
-            testModel: context.getStore(TestStore).getModel(),
+            resourceCache: resourceStore.getCache(),
+            resourceUpload: {
+                context: resourceStore.getUploadContext(),
+                progress: resourceStore.getUploadProgress(),
+            },
             patients: context.getStore(PatientStore).getPatients(),
             stages: context.getStore(StageStore).getStages(),
             stageCache: context.getStore(StageStore).getCache(),

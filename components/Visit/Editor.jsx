@@ -12,6 +12,7 @@ import TextField from '../Fields/Text';
 import RadioField from '../Fields/Radio';
 import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
+import FileField from '../Fields/File';
 
 const __debug = debug('forcept:components:Visit:Editor');
 
@@ -90,6 +91,15 @@ class Editor extends BaseComponent {
                         case "select":
                             fieldDOM = (
                                 <SelectField
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
+                            break;
+                        case "file":
+                            fieldDOM = (
+                                <FileField
+                                    cache={props.resourceCache.hasOwnProperty(fieldID) ? props.resourceCache[fieldID] : null}
+                                    upload={props.resourceUpload}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

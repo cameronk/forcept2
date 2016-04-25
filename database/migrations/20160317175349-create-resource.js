@@ -11,9 +11,6 @@ module.exports = {
             type: {
                 type: Sequelize.STRING
             },
-            data: {
-                type: Sequelize.TEXT
-            },
             isReferenced: {
                 type: Sequelize.BOOLEAN
             },

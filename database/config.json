@@ -6,8 +6,7 @@
         "host": "127.0.0.1",
         "dialect": "sqlite",
         "storage": "./storage/forcept-dev.db",
-        "seederStorage": "sequelize",
-        "logging": false
+        "seederStorage": "sequelize"
     },
     "test": {
         "username": "root",
@@ -22,6 +21,7 @@
         "database": "forcept-production",
         "host": "127.0.0.1",
         "dialect": "sqlite",
-        "storage": "./storage/forcept.db"
+        "storage": "./storage/forcept.db",
+        "logging": false
     }
 }
