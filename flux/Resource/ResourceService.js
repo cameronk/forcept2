@@ -3,6 +3,8 @@
  * @author Azuru Technology
  */
 
+var fs = require('fs');
+
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
 const __debug = require('debug')('forcept:flux:Console:ResourceService');
@@ -24,10 +26,31 @@ export default {
             /**
              *
              */
-            create: function(req, resource, params, body, config, callback) {
-                db.Resource.create(body).then(resource => {
-                    callback(null, resource, null);
-                })
+            create: function(req, resource, params, { type, data }, config, callback) {
+                db.Resource.create({
+                    type: type,
+                    uploadedBy: req.user.id
+                }).then(resource => {
+                    if(!resource) {
+                        callback(
+                            BuildError('Error creating resource record.', {
+                                output: {
+                                    message: 'Error creating resource record.'
+                                },
+                                statusCode: HttpStatus.NOT_FOUND
+                            })
+                        );
+                    } else {
+                        var buf = new Buffer(data, 'base64');
+                        fs.writeFile(`storage/resources/${resource.id}.jpg`, buf, (err) => {
+                            if(err) {
+                                callback(err);
+                            } else {
+                                callback(null, resource, null);
+                            }
+                        });
+                    }
+                });
             }
 
         }

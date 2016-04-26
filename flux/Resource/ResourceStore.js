@@ -32,7 +32,6 @@ class ResourceStore extends BaseStore {
         }
 
         setInitialState() {
-
             this.uploadContext = null;
             this.uploadProgress = 0;
 

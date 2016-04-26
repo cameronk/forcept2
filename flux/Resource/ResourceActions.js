@@ -3,8 +3,6 @@
  * @author Azuru Technology
  */
 
-// var fs = require('fs');
-
 import debug from 'debug';
 import keyBy from 'lodash/keyBy';
 
@@ -37,8 +35,10 @@ export function UploadResourcesAction(context, fieldID, done) {
         cachedResources[fieldID].map(resource => {
 
             var typeVSdata = resource.split(";");
-            var type = resource[0].split(":")[1];
-            var data = resource[1].split(",")[1];
+            var type = typeVSdata[0].split(":")[1];
+            var data = typeVSdata[1].split(",")[1];
+
+            __debug("Saving %s -> %s", type, data.length);
 
             /*
              *
@@ -46,11 +46,11 @@ export function UploadResourcesAction(context, fieldID, done) {
             context.service
                 .create('ResourceService')
                 .body({
-                    type: type
+                    type: type,
+                    data: data
                 }).end()
                 .then(resource => {
-                    var buf = new Buffer(data, 'base64');
-                    fs.writeFile('test.jpg', buf);
+                    
                 });
 
         });

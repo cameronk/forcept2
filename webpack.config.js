@@ -52,8 +52,7 @@ module.exports = function(devPort) {
             ]
         },
         node: {
-            setImmediate: false,
-            fs: "empty"
+            setImmediate: false
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
