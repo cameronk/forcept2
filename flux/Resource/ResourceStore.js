@@ -22,6 +22,7 @@ class ResourceStore extends BaseStore {
         [Actions.RESOURCES_UPDATE_CACHE]: 'handleUpdateCache',
         [Actions.RESOURCES_SET_UPLOAD_CONTEXT]: 'handleSetUploadContext',
         [Actions.RESOURCES_SET_UPLOAD_PROGRESS]: 'handleSetUploadProgress',
+        [Actions.RESOURCES_PROCESS_FIELD]: 'handleProcessField',
     }
 
     // =============================== \\
@@ -32,26 +33,38 @@ class ResourceStore extends BaseStore {
         }
 
         setInitialState() {
+            this.processingFields = [];
             this.uploadContext = null;
             this.uploadProgress = 0;
 
             this.handleClearCache();
-            this.handleClearResources();
         }
 
     // =============================== \\
 
-        handleUpdateResources(data) {
+        handleProcessField(fields) {
+            __debug(fields);
+            for(var field in fields) {
+                /// true -> add field
+                if(fields[field] === true) {
+                    this.processingFields.push(field);
+                    this.emitChange();
+                }
 
+                /// false -> remove field
+                else {
+                    var index = this.processingFields.indexOf(field);
+                    while(index > -1) {
+                        this.processingFields.splice(index, 1);
+                        index = this.processingFields.indexOf(field);
+                    }
+                    this.emitChange();
+                }
+            }
         }
 
-        getResources() {
-            return this.resources;
-        }
-
-        handleClearResources() {
-            this.resources = {};
-            this.emitChange();
+        getProcessingFields() {
+            return this.processingFields;
         }
 
     // =============================== \\
@@ -60,7 +73,12 @@ class ResourceStore extends BaseStore {
             __debug("Updating ResourceStore cache.");
             __debug(data);
             for(var field in data) {
-                this.cache[field] = data[field];
+                var resources = data[field];
+                if(resources === null) {
+                    delete this.cache[field];
+                } else {
+                    this.cache[field] = data[field];
+                }
             }
 
             this.emitChange();
@@ -106,13 +124,13 @@ class ResourceStore extends BaseStore {
 
         dehydrate() {
             return {
-                resources   : this.resources,
+                processingFields: this.processingFields,
                 cache       : this.cache,
             };
         }
 
         rehydrate(state) {
-            this.resources  = state.resources;
+            this.processingFields = state.processingFields;
             this.cache      = state.cache;
         }
 }

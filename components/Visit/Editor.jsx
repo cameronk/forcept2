@@ -98,8 +98,9 @@ class Editor extends BaseComponent {
                         case "file":
                             fieldDOM = (
                                 <FileField
-                                    cache={props.resourceCache.hasOwnProperty(fieldID) ? props.resourceCache[fieldID] : null}
-                                    upload={props.resourceUpload}
+                                    cache={props.resource.cache.hasOwnProperty(fieldID) ? props.resource.cache[fieldID] : null}
+                                    uploading={props.resource.upload.context === fieldID ? props.resource.upload.progress : false}
+                                    processing={props.resource.processing.indexOf(fieldID) > -1}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

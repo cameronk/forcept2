@@ -8,16 +8,18 @@ module.exports = {
     /*
      *
      */
-    jsonGetter: function(val) {
+    jsonGetter: function(val, def) {
 
-        if(!val || typeof val !== "string") return {};
+        def = def || {};
 
-        var obj = {};
+        if(!val || typeof val !== "string") return def;
+
+        var obj;
 
         try {
             obj = JSON.parse(val);
         } catch(e) {
-            obj = {};
+            obj = def;
             throw e;
         }
 
@@ -28,13 +30,15 @@ module.exports = {
     /*
      *
      */
-    jsonSetter: function(val) {
+    jsonSetter: function(val, def) {
 
-        var str = "{}";
+        def = def || "{}";
+        var str;
+
         try {
             str = JSON.stringify(val);
         } catch(e) {
-            str = "{}";
+            str = def;
             throw e;
         }
 
@@ -46,5 +50,5 @@ module.exports = {
         if(model.toJSON) return model.toJSON();
         else return model;
     }
-    
+
 };

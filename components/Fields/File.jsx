@@ -2,16 +2,21 @@
  * forcept - components/Fields/File.jsx
  * @author Azuru Technology
  *
- * https://www.npmjs.com/package/react-File-picker
+ * https://www.npmjs.com/package/jimp
  */
 
 import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
+import pullAllBy from 'lodash/pullAllBy';
 import debug from 'debug';
 
 import Label from './Label';
+import MessageScaffold from '../Scaffold/Message';
+import ProgressScaffold from '../Scaffold/Progress';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
-import { UpdateCacheAction, UploadResourcesAction } from '../../flux/Resource/ResourceActions';
+import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
+import { UpdateCacheAction, UploadResourcesAction,
+         ProcessResourcesAction } from '../../flux/Resource/ResourceActions';
 
 const __debug = debug('forcept:components:Fields:File');
 
@@ -22,6 +27,23 @@ if(process.env.BROWSER) {
 class FileField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
+
+    _remove = (id) => {
+        return () => {
+            var { patientID, stageID, fieldID, value } = this.props;
+            __debug("[%s] => _remove", fieldID);
+            __debug("| removing '%s'", id);
+            __debug("| value: %j", value);
+            __debug("| pulled: %j", pullAllBy(value, { id: id }, 'id'));
+            this.context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: pullAllBy(value, [{ id: id }], 'id')
+                    }
+                }
+            });
+        };
+    }
 
     /**
      *
@@ -37,7 +59,14 @@ class FileField extends BaseComponent {
             this.context.executeAction(UpdateCacheAction, {
                 [props.fieldID]: modifiedFiles
             });
+            this.context.executeAction(ProcessResourcesAction, {
+                [props.fieldID]: false
+            });
         };
+
+        this.context.executeAction(ProcessResourcesAction, {
+            [props.fieldID]: true
+        });
 
         /*
          * Loop through uploaded files.
@@ -136,7 +165,12 @@ class FileField extends BaseComponent {
      *
      */
     _upload = () => {
-        this.context.executeAction(UploadResourcesAction, this.props.fieldID);
+        var { patientID, stageID, fieldID } = this.props;
+        this.context.executeAction(UploadResourcesAction, {
+            fieldID: fieldID,
+            stageID: stageID,
+            patientID: patientID,
+        });
     }
 
     /**
@@ -146,12 +180,36 @@ class FileField extends BaseComponent {
         var props = this.props,
             { field, value } = props;
 
-        var fileInputID = `${props.fieldID}`;
+        var fileInputID = props.fieldID;
+        var inputDOM, cardsDOM;
 
-        return (
-            <div className="field">
-                <Label field={field} />
-                <input type="file" className="hidden" id={fileInputID} onChange={this._select} />
+        if(value.length > 0) {
+            cardsDOM = (
+                <div className="stackable ui cards">
+                    {value.map(({ type, id, ext }) => {
+                        switch(type) {
+                            case "image/jpeg":
+                                return (
+                                    <div className="card">
+                                        <div className="ui image">
+                                            <img src={["/resources/", id, ext].join("")} />
+                                        </div>
+                                        <div className="extra content">
+                                            <div className="ui fluid basic red button" onClick={this._remove(id)}>
+                                                <i className="delete icon"></i> Remove
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                                break;
+                        }
+                    })}
+                </div>
+            )
+        }
+
+        if(props.uploading === false) {
+            inputDOM = (
                 <div className="fluid ui action left icon input">
                     <i className="upload icon"></i>
                     <input type="text"
@@ -159,12 +217,9 @@ class FileField extends BaseComponent {
                         readOnly />
                     {(() => {
                         if(props.cache) {
-                            let isUploading = props.upload.context === props.fieldID;
                             return (
-                                <div className={BuildDOMClass("ui green", { "loading": isUploading }, "button")} onClick={isUploading ? null : this._upload}>
-                                    Upload
-                                    {props.cache.length}
-                                    files
+                                <div className="ui green button" onClick={this._upload}>
+                                    Upload {props.cache.length} files
                                 </div>
                             );
                         } else {
@@ -176,6 +231,47 @@ class FileField extends BaseComponent {
                         }
                     })()}
                 </div>
+            );
+        }
+
+        return (
+            <div className="Forcept-File field">
+                <Label field={field} />
+                {cardsDOM}
+                {(() => {
+                    /*
+                     * Show processing message.
+                     */
+                    if(props.processing === true) {
+                        return (
+                            <MessageScaffold
+                                type="small info"
+                                icon="notched circle loading"
+                                header="Processing..." />
+                        );
+                    }
+
+                    /*
+                     * Show uploading bar.
+                     */
+                    else if(props.uploading !== false) {
+                        return (
+                            <ProgressScaffold
+                                id={props.fieldID}
+                                className="small active blue"
+                                label={`Uploading ${props.cache.length} files...`}
+                                percent={99}
+                                autoSuccess={false} />
+                        );
+                    }
+                })()}
+                <input
+                    type="file"
+                    accept={field.settings.accept.join(",")}
+                    className="hidden"
+                    id={fileInputID}
+                    onChange={this._select} />
+                {inputDOM}
             </div>
         );
     }

@@ -85,7 +85,7 @@ class VerticalMenu extends BaseComponent {
                 </div>
             );
 
-            // ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console" 
+            // ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console"
 
             userItem = (
                 <div className="item">
@@ -121,9 +121,6 @@ class VerticalMenu extends BaseComponent {
 
         return (
             <div id={props.id} className={["ui large inverted vertical menu", props.className].join(" ")}>
-                <span className="ui left corner label">
-                    <i className={!isAuthenticated ? "sign in icon" : "sign out icon"}></i>
-                </span>
                 <div className="item logo">
                     <div className="ui large center aligned inverted statistic">
                         <div className="value">

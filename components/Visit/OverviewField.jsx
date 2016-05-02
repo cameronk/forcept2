@@ -21,48 +21,59 @@ class OverviewField extends BaseComponent {
     }
 
     shouldComponentUpdate(nextProps) {
-        return this.props.value !== nextProps.value;
+        return true;
+        // return this.props.value !== nextProps.value;
     }
 
     render() {
 
         var { props } = this,
             { value } = props,
-            iconClass = ((value && value.length > 0) ? "green check mark" : "red close"),
-            valueDOM;
+            valueDefined = (value && value.length > 0),
+            iconClass = (valueDefined ? "green check mark" : "red close"),
+            descriptionDOM, resourcesDOM;
 
-        switch(props.type) {
-            case "select":
-                if(props.settings && props.settings.multiple) {
-                    var items = value !== "" ? value.split(',') : [];
-                    if(items.length > 0) {
-                        valueDOM = (
-                            <ul>
-                                {items.map((item) => {
-                                    return (
-                                        <li>{item}</li>
-                                    );
-                                })}
-                            </ul>
-                        );
+        if(valueDefined) {
+            switch(props.type) {
+                case "select":
+                    if(props.settings && props.settings.multiple) {
+                        if(value.length > 0) {
+                            descriptionDOM = (
+                                <ul>
+                                    {value.map((item) => {
+                                        return (
+                                            <li>{item}</li>
+                                        );
+                                    })}
+                                </ul>
+                            );
+                        }
+                    } else {
+                        descriptionDOM = value.toString();
                     }
-                } else {
-                    valueDOM = value.toString();
-                }
-                break;
-            case "header":
-                return (
-                    <div className="item grey">
-                        <h5 className="right">{props.name || "Untitled header"}</h5>
-                    </div>
-                );
-                break;
-            case "file":
-                valueDOM = "File";
-                break;
-            default:
-                valueDOM = value.toString();
-                break;
+                    break;
+                case "header":
+                    return (
+                        <div className="item grey">
+                            <h5 className="right">{props.name || "Untitled header"}</h5>
+                        </div>
+                    );
+                    break;
+                case "file":
+                    resourcesDOM = value.map(({ type, id, ext }) => {
+                        return (
+                            <div className="ui fluid card">
+                                <div className="ui fluid image">
+                                    <img src={["/resources/", id, ext].join("")} />
+                                </div>
+                            </div>
+                        );
+                    });
+                    break;
+                default:
+                    descriptionDOM = value.toString();
+                    break;
+            }
         }
 
         return (
@@ -70,8 +81,9 @@ class OverviewField extends BaseComponent {
                 <i className={iconClass + " icon"}></i>
                 <div className="content">
                     <span className="header">{upperFirst(props.name || "Untitled field")}</span>
-                    <div className="description">{valueDOM}</div>
+                    <div className="description">{descriptionDOM}</div>
                 </div>
+                {resourcesDOM}
             </div>
         );
 

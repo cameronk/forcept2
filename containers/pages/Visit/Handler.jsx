@@ -112,12 +112,12 @@ class VisitHandler extends BaseComponent {
         var rootStageID = stageKeys[0];
 
         __debug("render() visit handler");
-        __debug(" | current tab = %s", tab);
-        __debug(" | visit = ", visit);
-        __debug(" | stageID = %s", stageID);
-        __debug(" | stages  = ", Object.keys(stages));
-        __debug(" | patients = ", patients);
-        __debug(" | recent destination = ", props.recentData);
+        // __debug(" | current tab = %s", tab);
+        // __debug(" | visit = ", visit);
+        // __debug(" | stageID = %s", stageID);
+        // __debug(" | stages  = ", Object.keys(stages));
+        // __debug(" | patients = ", patients);
+        // __debug(" | recent destination = ", props.recentData);
 
         /*
          * If the current navigateAction is complete...
@@ -265,8 +265,7 @@ class VisitHandler extends BaseComponent {
                                                 patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
                                                 visit={visit}
                                                 stage={thisStage}
-                                                resourceCache={props.resourceCache}
-                                                resourceUpload={props.resourceUpload} />
+                                                resource={props.resource} />
                                         </div>
                                     </div>
                                 </div>
@@ -434,12 +433,15 @@ VisitHandler = connectToStores(
             recentData: visitStore.getRecentData(),
             tab: visitStore.getCurrentTab(),
 
-            /// Resources
-            resourceCache: resourceStore.getCache(),
-            resourceUpload: {
-                context: resourceStore.getUploadContext(),
-                progress: resourceStore.getUploadProgress(),
+            resource: {
+                cache: resourceStore.getCache(),
+                processing: resourceStore.getProcessingFields(),
+                upload: {
+                    context: resourceStore.getUploadContext(),
+                    progress: resourceStore.getUploadProgress(),
+                }
             }
+
         };
 
     }

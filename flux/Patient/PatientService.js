@@ -36,6 +36,7 @@ export default {
                     createdBy: req.user.id,
                     lastModifiedBy: req.user.id
                 }).then(patient => {
+                    __debug("[create]: Patient created.");
                     callback(null, patient, null);
                 }).catch(err => {
                     __debug("[create]: ERROR:");

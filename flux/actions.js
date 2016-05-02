@@ -45,6 +45,7 @@ export default keyMirror({
     'RESOURCES_UPDATE_CACHE': null,
     'RESOURCES_SET_UPLOAD_CONTEXT': null,
     'RESOURCES_SET_UPLOAD_PROGRESS': null,
+    'RESOURCES_PROCESS_FIELD': null,
 
     /// Test
     'TEST_PUSH_MODEL': null,

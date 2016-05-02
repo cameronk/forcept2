@@ -45,7 +45,7 @@ export default {
              */
             update: function(req, resource, params, body, config, callback) {
 
-                __debug("[update]: Moving visit #%s -> %s", params.id, body.stage);
+                __debug("[update]: Updating visit #%s", params.id);
 
                 (db.Visit).findOne({
                     where: {

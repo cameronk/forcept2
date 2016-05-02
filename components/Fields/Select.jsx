@@ -28,8 +28,8 @@ class SelectField extends BaseComponent {
         $("#FieldDropdown-" + props.fieldID)
             .dropdown({
                 allowAdditions: (props.field.settings.customizable || false),
-                onChange: this._change("change"),
-                // onRemove: this._change("remove"),
+                onChange: this._change,
+                onRemove: this._remove
             });
         this.componentDidUpdate();
     }
@@ -38,7 +38,21 @@ class SelectField extends BaseComponent {
      * Update component if value changed.
      */
     shouldComponentUpdate(newProps) {
-        return newProps.value !== this.props.value;
+
+        /*
+         * difference() compares arrays in order of values
+         * thus we reverse the comparison and check for any differences
+         * (accounts for deletion and addition of values)
+         */
+        let update = (
+              difference(newProps.value, this.props.value).length
+            + difference(this.props.value, newProps.value).length
+        ) > 0;
+
+        __debug("[%s] => shouldComponentUpdate: %s (%s => %s)", this.props.fieldID, update, this.props.value, newProps.value);
+
+        return update;
+
     }
 
     /**
@@ -47,71 +61,89 @@ class SelectField extends BaseComponent {
      */
     componentDidUpdate() {
         var { props } = this;
-        if(props.hasOwnProperty('value') && props.value.length > 0) {
-            // $("#FieldDropdown-" + this.props.fieldID)
-                // .dropdown('set selected', this.props.value.split(','));
-        } else {
-            $("#FieldDropdown-" + this.props.fieldID)
-                .dropdown('clear');
+
+        __debug("[%s] - componentDidUpdate", props.fieldID);
+        __debug("|==> current value: %s", $("#FieldDropdown-" + props.fieldID).dropdown('get value').toString());
+        __debug("|==> new     value: %s", props.value.toString());
+
+        /*
+         * Only run update if the passed value differs from
+         * the current value of the dropdown.
+         */
+        if(props.value.toString() !== $("#FieldDropdown-" + props.fieldID).dropdown('get value')) {
+            if(props.hasOwnProperty('value') && props.value.length > 0) {
+                __debug("[%s] |==> updating selected to: %s", props.fieldID, props.value.toString());
+                $("#FieldDropdown-" + props.fieldID)
+                    .dropdown('set exactly', props.value);
+            } else {
+                $("#FieldDropdown-" + props.fieldID)
+                    .dropdown('clear');
+            }
         }
     }
 
     /**
      *
      */
-    _change = (type) => {
-        return (value) => {
-            __debug("change" + type);
-            var { patientID, stageID, fieldID } = this.props;
+    _change = (value) => {
+        var { patientID, stageID, fieldID } = this.props;
 
-            var bump = (val) => {
-                __debug("Bumping: " + val);
-                this.context.executeAction(UpdatePatientAction, {
-                    [patientID]: {
-                        [stageID]: {
-                            [fieldID]: val.toString()
+        __debug("[%s] onChange()", fieldID);
+        __debug("| [%s] => [%s]", this.props.value.toString(), value.toString());
+
+        /*
+         * _change() fires when using Semantic's 'set selected',
+         * so we get cascading updates during tab changes.
+         * Check to make sure the value of _change differs from
+         * the value passed to the field to prevent this.
+         */
+        if(value.toString() !== this.props.value.toString()) {
+
+            var selected = value.split(",");
+
+            if(selected.length >= this.props.value.length) {
+                __debug("| => Values were added, changed, or reordered.");
+                __debug("|==> Value: [%s] (%s)", fieldID, value.toString(), typeof value);
+
+                var bump = (val) => {
+                    __debug("|==> Bumping: %s (%s)", fieldID, val.toString(), typeof val);
+                    this.context.executeAction(UpdatePatientAction, {
+                        [patientID]: {
+                            [stageID]: {
+                                [fieldID]: val
+                            }
                         }
-                    }
-                })
-            };
-
-            /*
-             * Does this field allow multiple entries?
-             */
-            if(this.props.field.settings.multiple) {
-                value = value.split(",");
-
-                if(type === "remove") {
-                    bump($(`#FieldDropdown-${fieldID}`).dropdown('get value'));
-                } else {
-                    __debug(value);
-                    __debug(this.props.value);
-                    __debug(difference(value, this.props.value));
-
-                    /*
-                     * Check to see if we have new values.
-                     */
-                    if(difference(value, this.props.value).length > 0) {
-                        bump(value);
-                    }
-
-                }
-
-            } else {
+                    });
+                };
 
                 /*
-                 * _change() fires when using Semantic's 'set selected',
-                 * so we get cascading updates during tab changes.
-                 * Check to make sure the value of _change differs from
-                 * the value passed to the field to prevent this.
+                 * value            => string representing selected options (comma-separated)
+                 * this.props.value => array representing options stored with patient
                  */
-                if(value !== this.props.value) {
-                    bump(value);
+                if(value.length > 0) {
+                    bump(selected);
                 }
 
+                /*
+                 * Empty string value -> bump an empty array.
+                 */
+                else {
+                    bump([]);
+                }
+            } else {
+                __debug("| => Values were removed.");
             }
-        }
 
+        } else {
+            __debug("| => values are identical, skipping handler.");
+        }
+    }
+
+    /**
+     *
+     */
+    _remove = (value) => {
+        __debug("Removed value %s", value);
     }
 
     render() {
@@ -157,9 +189,8 @@ class SelectField extends BaseComponent {
                     id={"FieldDropdown-" + fieldID}
                     className={BuildDOMClass("ui", {
                         "search": settings.searchable,
-                        "multiple": settings.multiple,
-                        "selection dropdown": true,
-                    })}>
+                        "multiple": settings.multiple
+                    }, "selection dropdown")}>
                         <i className="dropdown icon"></i>
                         <input type="hidden" name="gender" />
                         <div className="default text">Select an option for {field.name || "untitled field"}</div>

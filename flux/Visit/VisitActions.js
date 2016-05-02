@@ -108,7 +108,7 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
 
             }
 
-            __debug(" |--|==> identify:", identifierFields);
+            __debug(" |--|==> identifiers:", identifierFields);
             __debug(" |--|==> body:", thisPatientWritableFields);
 
             promises.push(

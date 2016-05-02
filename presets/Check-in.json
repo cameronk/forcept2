@@ -3,14 +3,14 @@
     "name": "First name",
     "type": "text",
     "mutable": false,
-    "settings": "",
+    "settings": {},
     "description": ""
   },
   "lastName": {
     "name": "Last name",
     "type": "text",
     "mutable": false,
-    "settings": "",
+    "settings": {},
     "description": ""
   },
   "birthday": {
@@ -18,7 +18,8 @@
     "type": "date",
     "mutable": false,
     "settings": {
-      "useBroadMonthSelector": false
+      "useBroadSelector": false,
+      "view": "decade"
     },
     "description": ""
   },
@@ -76,7 +77,7 @@
     "name": "Demographics",
     "type": "header",
     "mutable": true,
-    "settings": "",
+    "settings": {},
     "description": "Various patient demographics"
   },
   "1452364500133": {
@@ -188,24 +189,46 @@
     "description": ""
   },
   "1452364656203": {
-    "name": "Married?",
-    "type": "yesno",
+    "name": "Marital status",
+    "type": "radio",
     "mutable": true,
-    "settings": "",
+    "settings": {
+        "options": {
+            "1461974685288": {
+                "value": "Yes"
+            },
+            "1461974702655": {
+                "value": "No"
+            }
+        },
+        "buttons": true
+    },
     "description": "Are you married?"
   },
   "1452364672742": {
     "name": "Number in house",
     "type": "number",
     "mutable": true,
-    "settings": "",
+    "settings": {
+        "unit": "people"
+    },
     "description": "How many people live at home?"
   },
   "1452364686969": {
-    "name": "Clean water access?",
-    "type": "yesno",
+    "name": "Clean water access",
+    "type": "radio",
     "mutable": true,
-    "settings": "",
+    "settings": {
+        "options": {
+            "1461974777522": {
+                "value": "Yes"
+            },
+            "1461974794179": {
+                "value": "No"
+            }
+        },
+        "buttons": true
+    },
     "description": "Do you have access to clean water?"
   },
   "1452364697952": {
@@ -237,7 +260,8 @@
         }
       },
       "customizable": true,
-      "searchable": false
+      "searchable": true,
+      "multiple": true
     },
     "description": "Where do you get your water?"
   },
@@ -245,21 +269,31 @@
     "name": "Medical-related",
     "type": "header",
     "mutable": true,
-    "settings": "",
+    "settings": {},
     "description": "Known allergies, details"
   },
   "1452364798047": {
-    "name": "Drug allergies?",
-    "type": "yesno",
+    "name": "Drug allergy status",
+    "type": "radio",
     "mutable": true,
-    "settings": "",
+    "settings": {
+        "options": {
+            "1461974856902": {
+                "value": "Yes"
+            },
+            "1461974860269": {
+                "value": "No"
+            }
+        },
+        "buttons": true
+    },
     "description": "Are you allergic to any medicine?"
   },
   "1452364810369": {
     "name": "Drug allergy details",
     "type": "textarea",
     "mutable": true,
-    "settings": "",
+    "settings": {},
     "description": ""
   }
 }

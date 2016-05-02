@@ -34,9 +34,7 @@ export function BaseStageDefinition(isRoot, db) {
                     );
                 },
                 set: function(val) {
-
                     var visits = this.getDataValue('visits') || [];
-
                     if(typeof visits === "string") {
                         if(visits == "[]") {
                             visits = [];
@@ -94,7 +92,7 @@ export function BaseStageDefinition(isRoot, db) {
  * @param tableName
  * @param db
  */
-export function BaseStageOptions(isRoot, tableName, db) {
+export function BaseStageOptions(isRoot, tableName) {
     var meta = {};
 
     if(isRoot) {
@@ -123,25 +121,61 @@ export function BaseStageOptions(isRoot, tableName, db) {
  */
 export default function UpdateStageDefinition(stage, db) {
 
+    var allFields = stage.get('fields');
     var fields = {};
     var tableName = stage.get('tableName');
     var modelName = stage.get('modelName');
 
+
     __debug("> Updating stage definition for %s @ %s", stage.get('name'), modelName);
 
-    for(var field in stage.get('fields')) {
+    for(let field in allFields) {
 
-        __debug("| %s", field);
+        let thisField = allFields[field];
+        __debug("| %s (%s)", field, thisField.type);
 
         /*
          * Add a definition for this field.
          */
-        fields[field] =  {
-            type: db.Sequelize.TEXT,
-            allowNull: true
-        };
+        fields[field] = ((id, type) => {
+            switch(type) {
+
+                /*
+                 *
+                 */
+                case "select":
+                case "file":
+                    __debug("|==> JSON");
+                    return {
+                        type: db.Sequelize.TEXT,
+                        get: function() {
+                            return ModelHelper.jsonGetter(
+                                this.getDataValue(id),
+                                []
+                            );
+                        },
+                        set: function(val) {
+                            this.setDataValue(id, ModelHelper.jsonSetter(val, "[]"));
+                        }
+                    };
+                    break;
+
+                /*
+                 * Fields stored as raw text
+                 */
+                default:
+                    __debug("|==> text")
+                    return {
+                        type: db.Sequelize.TEXT,
+                        allowNull: true
+                    };
+                    break;
+            }
+        })(field, thisField.type);
 
     }
+
+    __debug(fields);
 
     /*
      * Push back to available record models
@@ -161,7 +195,7 @@ export default function UpdateStageDefinition(stage, db) {
         ),
         Object.assign(
             {},
-            BaseStageOptions(stage.get('isRoot') || false, tableName, db)
+            BaseStageOptions(stage.get('isRoot') || false, tableName)
         )
     );
 
