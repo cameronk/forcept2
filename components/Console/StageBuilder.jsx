@@ -14,6 +14,7 @@ import BaseComponent, { grabContext } from '../Base';
 import FieldsAccordion from './FieldsAccordion';
 import HeadingScaffold from '../Scaffold/Heading';
 import MessageScaffold from '../Scaffold/Message';
+import { BuildDOMClass } from '../../utils/CSSClassHelper';
 
 const __debug = debug("forcept:components:Console:StageBuilder");
 const root = "components.console.stagebuilder";
@@ -41,9 +42,9 @@ class StageBuilder extends BaseComponent {
     }
 
     componentDidUpdate() {
-        $("#StageBuilder .ui.dropdown")
+        $("#Forcept-StageBuilder .ui.dropdown")
             .dropdown();
-        $("#StageBuilder .ui.accordion")
+        $("#Forcept-StageBuilder .ui.accordion")
             .accordion();
     }
 
@@ -59,17 +60,19 @@ class StageBuilder extends BaseComponent {
         this.context.executeAction(SaveStageAction, { id: this.props.stage.id || null });
     }
 
-    _addField = (evt) => {
-        this.context.executeAction(UpdateCacheAction, {
-            fields: {
-                [new Date().getTime()]: {
-    				name: "",
-    				type: "text",
-    				mutable: true,
-    				settings: this.context.getStore(StageStore).getDefaultSettings(),
-    			}
-            }
-        });
+    _addField = (type) => {
+        return () => {
+            this.context.executeAction(UpdateCacheAction, {
+                fields: {
+                    [new Date().getTime()]: {
+        				name: "",
+        				type: type,
+        				mutable: true,
+        				settings: this.context.getStore(StageStore).getDefaultSettings(),
+        			}
+                }
+            });
+        }
     }
 
     _uploadConfig = (evt) => {
@@ -110,10 +113,20 @@ class StageBuilder extends BaseComponent {
             /// Add a new field
             AddNewFieldButtonDOM = (
                 <button
-                    onClick={this._addField}
-                    className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+                    className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
                     Add a new field
+                    <div className="menu">
+                        <div className="item" onClick={this._addField("text")}>Text field</div>
+                        <div className="item" onClick={this._addField("textarea")}>Textarea field</div>
+                        <div className="item" onClick={this._addField("number")}>Number field</div>
+                        <div className="item" onClick={this._addField("date")}>Date field</div>
+                        <div className="item" onClick={this._addField("radio")}>Radio/button field</div>
+                        <div className="item" onClick={this._addField("select")}>Select field</div>
+                        <div className="item" onClick={this._addField("file")}>File field</div>
+                        <div className="item" onClick={this._addField("header")}>Group fields with a header</div>
+                        <div className="item" onClick={this._addField("pharmacy")}>Pharmacy - show available medication</div>
+                    </div>
                 </button>
             );
 
@@ -162,7 +175,7 @@ class StageBuilder extends BaseComponent {
         }
 
         return (
-            <div className="ui basic expanded segment" id="StageBuilder">
+            <div className="ui basic expanded segment" id="Forcept-StageBuilder">
                 <HeadingScaffold
                     label={{
                         className: 'teal',
