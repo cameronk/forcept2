@@ -63,22 +63,26 @@ class SelectField extends BaseComponent {
         var { props } = this;
 
         __debug("[%s] - componentDidUpdate", props.fieldID);
-        __debug("|==> current value: %s", $("#FieldDropdown-" + props.fieldID).dropdown('get value').toString());
-        __debug("|==> new     value: %s", props.value.toString());
+        __debug("| - current value: %s", $("#FieldDropdown-" + props.fieldID).dropdown('get value').toString());
+        __debug("| - new     value: %s", props.value.toString());
 
         /*
          * Only run update if the passed value differs from
          * the current value of the dropdown.
          */
         if(props.value.toString() !== $("#FieldDropdown-" + props.fieldID).dropdown('get value')) {
+            __debug("| values differ...");
             if(props.hasOwnProperty('value') && props.value.length > 0) {
-                __debug("[%s] |==> updating selected to: %s", props.fieldID, props.value.toString());
+                __debug("|==> updating selected to: %s", props.fieldID, props.value.toString());
                 $("#FieldDropdown-" + props.fieldID)
-                    .dropdown('set exactly', props.value);
+                    .dropdown('set value', props.value);
             } else {
+                __debug("|==> clearing dropdown");
                 $("#FieldDropdown-" + props.fieldID)
                     .dropdown('clear');
             }
+        } else {
+            __debug("| values do NOT differ! not doing anything.");
         }
     }
 
@@ -102,11 +106,10 @@ class SelectField extends BaseComponent {
             var selected = value.split(",");
 
             if(selected.length >= this.props.value.length) {
-                __debug("| => Values were added, changed, or reordered.");
-                __debug("|==> Value: [%s] (%s)", fieldID, value.toString(), typeof value);
+                __debug("| Values were added, changed, or reordered.");
 
                 var bump = (val) => {
-                    __debug("|==> Bumping: %s (%s)", fieldID, val.toString(), typeof val);
+                    __debug("|==> Bumping: %s (%s)", val.toString(), typeof val);
                     this.context.executeAction(UpdatePatientAction, {
                         [patientID]: {
                             [stageID]: {
