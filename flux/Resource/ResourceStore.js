@@ -19,119 +19,70 @@ class ResourceStore extends BaseStore {
 
     static storeName = 'ResourceStore'
     static handlers = {
-        [Actions.RESOURCES_UPDATE_CACHE]: 'handleUpdateCache',
-        [Actions.RESOURCES_SET_UPLOAD_CONTEXT]: 'handleSetUploadContext',
-        [Actions.RESOURCES_SET_UPLOAD_PROGRESS]: 'handleSetUploadProgress',
-        [Actions.RESOURCES_PROCESS_FIELD]: 'handleProcessField',
+        [Actions.RESOURCES_UPDATE_STATE]: 'handleUpdateState'
     }
 
     // =============================== \\
 
         constructor(dispatcher) {
             super(dispatcher);
-            this.setInitialState();
-        }
-
-        setInitialState() {
-            this.processingFields = [];
-            this.uploadContext = null;
-            this.uploadProgress = 0;
-
-            this.handleClearCache();
+            this.state = {};
         }
 
     // =============================== \\
 
-        handleProcessField(fields) {
-            __debug(fields);
+
+        /**
+         * {
+         *      [fieldID]: {
+         *          [patientID]: {
+         *              status: "uploading"/"waiting"/"processing"
+         *              cache: [array of cached files]
+         *          }
+         *      }
+         * }
+         */
+        handleUpdateState(fields) {
             for(var field in fields) {
-                /// true -> add field
-                if(fields[field] === true) {
-                    this.processingFields.push(field);
-                    this.emitChange();
-                }
+                var thisField = fields[field];
 
-                /// false -> remove field
-                else {
-                    var index = this.processingFields.indexOf(field);
-                    while(index > -1) {
-                        this.processingFields.splice(index, 1);
-                        index = this.processingFields.indexOf(field);
-                    }
-                    this.emitChange();
-                }
-            }
-        }
-
-        getProcessingFields() {
-            return this.processingFields;
-        }
-
-    // =============================== \\
-
-        handleUpdateCache(data) {
-            __debug("Updating ResourceStore cache.");
-            __debug(data);
-            for(var field in data) {
-                var resources = data[field];
-                if(resources === null) {
-                    delete this.cache[field];
+                if(!this.state[field]) {
+                    this.state[field] = thisField;
                 } else {
-                    this.cache[field] = data[field];
+                    for(var patient in thisField) {
+
+                        var thisPatient = thisField[patient];
+                        if(thisPatient === null) {
+                            delete this.state[field][patient];
+                        } else {
+                            if(!this.state[field].hasOwnProperty(patient)) {
+                                this.state[field][patient] = thisPatient;
+                            } else {
+                                for(var key in thisPatient) {
+                                    this.state[field][patient][key] = thisPatient[key];
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
             this.emitChange();
         }
 
-        getCache() {
-            return this.cache;
-        }
-
-        handleClearCache() {
-            this.cache  = {};
-            this.emitChange();
-        }
-
-    // =============================== \\
-
-        handleSetUploadContext(context) {
-            __debug(context);
-            if(this.uploadContext !== context) {
-                this.uploadContext = context;
-                this.emitChange();
-            }
-        }
-
-        getUploadContext() {
-            return this.uploadContext;
-        }
-
-    // =============================== \\
-
-        handleSetUploadProgress(progress) {
-            if(this.uploadProgress !== progress) {
-                this.uploadProgress = progress;
-                this.emitChange();
-            }
-        }
-
-        getUploadProgress() {
-            return this.uploadProgress;
+        getState() {
+            return this.state;
         }
 
     // =============================== \\
 
         dehydrate() {
             return {
-                processingFields: this.processingFields,
-                cache       : this.cache,
+                state: this.state
             };
         }
 
         rehydrate(state) {
-            this.processingFields = state.processingFields;
-            this.cache      = state.cache;
+            this.state      = state.state;
         }
 }
 

@@ -52,30 +52,10 @@ class Index extends BaseComponent {
 
         return (
             <div>
-                <Horizon>
-                    <a className="item" onClick={this._importTestModel}>
-                    Grab model
-                    </a>
-                    <a className="item" onClick={this._updateTestModel}>
-                    Update model name
-                    </a>
-                    <div className="ui pointing dropdown link item">
-                        <span className="text">text</span><i className="dropdown icon"></i>
-                        <div className="menu">
-                            <div className="item">Test</div>
-                            <div className="item">Test</div>
-                            <div className="item">Test</div>
-                            <div className="item">Test</div>
-                        </div>
-                    </div>
-                </Horizon>
-                <h1>ResourceStore::getCache()</h1>
-                <pre>{JSON.stringify(props.resourceCache, null, '  ')}</pre>
+                <h1>ResourceStore::getState()</h1>
+                <pre>{JSON.stringify(props.resourceState, null, '  ')}</pre>
                 <div className="ui divider"></div>
-                <h1>ResourceStore upload</h1>
-                <pre>{JSON.stringify(props.resourceUpload, null, '  ')}</pre>
                 <div className="ui divider"></div>
-
                 <h1>VisitStore::getVisit()</h1>
                 <pre>{JSON.stringify(props.visit, null, '  ')}</pre>
                 <div className="ui divider"></div>
@@ -99,11 +79,7 @@ Index = connectToStores(
     (context, props) => {
         let resourceStore = context.getStore(ResourceStore);
         return {
-            resourceCache: resourceStore.getCache(),
-            resourceUpload: {
-                context: resourceStore.getUploadContext(),
-                progress: resourceStore.getUploadProgress(),
-            },
+            resourceState: resourceStore.getState(),
             patients: context.getStore(PatientStore).getPatients(),
             stages: context.getStore(StageStore).getStages(),
             stageCache: context.getStore(StageStore).getCache(),

@@ -16,7 +16,8 @@ import ProgressScaffold from '../Scaffold/Progress';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
 import { UpdateCacheAction, UploadResourcesAction,
-         ProcessResourcesAction } from '../../flux/Resource/ResourceActions';
+         ProcessResourcesAction,
+         UpdateStateAction } from '../../flux/Resource/ResourceActions';
 
 const __debug = debug('forcept:components:Fields:File');
 
@@ -55,17 +56,32 @@ class FileField extends BaseComponent {
             countFiles = files.length,
             modifiedFiles = [];
 
+        /**
+         * Once processed, push the base64 data for images
+         * to the cache, and tell the store we're no longer
+         * processing images for this field.
+         */
         var complete = () => {
-            this.context.executeAction(UpdateCacheAction, {
-                [props.fieldID]: modifiedFiles
-            });
-            this.context.executeAction(ProcessResourcesAction, {
-                [props.fieldID]: false
+            this.context.executeAction(UpdateStateAction, {
+                [props.fieldID]: {
+                    [props.patientID]: {
+                        status: "waiting",
+                        cache:  modifiedFiles
+                    }
+                }
             });
         };
 
-        this.context.executeAction(ProcessResourcesAction, {
-            [props.fieldID]: true
+        /**
+         * Update ResourceStore so it know we're processing
+         * the uploads for this file field.
+         */
+        this.context.executeAction(UpdateStateAction, {
+            [props.fieldID]: {
+                [props.patientID]: {
+                    status: "processing"
+                }
+            }
         });
 
         /*
@@ -181,7 +197,7 @@ class FileField extends BaseComponent {
             { field, value } = props;
 
         var fileInputID = props.fieldID;
-        var inputDOM, cardsDOM;
+        var inputDOM, cardsDOM, previewDOM;
 
         if(value.length > 0) {
             cardsDOM = (
@@ -205,66 +221,68 @@ class FileField extends BaseComponent {
                         }
                     })}
                 </div>
-            )
+            );
         }
 
-        if(props.uploading === false) {
+        if(props.state === null) {
             inputDOM = (
                 <div className="fluid ui action left icon input">
                     <i className="upload icon"></i>
-                    <input type="text"
-                        value={props.cache ? (props.cache.length + ' files selected...') : 'Choose a file with the adjacent button...'}
-                        readOnly />
-                    {(() => {
-                        if(props.cache) {
-                            return (
-                                <div className="ui green button" onClick={this._upload}>
-                                    Upload {props.cache.length} files
-                                </div>
-                            );
-                        } else {
-                            return (
-                                <label htmlFor={fileInputID} className="ui teal button">
-                                    Choose
-                                </label>
-                            );
-                        }
-                    })()}
+                    <input type="text" value="Choose files." readOnly />
+                    <label htmlFor={fileInputID} className="ui teal button">Choose</label>
                 </div>
             );
+        } else {
+            if(props.state.hasOwnProperty('status')) {
+                switch(props.state.status) {
+                    case "uploading":
+                        previewDOM = (
+                            <ProgressScaffold
+                                id={props.fieldID}
+                                className="small active blue"
+                                label={`Uploading ${props.state.cache.length} files...`}
+                                percent={99}
+                                autoSuccess={false} />
+                        )
+                        break;
+                    case "processing":
+                        previewDOM = (
+                            <MessageScaffold
+                                type="small info"
+                                icon="notched circle loading"
+                                header="Processing..." />
+                        );
+                        break;
+                    case "waiting":
+                        previewDOM = (
+                            <div className="ui fluid card">
+                                <div className="content">
+                                    <div className="header">
+                                        {props.state.cache.length} files ready for upload.
+                                    </div>
+                                </div>
+                                <div className="extra content">
+                                    <div className="small ui green basic left floated button" onClick={this._upload}>
+                                        <i className="upload icon"></i>
+                                        Upload
+                                    </div>
+                                    <div className="small ui red basic right floated button">
+                                        <i className="remove icon"></i>
+                                        Cancel
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        break;
+                }
+            }
         }
 
         return (
             <div className="Forcept-File field">
                 <Label field={field} />
                 {cardsDOM}
-                {(() => {
-                    /*
-                     * Show processing message.
-                     */
-                    if(props.processing === true) {
-                        return (
-                            <MessageScaffold
-                                type="small info"
-                                icon="notched circle loading"
-                                header="Processing..." />
-                        );
-                    }
-
-                    /*
-                     * Show uploading bar.
-                     */
-                    else if(props.uploading !== false) {
-                        return (
-                            <ProgressScaffold
-                                id={props.fieldID}
-                                className="small active blue"
-                                label={`Uploading ${props.cache.length} files...`}
-                                percent={99}
-                                autoSuccess={false} />
-                        );
-                    }
-                })()}
+                {previewDOM}
                 <input
                     type="file"
                     accept={field.settings.accept.join(",")}

@@ -42,6 +42,7 @@ export default keyMirror({
     'PATIENT_UPDATE': null,
     'PATIENT_CLEAR_ALL': null,
 
+    'RESOURCES_UPDATE_STATE': null,
     'RESOURCES_UPDATE_CACHE': null,
     'RESOURCES_SET_UPLOAD_CONTEXT': null,
     'RESOURCES_SET_UPLOAD_PROGRESS': null,

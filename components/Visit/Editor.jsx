@@ -96,11 +96,29 @@ class Editor extends BaseComponent {
                             );
                             break;
                         case "file":
+                            // let _cache = props.resource.cache;
+                            // let cache = _cache.hasOwnProperty(fieldID)
+                            //             && _cache[fieldID].hasOwnProperty(patient.id)
+                            //                 ? _cache[fieldID]
+                            //                 : null;
+                            let _state = props.resourcesState;
+                            let state = _state.hasOwnProperty(fieldID)
+                                        && _state[fieldID].hasOwnProperty(patient.id)
+                                            ? _state[fieldID][patient.id]
+                                            : null;
+                            //
+                            // let _uploading = props.resource.uploading;
+                            // let uploading = _uploading.hasOwnProperty(fieldID)
+                            //                 && _uploading[fieldID].hasOwnProperty(patient.id)
+                            //                     ? _uploading[fieldID]
+                            //                     : null;
+                            // uploading={props.resource.upload.context === fieldID ? props.resource.upload.progress : false}
+                            // processing={props.resource.processing.indexOf(fieldID) > -1}
+
+                                // cache={cache}
                             fieldDOM = (
                                 <FileField
-                                    cache={props.resource.cache.hasOwnProperty(fieldID) ? props.resource.cache[fieldID] : null}
-                                    uploading={props.resource.upload.context === fieldID ? props.resource.upload.progress : false}
-                                    processing={props.resource.processing.indexOf(fieldID) > -1}
+                                    state={state}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

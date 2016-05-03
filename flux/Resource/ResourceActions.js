@@ -13,19 +13,12 @@ import { JsonModel } from '../../database/helper';
 
 const __debug = debug('forcept:flux:Resource:ResourceActions');
 
-/*
- * Update the Resource cache via payload.
- */
-export function UpdateCacheAction(context, payload, done) {
-    context.dispatch(Actions.RESOURCES_UPDATE_CACHE, payload);
-    done();
-}
-
 /**
  *
  */
-export function ProcessResourcesAction(context, payload, done) {
-    context.dispatch(Actions.RESOURCES_PROCESS_FIELD, payload);
+export function UpdateStateAction(context, payload, done) {
+    context.dispatch(Actions.RESOURCES_UPDATE_STATE, payload);
+    done();
 }
 
 /**
@@ -35,13 +28,16 @@ export function UploadResourcesAction(context, { fieldID, stageID, patientID }, 
     context.dispatch(Actions.RESOURCES_SET_UPLOAD_CONTEXT, fieldID);
 
     var resourceStore = context.getStore(ResourceStore);
-    var cachedResources = resourceStore.getCache();
+    var cachedResources = resourceStore.getState();
 
-    if(cachedResources.hasOwnProperty(fieldID)) {
+    if(    cachedResources.hasOwnProperty(fieldID)
+        && cachedResources[fieldID].hasOwnProperty(patientID)
+        && cachedResources[fieldID][patientID].hasOwnProperty('cache')
+        && cachedResources[fieldID][patientID].cache.length > 0) {
 
         var promises = [];
 
-        cachedResources[fieldID].map(resource => {
+        (cachedResources[fieldID][patientID].cache).map(resource => {
 
             var typeVSdata = resource.split(";");
             var type = typeVSdata[0].split(":")[1];
@@ -68,30 +64,25 @@ export function UploadResourcesAction(context, { fieldID, stageID, patientID }, 
             __debug("Saved %s resource(s)", resources.length);
 
             /*
-             * Nullify upload context
+             * Nullify upload state for this fieldID/patientID
              */
-            context.dispatch(Actions.RESOURCES_SET_UPLOAD_CONTEXT, null);
+            context.dispatch(Actions.RESOURCES_UPDATE_STATE, {
+                [fieldID]: {
+                    [patientID]: null
+                }
+            })
 
             /*
-             * Delete the resources we just uploaded from the cache.
+             * Update patient with the resource objects returned from ResourceService
              */
-            context.executeAction(UpdateCacheAction, {
-                [fieldID]: null
-            }, () => {
-
-                /*
-                 * Update patient with the resource objects returned from ResourceService
-                 */
-                context.executeAction(UpdatePatientAction, {
-                    [patientID]: {
-                        [stageID]: {
-                            [fieldID]: resources
-                        }
+            context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: resources
                     }
-                }, () => {
-                    done();
-                });
-
+                }
+            }, () => {
+                done();
             });
 
         });

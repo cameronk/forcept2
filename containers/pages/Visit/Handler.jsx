@@ -265,12 +265,13 @@ class VisitHandler extends BaseComponent {
                                                 patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
                                                 visit={visit}
                                                 stage={thisStage}
-                                                resource={props.resource} />
+                                                resourcesState={props.resourcesState} />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         );
+                        // resource={props.resource}
 
                     }
 
@@ -433,14 +434,16 @@ VisitHandler = connectToStores(
             recentData: visitStore.getRecentData(),
             tab: visitStore.getCurrentTab(),
 
-            resource: {
-                cache: resourceStore.getCache(),
-                processing: resourceStore.getProcessingFields(),
-                upload: {
-                    context: resourceStore.getUploadContext(),
-                    progress: resourceStore.getUploadProgress(),
-                }
-            }
+            resourcesState: resourceStore.getState(),
+
+            // resource: {
+            //     cache: resourceStore.getCache(),
+            //     processing: resourceStore.getProcessingFields(),
+            //     upload: {
+            //         context: resourceStore.getUploadContext(),
+            //         progress: resourceStore.getUploadProgress(),
+            //     }
+            // }
 
         };
 

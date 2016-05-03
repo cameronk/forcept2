@@ -67,30 +67,6 @@ class Field extends BaseComponent {
             typeSelectDOM, removeButtonDOM;
 
         if(mutable) {
-
-            typeSelectDOM = (
-                <div className="field">
-                    <label>Type:</label>
-                    <select className="ui dropdown" value={field.type} onChange={this._change('type')}>
-                        <optgroup label="Inputs">
-                            <option value="text">Text field</option>
-                            <option value="textarea">Textarea field</option>
-                            <option value="number">Number field</option>
-                            <option value="date">Date field</option>
-                        </optgroup>
-                        <optgroup label="Multiple-option fields">
-                            <option value="radio">Radio/button field</option>
-                            <option value="select">Select field</option>
-                            <option value="file">File field</option>
-                        </optgroup>
-                        <optgroup label="Other">
-                            <option value="header">Group fields with a header</option>
-                            <option value="pharmacy">Pharmacy - show available medication</option>
-                        </optgroup>
-                    </select>
-                </div>
-            );
-
             removeButtonDOM = (
                 <button
                     onClick={this._removeField}
@@ -99,7 +75,6 @@ class Field extends BaseComponent {
                     Remove this field
                 </button>
             );
-
         }
 
         return (
@@ -110,7 +85,6 @@ class Field extends BaseComponent {
                             <label>Name:</label>
                             <input type="text" placeholder={"Enter a field name"} value={field.name} onChange={this._change('name')} />
                         </div>
-                        {typeSelectDOM}
                         <div className="field">
                             <label>Description:</label>
                             <textarea
