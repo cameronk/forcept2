@@ -44,6 +44,10 @@ const messages = defineMessages({
     consoleFieldDataItem: {
         id: "verticalmenu.user.consoleFieldDataItem",
         defaultMessage: "Field data"
+    },
+    consoleUsersItem: {
+        id: "verticalmenu.user.consoleUsersItem",
+        defaultMessage: "Users"
     }
 
 });
@@ -91,20 +95,32 @@ class VerticalMenu extends BaseComponent {
                 <div className="item">
                     <div className="header">Header</div>
                     <div className="menu">
-                        <NavLink key="console" className="item" href="/console">
-                            <i className="lock icon"></i>
-                            {formatMessage(messages.consoleItem)}
-                        </NavLink>
-                        <div className="sub menu">
-                            <NavLink href="/console/field-data" key="field-data" className="item">
-                                <i className="database icon"></i>
-                                {formatMessage(messages.consoleFieldDataItem)}
-                            </NavLink>
-                            <NavLink href="/console/stages" key="stages" className="item">
-                                <i className="list icon"></i>
-                                {formatMessage(messages.consoleStageItem)}
-                            </NavLink>
-                        </div>
+                        {(() => {
+                            if(ctx.getUser("isAdmin") === true) {
+                                return (
+                                    <div>
+                                        <NavLink className="item" href="/console">
+                                            <i className="chevron down icon"></i>
+                                            {formatMessage(messages.consoleItem)}
+                                        </NavLink>
+                                        <div className="sub menu">
+                                            <NavLink href="/console/users" className="item">
+                                                <i className="users icon"></i>
+                                                {formatMessage(messages.consoleUsersItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/stages" className="item">
+                                                <i className="database icon"></i>
+                                                {formatMessage(messages.consoleStageItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/field-data" className="item">
+                                                <i className="list icon"></i>
+                                                {formatMessage(messages.consoleFieldDataItem)}
+                                            </NavLink>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                        })()}
                         <a key="chooseLanguage" className="item">
                             <i className="globe icon"></i>
                             {formatMessage(messages.chooseLanguage)}

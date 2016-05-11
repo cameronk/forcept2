@@ -84,6 +84,15 @@ export default {
         handler: getPage('Console/Stages'),
         title: messages['pages.console.stages.title']
     },
+    consoleUsers: {
+        path: '/console/users',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Users'),
+        title: messages['pages.console.stages.title']
+    },
     consoleStagesStage: {
         path: '/console/stages/:stageID',
         namespace: 'console',
