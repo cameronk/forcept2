@@ -52,41 +52,23 @@ class Container extends React.Component {
         } else if(!Handler) {
             content = "Handler not found";
         } else {
-
             const params = currentRoute.params || {};
             content = <Handler {...params} />
-            //
-            // if(!isNavigateComplete) {
-            //     switch(loadingMode) {
-            //         case "container":
-            //             content = getHandler();
-            //             $()
-            //             break;
-            //         case "default":
-            //         default:
-            //             content = "Loading";
-            //             break;
-            //     }
-            // } else {
-            // }
-                // content = getHandler();
         }
-
-        /*if(!isNavigateComplete) {
-            loading = (
-                <div className="ui active loader"></div>
-            );
-        }*/
 
         /// #Container is now like <body>
         return (
             <div id="Container">
+
                 {/** CSS hides these for large screen sizes **/}
                 <SideBar />
                 <TopBar />
+
                 {/** Add .pusher so semantic can fiddle with sidebar **/}
                 <div className="pusher">
+
                     <div className="full height">
+
                         {/** CSS displays SideRail on large screen sizes **/}
                         <div className="toc">
                             <SideRail />
@@ -95,8 +77,11 @@ class Container extends React.Component {
                             {loading}
                             {content}
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
         );
     }

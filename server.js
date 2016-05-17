@@ -36,9 +36,10 @@ import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
 import PatientService from './flux/Patient/PatientService';
 import VisitService from './flux/Visit/VisitService';
-import TestService from './flux/Test/TestService';
 import RecordService from './flux/Record/RecordService';
 import ResourceService from './flux/Resource/ResourceService';
+import UserService from './flux/User/UserService';
+import TestService from './flux/Test/TestService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -156,6 +157,7 @@ __debug("---");
               FetchrPlugin.registerService(VisitService.attach(db));
               FetchrPlugin.registerService(RecordService.attach(db));
               FetchrPlugin.registerService(ResourceService.attach(db));
+              FetchrPlugin.registerService(UserService.attach(db));
               FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
