@@ -14,7 +14,8 @@ import Horizon    from '../../../components/Meta/Horizon';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Editor     from '../../../components/Visit/Editor';
 import MessageScaffold from '../../../components/Scaffold/Message';
-import { SetCurrentTabAction, CreatePatientAction } from '../../../flux/Visit/VisitActions';
+import { SetCurrentTabAction, ReadVisitsAtStageAction,
+        ClearVisitListAction, CreatePatientAction } from '../../../flux/Visit/VisitActions';
 
 import AppStore   from '../../../flux/App/AppStore';
 import StageStore from '../../../flux/Stage/StageStore';
@@ -32,7 +33,20 @@ class VisitList extends BaseComponent {
     static contextTypes = grabContext()
 
     componentDidMount() {
-        // this.context.executeAction()
+        this.fetch();
+    }
+
+    componentDidUpdate(lastProps) {
+        if(this.props.stageID !== lastProps.stageID) {
+            this.context.executeAction(ClearVisitListAction);
+            this.fetch();
+        }
+    }
+
+    fetch() {
+        this.context.executeAction(ReadVisitsAtStageAction, {
+            stageID: this.props.stageID
+        });
     }
 
     render() {
@@ -50,7 +64,7 @@ class VisitList extends BaseComponent {
             horizonDOM = (
                 <Horizon>
                     <NavLink
-                        href={props.stageID + "/new"}
+                        href={props.stageSlug + "/new"}
                         className="item">
                         <i className="plus icon"></i>
                         Create a new visit
@@ -103,9 +117,20 @@ VisitList = connectToStores(
 
         let params = routeStore.getCurrentRoute().params;
 
+        let stageID = null,
+            stageSlug = null,
+            stage = null;
+
+        if(params.stageID) {
+            stageSlug = params.stageID;
+            stageID = params.stageID.split("-")[0];
+            stage = stageStore.getStages()[stageID];
+        }
+
         return {
-            stageID: params.stageID ? params.stageID : null,
-            stage: params.stageID ? stageStore.getStages()[params.stageID.split("-")[0]] : null,
+            stageSlug: stageSlug,
+            stageID: stageID,
+            stage: stage,
             list:  visitStore.getList()
         };
     }

@@ -18,10 +18,26 @@ const __debug = debug('forcept:flux:Visit:VisitActions');
 /**
  *
  */
+export function ClearVisitListAction(context, payload, done) {
+    context.dispatch(Actions.VISIT_LIST_CLEAR);
+    done();
+}
+
+/**
+ *
+ */
 export function ReadVisitsAtStageAction(context, payload, done) {
-
-
-
+    context.service
+        .read('VisitService')
+        .params({
+            where: {
+                stage: payload.stageID
+            }
+        }).end().then(({data}) => {
+            __debug("Found %s visits at stage %s", data.length, payload.stageID);
+            context.dispatch(Actions.VISIT_LIST_UPDATE, data);
+            done();
+        });
 }
 
 /*

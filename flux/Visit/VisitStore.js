@@ -113,6 +113,7 @@ class VisitStore extends BaseStore {
      */
     handleUpdateList(visits) {
         this.list = visits;
+        this.emitChange();
     }
 
     // =============================== \\
