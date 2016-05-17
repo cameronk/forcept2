@@ -9,17 +9,35 @@ import debug from 'debug';
 
 const __debug = debug('forcept:flux:Visit:VisitStore');
 
+/**
+ * visit (Object) => stores data about visit currently being modified
+ * list (Array)   => sorted list of visits within current stage
+ */
 class VisitStore extends BaseStore {
 
     static storeName = 'VisitStore'
     static handlers = {
+
+        /*
+         * Misc. actions
+         */
         [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
         [Actions.VISIT_SET_DESTINATION]: 'handleSetDestination',
         [Actions.VISIT_SET_RECENT_DATA]: 'handleSetRecentData',
-        [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
+        [Actions.VISIT_SET_OVERVIEW_MODE]: 'handleSetOverviewMode',
+
+        /*
+         * Visit actions
+         */
         [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
         [Actions.VISIT_CLEAR]: 'handleClearVisit',
-        [Actions.VISIT_SET_OVERVIEW_MODE]: 'handleSetOverviewMode'
+        [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
+
+        /*
+         * List actions
+         */
+        [Actions.VISIT_LIST_UPDATE]: 'handleUpdateList',
+        [Actions.VISIT_LIST_CLEAR]: 'handleClearList'
     }
 
     // =============================== \\
@@ -32,7 +50,9 @@ class VisitStore extends BaseStore {
     setInitialState() {
         this.recentData = null;
         this.overviewModes = {};
+
         this.handleClearVisit();
+        this.handleClearList();
     }
 
     // =============================== \\
@@ -70,6 +90,29 @@ class VisitStore extends BaseStore {
             this.visit[field] = data[field];
         }
         this.emitChange();
+    }
+
+    // =============================== \\
+
+    /**
+     *
+     */
+    getList() {
+        return this.list;
+    }
+
+    /**
+     *
+     */
+    handleClearList() {
+        this.list = [];
+    }
+
+    /**
+     *
+     */
+    handleUpdateList(visits) {
+        this.list = visits;
     }
 
     // =============================== \\

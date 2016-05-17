@@ -15,14 +15,19 @@ import { JsonModel } from '../../database/helper';
 
 const __debug = debug('forcept:flux:Visit:VisitActions');
 
-/*
+/**
  *
  */
-export function RedirectRootAction(context, payload, done) {
+export function ReadVisitsAtStageAction(context, payload, done) {
 
+
+
+}
+
+/*
+export function RedirectRootAction(context, payload, done) {
     var stages = context.getStore(StageStore).getStages();
         stages = keyBy(stages, 'id');
-
     var thisStage = stages[payload.params.stageID.split('-')[0]];
     if(thisStage && thisStage.isRoot) {
         __debug("Stage is root, redirecting");
@@ -35,8 +40,8 @@ export function RedirectRootAction(context, payload, done) {
         __debug("Stage is not root, skipping extra navigateAction");
         done();
     }
-
 }
+*/
 
 /*
  * Create and/or update a visit record with patient data.

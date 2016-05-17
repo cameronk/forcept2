@@ -9,9 +9,11 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../../../components/Base';
+import NavLink    from '../../../components/Navigation/NavLink';
 import Horizon    from '../../../components/Meta/Horizon';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Editor     from '../../../components/Visit/Editor';
+import MessageScaffold from '../../../components/Scaffold/Message';
 import { SetCurrentTabAction, CreatePatientAction } from '../../../flux/Visit/VisitActions';
 
 import AppStore   from '../../../flux/App/AppStore';
@@ -29,13 +31,84 @@ class VisitList extends BaseComponent {
 
     static contextTypes = grabContext()
 
+    componentDidMount() {
+        // this.context.executeAction()
+    }
+
     render() {
+
+        var { props } = this,
+            { list, stage } = props;
+
+        var horizonDOM, listDOM;
+
+        /*
+         * Show horizon controls bsaed on whether or not this
+         * is the root stage.
+         */
+        if(stage.isRoot) {
+            horizonDOM = (
+                <Horizon>
+                    <NavLink
+                        href={props.stageID + "/new"}
+                        className="item">
+                        <i className="plus icon"></i>
+                        Create a new visit
+                    </NavLink>
+                </Horizon>
+            )
+        }
+
+        /*
+         * Show the list if we've populated it with items;
+         * otherwise, show a loading message.
+         */
+        if(list.length > 0) {
+
+        } else {
+            listDOM = (
+                <div className="ui basic bottom attached segment">
+                    <MessageScaffold
+                        type="info"
+                        icon="loading notched spinner"
+                        text="Fetching visits, one moment..." />
+                </div>
+            )
+        }
+
         return (
-            <div>List</div>
+            <div>
+                <h1 className="ui top attached header">
+                    <i className="hospital icon"></i>
+                    <div className="content">
+                        {stage.name}
+                    </div>
+                </h1>
+                {horizonDOM}
+                {listDOM}
+            </div>
         );
     }
 
 }
 
+VisitList = connectToStores(
+    VisitList,
+    [StageStore, VisitStore],
+    (context, props) => {
+
+        let routeStore = context.getStore('RouteStore');
+        let stageStore = context.getStore(StageStore);
+        let visitStore = context.getStore(VisitStore);
+
+        let params = routeStore.getCurrentRoute().params;
+
+        return {
+            stageID: params.stageID ? params.stageID : null,
+            stage: params.stageID ? stageStore.getStages()[params.stageID.split("-")[0]] : null,
+            list:  visitStore.getList()
+        };
+    }
+);
 
 export default injectIntl(VisitList);

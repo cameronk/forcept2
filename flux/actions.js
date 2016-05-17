@@ -38,6 +38,9 @@ export default keyMirror({
     'VISIT_CLEAR': null,
     'VISIT_SET_OVERVIEW_MODE': null,
 
+    'VISIT_LIST_CLEAR': null,
+    'VISIT_LIST_UPDATE': null,
+
     /// Patient
     'PATIENT_UPDATE': null,
     'PATIENT_CLEAR_ALL': null,
