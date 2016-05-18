@@ -11,7 +11,7 @@ import debug from 'debug';
 
 import BaseComponent    from '../../../components/Base';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
-import { LoadUsersAction, CreateUserAction, UpdateNurseryAction } from '../../../flux/User/UserActions';
+import { LoadUsersAction, CreateUserAction, DeleteUserAction, UpdateNurseryAction } from '../../../flux/User/UserActions';
 import UserStore from '../../../flux/User/UserStore';
 
 const __debug = debug('forcept:containers:pages:Console:Users');
@@ -42,6 +42,10 @@ class Users extends BaseComponent {
      *
      */
     _showAddUser = () => {
+
+        /*
+         * Bind onApprove to modal, then show it.
+         */
         $("#Forcept-Modal-addUser")
             .modal({
                 onApprove: () => {
@@ -57,6 +61,10 @@ class Users extends BaseComponent {
             })
             .modal('show')
         ;
+
+        /*
+         * Set up form checking before submission.
+         */
         $("#Forcept-Modal-addUser .ui.form")
             .form({
                 inline: true,
@@ -69,12 +77,35 @@ class Users extends BaseComponent {
     }
 
     /**
+    _showRemoveUser = (id) => {
+        return (evt) => {
+            var wait = 2;
+            var button = $(`.button.FORCEPT-Action-removeUser[data-user-id='${id}']`);
+                button.html('Yes, remove this user');
+                button.on('click', () => {
+                    this._submitRemoveUser(id);
+                });
+        };
+    }
+     *
+     */
+
+    /**
+     *
+     */
+    _submitRemoveUser = (id) => {
+        return (evt) => {
+            this.context.executeAction(DeleteUserAction, {
+                id: id
+            });
+        }
+    }
+
+    /**
      *
      */
     _submitAddUser = () => {
-        console.log("Test");
         $("#Forcept-Modal-addUser .ui.form").form('submit');
-        console.log($("#Forcept-Modal-addUser .ui.form"));
     }
 
     /*
@@ -129,7 +160,7 @@ class Users extends BaseComponent {
                                                     </td>
                                                     <td>
                                                         <div className="small ui buttons">
-                                                            <div className="ui red button">
+                                                            <div className="ui red button FORCEPT-Action-removeUser" data-user-id={id} onClick={this._submitRemoveUser(id)}>
                                                                 Remove user
                                                             </div>
                                                         </div>

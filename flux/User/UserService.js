@@ -52,9 +52,33 @@ export default {
             /**
              *
              */
-            delete: function(req, resource, params, body, config, callback) {
-                __debug("[delete]: ");
-                
+            delete: function(req, resource, params, config, callback) {
+                __debug("[delete]: deleting user %s", params.id);
+                db.User.findOne({
+                    where: {
+                        id: params.id
+                    }
+                }).then(user => {
+                    if(user) {
+                        user.destroy()
+                            .then(() => {
+                                callback(null, params.id, null);
+                            });
+                    } else {
+                        callback(
+                            BuildError(`User ${params.id} not found.`, {
+                                output: {
+                                    message: `User ${params.id} not found.`
+                                },
+                                statusCode: HttpStatus.NOT_FOUND
+                            })
+                        );
+                    }
+                }).catch(err => {
+                    __debug("[delete]: ERROR:");
+                    __debug(err);
+                    callback(err);
+                });
             }
 
         }

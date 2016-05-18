@@ -23,7 +23,6 @@ export function LoadUsersAction(context, payload, done) {
         });
 }
 
-
 /**
  *
  */
@@ -36,6 +35,21 @@ export function CreateUserAction(context, payload, done) {
         })
         .end().then(({data}) => {
             context.dispatch(Actions.USERS_UPDATE, { [data.id] : data });
+            done();
+        });
+}
+
+/**
+ *
+ */
+export function DeleteUserAction(context, payload, done) {
+    context.service
+        .delete('UserService')
+        .params({
+            id: payload.id
+        })
+        .end().then(({data}) => {
+            context.dispatch(Actions.USERS_UPDATE, { [payload.id] : null });
             done();
         });
 }

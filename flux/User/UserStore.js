@@ -44,7 +44,11 @@ class UserStore extends BaseStore {
     handleUpdateUsers(users) {
         __debug("Adding users: %j", users);
         for(var id in users) {
-            this.users[id] = users[id];
+            if(users[id] === null && this.users.hasOwnProperty(id)) {
+                delete this.users[id];
+            } else {
+                this.users[id] = users[id];
+            }
         }
         this.emitChange();
     }
