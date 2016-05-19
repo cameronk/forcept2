@@ -93,7 +93,7 @@ class VerticalMenu extends BaseComponent {
 
             userItem = (
                 <div className="item">
-                    <div className="header">Header</div>
+                    <div className="header">Administration</div>
                     <div className="menu">
                         {(() => {
                             if(ctx.getUser("isAdmin") === true) {
