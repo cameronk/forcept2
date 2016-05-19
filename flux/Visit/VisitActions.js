@@ -4,8 +4,11 @@
  */
 
 import debug from 'debug';
-import keyBy from 'lodash/keyBy';
 import pick from 'lodash/pick';
+import isNil from 'lodash/isNil';
+import keyBy from 'lodash/keyBy';
+import sortBy from 'lodash/sortBy';
+import omitBy from 'lodash/omitBy';
 
 import Actions from '../actions';
 import { navigateAction } from '../Route/RouteActions';
@@ -35,8 +38,33 @@ export function ReadVisitsAtStageAction(context, payload, done) {
             }
         }).end().then(({data}) => {
             __debug("Found %s visits at stage %s", data.length, payload.stageID);
-            context.dispatch(Actions.VISIT_LIST_UPDATE, data);
-            done();
+
+            var promises = [];
+
+            data.map((visit, index) => {
+                promises.push(
+                    context.service
+                        .read('RecordService')
+                        .params({
+                            patients: visit.patients,
+                            visit: visit.id,
+                            stages: [1]
+                        }).end().then(({data}) => {
+                            ///                 0 = .read() returns array of objects, grab the first
+                            var patients = data[0][1];
+                            ///                    1 = root stage
+                            visit.patients = sortBy(patients, ['priority', 'birthday', 'createdAt']);
+                            return visit;
+                        })
+                );
+            });
+
+            Promise.all(promises).then(visits => {
+                __debug(visits);
+                context.dispatch(Actions.VISIT_LIST_UPDATE, visits);
+                done();
+            });
+
         });
 }
 
@@ -244,6 +272,10 @@ export function MoveVisitAction(context, { id, destination }, done) {
  *
  */
 export function GrabVisitAction(context, payload, done) {
+
+    /*
+     * Grab this visit's data.
+     */
     return context.service
         .read('VisitService')
         .params({
@@ -251,15 +283,55 @@ export function GrabVisitAction(context, payload, done) {
                 id: payload.id
             }
         }).end().then(({data}) => {
+
+            /*
+             * Convert visit to a JSON model.
+             */
             var visit = JsonModel(data[0]);
+
+            /*
+             * Dispatch event to update page with visit info.
+             */
             context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
+
+            /*
+             * Fetch *all* available records for each patient.
+             */
             return context.service
                 .read('RecordService')
                 .params({
                     patients: visit.patients,
-                    visit: visit.id
+                    visit: visit.id,
+                    stages: "*"
                 }).end().then(({data}) => {
-                    context.dispatch(Actions.PATIENT_UPDATE, data);
+
+                    var collapsed = Object.assign(...data);
+                    var patients = {};
+
+                    /*
+                     * Process returned data into a usable object.
+                     */
+                    for(let stageID in collapsed) {
+                        collapsed[stageID].map((record) => {
+
+                            /*
+                             * Root stage identifier is     record.id
+                             * Other stages identify with   record.patient
+                             */
+                            var patientID = stageID == 1 ? record.id : record.patient;
+
+                            if(!patients.hasOwnProperty(patientID)) {
+                                patients[patientID] = {};
+                            }
+
+                            /*
+                             * Omit null values from object.
+                             */
+                            patients[patientID][stageID] = omitBy(JsonModel(record), isNil);
+                        });
+                    }
+
+                    context.dispatch(Actions.PATIENT_UPDATE, patients);
                     done();
                     return;
                 });

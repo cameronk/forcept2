@@ -4,13 +4,13 @@
  */
 
 import HttpStatus from 'http-status-codes';
-import flatten from 'lodash/flatten';
-import omitBy from 'lodash/omitBy';
-import isNil from 'lodash/isNil';
+import pick from 'lodash/pick';
+import invert from 'lodash/invert';
 
 import { JsonModel } from '../../database/helper';
 import BuildError from '../../utils/BuildError';
-const __debug = require('debug')('forcept:flux:Record:RecordService')
+
+const __debug = require('debug')('forcept:flux:Record:RecordService');
 
 export default {
     attach: function(db) {
@@ -24,13 +24,39 @@ export default {
                 __debug("[read]: ...");
 
                 var promises = [];
+                var constrainedRecordModels = {};
+
+                if(!params.stages) {
+                    callback(
+                        BuildError('Missing stages constraint for RecordService call.', {
+                            output: {
+                                message: 'Missing stages constraint for RecordService call.'
+                            },
+                            statusCode: HttpStatus.NOT_FOUND
+                        })
+                    );
+
+                    return;
+                } else {
+                    if(typeof params.stages === "string") {
+                        switch(params.stages) {
+                            case "*":
+                                constrainedRecordModels = db.RecordModels;
+                                break;
+                        }
+                    } else if(Array.isArray(params.stages)) {
+                        constrainedRecordModels = invert(pick(invert(db.RecordModels), params.stages));
+                    }
+                }
+
+                __debug("[read]: Constraining to models: %s", Object.keys(constrainedRecordModels).join(", "));
 
                 /*
                  * Loop through record models and check
                  * each table for records for this patient.
                  */
-                for(let modelName in db.RecordModels) {
-                    __debug("[read] => %s", modelName);
+                for(let modelName in constrainedRecordModels) {
+                    __debug("[read]==> %s", modelName);
 
                     var where = {};
 
@@ -68,7 +94,7 @@ export default {
                                 __debug(err);
                             })
                             .then(records => {
-                                __debug("[read] Found %s record(s) in %s", records.length, modelName);
+                                __debug("[read]: Found %s record(s) in %s", records.length, modelName);
                                 return {
                                     [db.RecordModels[modelName]]: records
                                 };
@@ -78,29 +104,10 @@ export default {
                 }
 
                 /*
-                 *
+                 * Return unprocessed data for handling by calling action.
                  */
                 Promise.all(promises).then(data => {
-
-                    var collapsed = Object.assign(...data);
-                    var patients = {};
-
-                    for(let stageID in collapsed) {
-                        collapsed[stageID].map((record) => {
-                            var patientID = stageID == 1 ? record.get('id') : record.get('patient');
-
-                            if(!patients.hasOwnProperty(patientID)) {
-                                patients[patientID] = {};
-                            }
-
-                            /*
-                             * Omit null values from object.
-                             */
-                            patients[patientID][stageID] = omitBy(JsonModel(record), isNil);
-                        });
-                    }
-
-                    callback(null, patients, null);
+                    callback(null, data, null);
                 });
 
             },

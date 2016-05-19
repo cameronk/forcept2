@@ -126,7 +126,6 @@ export default function UpdateStageDefinition(stage, db) {
     var tableName = stage.get('tableName');
     var modelName = stage.get('modelName');
 
-
     __debug("> Updating stage definition for %s @ %s", stage.get('name'), modelName);
 
     for(let field in allFields) {
@@ -174,8 +173,6 @@ export default function UpdateStageDefinition(stage, db) {
         })(field, thisField.type);
 
     }
-
-    __debug(fields);
 
     /*
      * Push back to available record models

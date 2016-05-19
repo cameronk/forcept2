@@ -85,9 +85,8 @@ __debug("---");
             UpdateStageDefinition(stage, db);
         });
 
-        __debug("Available models:");
-        __debug(Object.keys(db.sequelize.models));
-        __debug(db.RecordModels);
+        __debug("Available record models:");
+        __debug(Object.keys(db.RecordModels));
 
         /*
          * Configure Passport local strategy.

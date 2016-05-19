@@ -49,7 +49,7 @@ const messages = defineMessages({
 });
 
 if(process.env.BROWSER) {
-    require('../../../styles/Visit.less');
+    require('../../../styles/VisitHandler.less');
 }
 
 class VisitHandler extends BaseComponent {

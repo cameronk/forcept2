@@ -1,0 +1,40 @@
+#VisitList {
+    .FORCEPT-Visit-Listing {
+        .top.attached.header {
+            padding-top: 0.72em;
+            background: #fafafa;
+            border-left: 10px solid #D4D4D4;
+            border-right: 1px solid #D4D4D4;
+        }
+
+        @media only screen and (max-width: 1144px) {
+            .ui.stackable.cards {
+                margin-top: 0.2em;
+                margin-bottom: 0.2em;
+
+                & > .card {
+                    border-radius: 0;
+                    margin: 0 auto;
+
+                    .image {
+                        overflow: hidden;
+                        border-radius: 0 !important;
+                        img {
+                            border-radius: 0;
+                        }
+                    }
+                }
+                &:first-child > .card:first-child {
+                    overflow: hidden;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+                &:last-child > .card:last-child {
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                }
+            }
+        }
+
+    }
+}
