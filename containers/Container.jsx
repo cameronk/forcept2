@@ -12,9 +12,7 @@ import { handleHistory } from 'fluxible-router';
 import debug from 'debug';
 
 import AppStore from '../flux/App/AppStore';
-import SideBar from '../components/Navigation/SideBar';
-import TopBar from '../components/Navigation/TopBar';
-import SideRail from '../components/Navigation/SideRail';
+import VerticalMenu from '../components/Navigation/VerticalMenu';
 
 const __debug = debug('forcept:containers:Container')
 
@@ -37,6 +35,10 @@ class Container extends React.Component {
         document.title = this.props.intl.formatMessage(newProps.pageTitle); //this.props.intl.formatMessage(newProps.pageTitle);
     }
 
+    _handleShowSidebar = () => {
+        $("#Container").toggleClass("sidebar");
+    }
+
     render() {
 
         const { currentNavigateError,
@@ -44,7 +46,7 @@ class Container extends React.Component {
                 isNavigateComplete } = this.props;
 
         const Handler = currentRoute && currentRoute.handler;
-        let content, loading;
+        let content;
 
         // TODO add real handlers for these things
         if(currentNavigateError) {
@@ -61,25 +63,18 @@ class Container extends React.Component {
             <div id="Container">
 
                 {/** CSS hides these for large screen sizes **/}
-                <SideBar />
-                <TopBar />
-
-                {/** Add .pusher so semantic can fiddle with sidebar **/}
-                <div className="pusher">
-
-                    <div className="full height">
-
-                        {/** CSS displays SideRail on large screen sizes **/}
-                        <div className="toc">
-                            <SideRail />
-                        </div>
-                        <div id="Handler">
-                            {loading}
-                            {content}
-                        </div>
-
+                <div id="TopBar" className="ui fixed inverted main menu">
+                    <div className="ui container">
+                        <a onClick={this._handleShowSidebar} className="launch icon item">
+                            <i className="content icon"></i>
+                        </a>
                     </div>
+                </div>
 
+                {/** CSS displays SideRail on large screen sizes **/}
+                <VerticalMenu id="Rail" />
+                <div id="Handler">
+                    {content}
                 </div>
 
             </div>
