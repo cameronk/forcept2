@@ -100,7 +100,7 @@ class VisitList extends BaseComponent {
                                 <div className="detail">{visit.id}</div>
                             </div>
                             {" "}
-                            {visit.patients.length} patients
+                            {props.intl.formatMessage(messages['visitHeader'], { count: visit.patients.length })}
                         </div>
                         <div className="ui bottom attached segment">
                             {chunk([].concat(visit.patients, ["filler"]), 5).map(patients => {

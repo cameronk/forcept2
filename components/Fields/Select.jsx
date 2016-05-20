@@ -8,6 +8,7 @@ import BaseComponent, { grabContext } from '../Base';
 import debug from 'debug';
 import $ from 'jquery';
 import difference from 'lodash/difference';
+import pull from 'lodash/pull';
 
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import Label from './Label';
@@ -24,14 +25,78 @@ class SelectField extends BaseComponent {
      *
      */
     componentDidMount() {
+        var { props } = this,
+            { settings } = props.field,
+            container = $("#FieldDropdown-" + props.fieldID);
+
+        var options = {
+            allowAdditions: (settings.customizable || false),
+            action:         this._change,
+            onRemove:       this._remove
+        };
+
+        __debug("Setting up field %s with options %j", props.fieldID, Object.keys(options));
+
+        container.dropdown(options);
+
+        /// First-time setup complete, update dropdown values as normal.
+        this.componentDidUpdate(props);
+    }
+
+    /**
+     *
+     */
+    _remove = (value, text, $choice) => {
         var { props } = this;
-        $("#FieldDropdown-" + props.fieldID)
-            .dropdown({
-                allowAdditions: (props.field.settings.customizable || false),
-                onChange: this._change,
-                onRemove: this._remove
+        __debug("[%s] Removing value => %s", props.fieldID, value);
+
+        var selected = $("#FieldDropdown-" + props.fieldID).dropdown('get value').split(",");
+
+        __debug(selected);
+        
+        /*
+         * If this value is actually no longer selected...
+         */
+        if(selected.indexOf(value) === -1) {
+            __debug("Actually removing this value.");
+            this.context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: selected
+                    }
+                }
             });
-        this.componentDidUpdate();
+        }
+    }
+
+    /**
+     *
+     */
+    _change = (text, value) => {
+
+        var { props }    = this,
+            { settings } = props.field,
+            { patientID, stageID, fieldID } = props,
+            newValue = [];
+
+        /*
+         * If we allow multiple selections, push the value
+         * onto the end of the previously passed array.
+         */
+        if(settings.multiple && Array.isArray(props.value)) {
+            newValue = [].concat(props.value);
+        }
+
+        newValue.push(value);
+
+        this.context.executeAction(UpdatePatientAction, {
+            [patientID]: {
+                [stageID]: {
+                    [fieldID]: newValue
+                }
+            }
+        });
+
     }
 
     /**
@@ -49,7 +114,7 @@ class SelectField extends BaseComponent {
             + difference(this.props.value, newProps.value).length
         ) > 0;
 
-        __debug("[%s] => shouldComponentUpdate: %s (%s => %s)", this.props.fieldID, update, this.props.value, newProps.value);
+        __debug("[%s] => shouldComponentUpdate: %s (%j => %j)", this.props.fieldID, update, this.props.value, newProps.value);
 
         return update;
 
@@ -62,91 +127,20 @@ class SelectField extends BaseComponent {
     componentDidUpdate() {
         var { props } = this;
 
-        __debug("[%s] - componentDidUpdate", props.fieldID);
-        __debug("| - current value: %s", $("#FieldDropdown-" + props.fieldID).dropdown('get value').toString());
-        __debug("| - new     value: %s", props.value.toString());
+        var container = $("#FieldDropdown-" + props.fieldID);
 
-        /*
-         * Only run update if the passed value differs from
-         * the current value of the dropdown.
-         */
-        if(props.value.toString() !== $("#FieldDropdown-" + props.fieldID).dropdown('get value')) {
-            __debug("| values differ...");
-            if(props.hasOwnProperty('value') && props.value.length > 0) {
-                __debug("|==> updating selected to: %s", props.fieldID, props.value.toString());
-                $("#FieldDropdown-" + props.fieldID)
-                    .dropdown('set value', props.value);
-            } else {
-                __debug("|==> clearing dropdown");
-                $("#FieldDropdown-" + props.fieldID)
-                    .dropdown('clear');
-            }
+        if(props.value && props.value.length > 0) {
+            __debug("[%s] setting exactly %s selected value(s)", props.fieldID, props.value.length);
+
+            /// We need to set the DIFFERENCE between the current value
+            /// and the passed value
+            container.dropdown('set exactly', props.value)
+                     .dropdown('refresh');
         } else {
-            __debug("| values do NOT differ! not doing anything.");
+            __debug("[%s] clearing dropdown", props.fieldID);
+            container
+                .dropdown('restore default text');
         }
-    }
-
-    /**
-     *
-     */
-    _change = (value) => {
-        var { patientID, stageID, fieldID } = this.props;
-
-        __debug("[%s] onChange()", fieldID);
-        __debug("| [%s] => [%s]", this.props.value.toString(), value.toString());
-
-        /*
-         * _change() fires when using Semantic's 'set selected',
-         * so we get cascading updates during tab changes.
-         * Check to make sure the value of _change differs from
-         * the value passed to the field to prevent this.
-         */
-        if(value.toString() !== this.props.value.toString()) {
-
-            var selected = value.split(",");
-
-            if(selected.length >= this.props.value.length) {
-                __debug("| Values were added, changed, or reordered.");
-
-                var bump = (val) => {
-                    __debug("|==> Bumping: %s (%s)", val.toString(), typeof val);
-                    this.context.executeAction(UpdatePatientAction, {
-                        [patientID]: {
-                            [stageID]: {
-                                [fieldID]: val
-                            }
-                        }
-                    });
-                };
-
-                /*
-                 * value            => string representing selected options (comma-separated)
-                 * this.props.value => array representing options stored with patient
-                 */
-                if(value.length > 0) {
-                    bump(selected);
-                }
-
-                /*
-                 * Empty string value -> bump an empty array.
-                 */
-                else {
-                    bump([]);
-                }
-            } else {
-                __debug("| => Values were removed.");
-            }
-
-        } else {
-            __debug("| => values are identical, skipping handler.");
-        }
-    }
-
-    /**
-     *
-     */
-    _remove = (value) => {
-        __debug("Removed value %s", value);
     }
 
     render() {
