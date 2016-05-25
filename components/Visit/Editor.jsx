@@ -96,32 +96,24 @@ class Editor extends BaseComponent {
                             );
                             break;
                         case "file":
-                            // let _cache = props.resource.cache;
-                            // let cache = _cache.hasOwnProperty(fieldID)
-                            //             && _cache[fieldID].hasOwnProperty(patient.id)
-                            //                 ? _cache[fieldID]
-                            //                 : null;
                             let _state = props.resourcesState;
                             let state = _state.hasOwnProperty(fieldID)
                                         && _state[fieldID].hasOwnProperty(patient.id)
                                             ? _state[fieldID][patient.id]
                                             : null;
-                            //
-                            // let _uploading = props.resource.uploading;
-                            // let uploading = _uploading.hasOwnProperty(fieldID)
-                            //                 && _uploading[fieldID].hasOwnProperty(patient.id)
-                            //                     ? _uploading[fieldID]
-                            //                     : null;
-                            // uploading={props.resource.upload.context === fieldID ? props.resource.upload.progress : false}
-                            // processing={props.resource.processing.indexOf(fieldID) > -1}
-
-                                // cache={cache}
                             fieldDOM = (
                                 <FileField
                                     state={state}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );
+                            break;
+                        case "header":
+                            fieldDOM = (
+                                <div className="ui huge dividing header">
+                                    {thisField.name || "Untitled header"}
+                                </div>
+                            )
                             break;
                     }
 
