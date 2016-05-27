@@ -27,12 +27,12 @@ class SelectField extends BaseComponent {
     componentDidMount() {
         var { props } = this,
             { settings } = props.field,
-            container = $("#FieldDropdown-" + props.fieldID);
+            key = this.getKey(),
+            container = $(`#${key}`);
 
         var options = {
             allowAdditions: (settings.customizable || false),
-            action:         this._change,
-            onRemove:       this._remove
+            onChange: this._change2
         };
 
         __debug("Setting up field %s with options %j", props.fieldID, Object.keys(options));
@@ -45,54 +45,26 @@ class SelectField extends BaseComponent {
 
     /**
      *
+     * value: comma-separated value for the ENTIRE dropdown
      */
-    _remove = (value, text, $choice) => {
-        var { props } = this;
-        __debug("[%s] Removing value => %s", props.fieldID, value);
+    _change2 = (value, text, $choice) => {
 
-        var selected = $("#FieldDropdown-" + props.fieldID).dropdown('get value').split(",");
+        var { patientID, stageID, fieldID } = this.props;
 
-        __debug(selected);
-        
-        /*
-         * If this value is actually no longer selected...
-         */
-        if(selected.indexOf(value) === -1) {
-            __debug("Actually removing this value.");
-            this.context.executeAction(UpdatePatientAction, {
-                [patientID]: {
-                    [stageID]: {
-                        [fieldID]: selected
-                    }
-                }
-            });
-        }
-    }
+        var current = this.props.value,
+            updated = value.split(','),
+            diff = difference(updated, current);
 
-    /**
-     *
-     */
-    _change = (text, value) => {
+        __debug("!!!!!!!!!!!!!!!! Caught change2");
+        __debug("Current: ", current)
+        __debug("Updated: ", updated);
+        __debug("Difference: ", diff);
 
-        var { props }    = this,
-            { settings } = props.field,
-            { patientID, stageID, fieldID } = props,
-            newValue = [];
-
-        /*
-         * If we allow multiple selections, push the value
-         * onto the end of the previously passed array.
-         */
-        if(settings.multiple && Array.isArray(props.value)) {
-            newValue = [].concat(props.value);
-        }
-
-        newValue.push(value);
 
         this.context.executeAction(UpdatePatientAction, {
             [patientID]: {
                 [stageID]: {
-                    [fieldID]: newValue
+                    [fieldID]: updated
                 }
             }
         });
@@ -116,7 +88,7 @@ class SelectField extends BaseComponent {
 
         __debug("[%s] => shouldComponentUpdate: %s (%j => %j)", this.props.fieldID, update, this.props.value, newProps.value);
 
-        return update;
+        return this.props.patientID !== newProps.patientID;
 
     }
 
@@ -125,23 +97,32 @@ class SelectField extends BaseComponent {
      * Otherwise, clear the dropdown.
      */
     componentDidUpdate() {
-        var { props } = this;
+        var { props } = this,
+            container = $(`#${this.getKey()}`);
+        //
+        // var currentValue = container.dropdown('get value').split(',');
+        //
+        // if(difference(currentValue, this.props.value).length > 0) {
+        //     container.dropdown('set exactly', )
+        // }
 
-        var container = $("#FieldDropdown-" + props.fieldID);
+        // __debug(currentValue);
 
-        if(props.value && props.value.length > 0) {
-            __debug("[%s] setting exactly %s selected value(s)", props.fieldID, props.value.length);
-
-            /// We need to set the DIFFERENCE between the current value
-            /// and the passed value
-            container.dropdown('set exactly', props.value)
-                     .dropdown('refresh');
-        } else {
-            __debug("[%s] clearing dropdown", props.fieldID);
-            container
-                .dropdown('restore default text');
-        }
+        // if(props.value && props.value.length > 0) {
+        //     __debug("[%s] setting exactly %s selected value(s)", props.fieldID, props.value.length);
+        //
+        //     /// We need to set the DIFFERENCE between the current value
+        //     /// and the passed value
+            container.dropdown('set value', props.value.join());
+        //              .dropdown('refresh');
+        // } else {
+        //     __debug("[%s] clearing dropdown", props.fieldID);
+        //     container
+        //         .dropdown('restore default text');
+        // }
     }
+
+    getKey = () => `FieldDropdown-${this.props.fieldID}-${this.props.patientID}`
 
     render() {
         var props = this.props,
@@ -181,9 +162,11 @@ class SelectField extends BaseComponent {
                 );
             });
 
+            var key = this.getKey();
+
             selectDOM = (
-                <div
-                    id={"FieldDropdown-" + fieldID}
+                <div key={key}
+                    id={key}
                     className={BuildDOMClass("ui", {
                         "search": settings.searchable,
                         "multiple": settings.multiple
