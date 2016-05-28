@@ -6,6 +6,7 @@
 import debug from 'debug';
 import { LogoutAction } from '../Auth/AuthActions';
 import { LoadStagesAction } from '../Stage/StageActions';
+import { ClearVisitListAction } from '../Visit/VisitActions';
 import { defineMessages } from 'react-intl';
 
 const __debug = debug('forcept:flux:Route:Routes');
@@ -112,6 +113,7 @@ export default {
         method: 'get',
         auth: true,
         handler: getPage('Visit/List'),
+        action: ClearVisitListAction,
         title: messages["pages.console.stages.stage.title"]
     },
 

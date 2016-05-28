@@ -113,7 +113,7 @@ class SelectField extends BaseComponent {
         //
         //     /// We need to set the DIFFERENCE between the current value
         //     /// and the passed value
-            container.dropdown('set value', props.value.join());
+            // container.dropdown('set value', props.value.join());
         //              .dropdown('refresh');
         // } else {
         //     __debug("[%s] clearing dropdown", props.fieldID);

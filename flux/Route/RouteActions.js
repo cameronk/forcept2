@@ -7,8 +7,13 @@ import debug from 'debug';
 
 import Actions from '../actions';
 import StageStore from '../Stage/StageStore';
-import { LoadStagesAction, GrabStageAction, ClearCacheAction } from '../Stage/StageActions';
-import { GrabVisitAction } from '../Visit/VisitActions';
+
+import { FlashAppDataAction } from '../App/AppActions';
+import { ClearAllPatientsAction } from '../Patient/PatientActions';
+import { LoadStagesAction, GrabStageAction,
+        ClearCacheAction } from '../Stage/StageActions';
+import { ClearVisitAction, GrabVisitAction,
+        SetRecentVisitDataAction } from '../Visit/VisitActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -19,86 +24,124 @@ var __debug = debug('forcept:flux:Route:RouteActions');
  * Dispatches:
  *  STAGES_CLEAR_CACHE -> Stage/StageStore
  */
-var RunPageLoadActions = function(context, payload, done) {
+var PreNavigateActions = function(context, payload, done) {
 
-    let promises = [];
-
-    /*
-     * Clear stage cache every page load.
-     */
-    context.dispatch(Actions.APP_FLASH, false);
-    context.dispatch(Actions.VISIT_SET_RECENT_DATA, null);
-    // promises.push(
-        context.executeAction(ClearCacheAction);
-    // );
+    __debug("==[ PreNavigateActions ]==");
 
     /*
-     * If stages name/ID list has not been loaded
-     * grab it from the database now.
+     * This must be done first in order to ensure that the action
+     * doesn't clear *after* the execution of LoadStagesAction.
      */
-    if(context.getStore(StageStore).hasLoadedStages() === false) {
+    Promise.all([
 
-        __debug("Loading stage IDs and NAMEs");
-        promises.push(
-            context.executeAction(LoadStagesAction)
-        );
-
-    }
-
-    /*
-     * Automagically cache stage data if a stageID parameter is provided.
-     */
-    if(payload.hasOwnProperty('params')) {
-
-        /**
-         * Load stage if stageID parameter was given.
+        /*
+         * The stage cache holds data regarding a stage's fields
+         * before the stage's record model is updated.
+         *
+         * It should be cleared on every page change so that
+         * data entered for one stage doesn't carry over
+         * to another.
          */
-        if(payload.params.hasOwnProperty('stageID')) {
+        context.executeAction(ClearCacheAction),
+
+        /*
+         * "Flash data" is intended to be per-request (per-page-view),
+         * so we should clear it every time the page changes.
+         */
+        context.executeAction(FlashAppDataAction, false),
+
+        /*
+         * "Recent visit data" contains stage information stored after
+         * a visit is moved to a different stage, in order to provide the
+         * user a quick + easy link to follow the visit they just handled.
+         */
+        context.executeAction(SetRecentVisitDataAction, null),
+
+        /*
+         * VisitStore maintains data about the visit
+         * currently in question. When the page changes,
+         * we clear this data to ensure new visit data
+         * can be populated.
+         */
+        context.executeAction(ClearVisitAction),
+
+        /*
+         * Similarly, PatientStore maintains data about
+         * the patients in a visit. Thus, we should clear
+         * patients out between page loads.
+         */
+        context.executeAction(ClearAllPatientsAction)
+
+    ]).then(() => {
+
+        __debug(" | Clearing actions completed.");
+
+        let promises = [];
+
+        /*
+         * If stages name/ID list has not been loaded
+         * grab it from the database now.
+         *
+         * Very important!
+         */
+        if(context.getStore(StageStore).hasLoadedStages() === false) {
+
+            promises.push(
+                context.executeAction(LoadStagesAction)
+            );
+
+        }
+
+        /*
+         * Automagically cache stage data if a stageID parameter is provided.
+         */
+        if(payload.hasOwnProperty('params')) {
 
             /*
-             * Clear visit/patient data here instead of under the visitID check
-             * because the latter doesn't fire for new visits.
+             * Load stage if stageID parameter was given.
              */
-            context.dispatch(Actions.VISIT_CLEAR);
-            context.dispatch(Actions.PATIENT_CLEAR_ALL);
+            if(payload.params.hasOwnProperty('stageID')) {
 
-            __debug(" - loading stage: %s", payload.params.stageID);
+                /*
+                 * Grab the stage in question by splitting the stage slug
+                 * by dashes ("1-check-in") and getting the first array element
+                 * (which is the stage ID)
+                 */
+                promises.push(
+                    context.executeAction(GrabStageAction, {
+                        id: payload.params.stageID.split("-")[0]
+                    })
+                );
 
-            promises.push(
-                context.executeAction(GrabStageAction, {
-                    id: payload.params.stageID.split("-")[0]
-                })
-            );
+            }
+
+            /**
+             *
+             */
+            if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
+
+                promises.push(
+                    context.executeAction(GrabVisitAction, {
+                        id: payload.params.visitID
+                    })
+                );
+
+            }
 
         }
 
-        /**
-         *
+        __debug(" | Executing %s promises prior to load.", promises.length);
+
+        /*
+         * Run all promises before returning done()
          */
-        if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
+        Promise.all(promises).then(() => {
+            done();
+        }).catch(err => {
+            // TODO: dispatch error and continue loading
+            done();
+        });
 
-            __debug(" - loading visit: %s", payload.params.visitID);
-
-            promises.push(
-                context.executeAction(GrabVisitAction, {
-                    id: payload.params.visitID
-                })
-            );
-
-        }
-
-    }
-
-    __debug("Executing %s promises prior to load.", promises.length);
-
-    /*
-     * Run all promises before returning done()
-     */
-    Promise.all(promises).then(() => {
-        done();
-    }).catch(err => {
-        // TODO: dispatch error and continue loading
-        done();
     });
 
 }
@@ -168,7 +211,7 @@ var navAction = function navigateAction(context, payload, done) {
     /*
      * Execute actions required for page load first.
      */
-    context.executeAction(RunPageLoadActions, route, (err) => {
+    context.executeAction(PreNavigateActions, route, (err) => {
 
         __debug("Page-load actions done.");
 

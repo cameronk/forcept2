@@ -20,15 +20,16 @@ const __debug = debug('forcept:flux:Stage:StageActions');
  *  STAGES_LOAD_ERROR -> Stage/StageStore
  */
 export function LoadStagesAction(context, payload, done) {
-    __debug("Loading stages.");
+
+    __debug(" ==> Action: LoadStages");
+
     return context.service
         .read("StageService")
         .params({
-            order: ['order'],
-            // attributes: ['id', 'name', 'isRoot']
+            order: ['order']
         }).end()
         .then(({data}) => {
-            __debug("...stages fetched.");
+            __debug(" | LoadStages: stages fetched.");
             context.dispatch(
                 Actions.STAGES_LOADED,
                 keyBy(data, "id")
@@ -50,14 +51,16 @@ export function LoadStagesAction(context, payload, done) {
  *  STAGES_LOAD_ERROR   -> Stage/StageStore
  */
 export function GrabStageAction(context, { id }) {
-    __debug("Grabbing stage.");
+
+    __debug(" ==> Action: GrabStage (id=%s)", id);
+
     return context.service
         .read("StageService")
         .params({
             where: { id: id }
         }).end()
         .then(({data}) => {
-            __debug("...grabbed stage #%s", id);
+            __debug(" | GrabStage: grabbed stage #%s", id);
             if(data.length > 0) {
                 context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
             } else {
@@ -76,8 +79,10 @@ export function GrabStageAction(context, { id }) {
 /*
  *
  */
-export function ClearCacheAction(context, payload) {
-   context.dispatch(Actions.STAGES_CLEAR_CACHE);
+export function ClearCacheAction(context, payload, done) {
+    __debug(" ==> Action: ClearCache");
+    context.dispatch(Actions.STAGES_CLEAR_CACHE);
+    done();
 }
 
 /*

@@ -22,6 +22,7 @@ const __debug = debug('forcept:flux:Visit:VisitActions');
  *
  */
 export function ClearVisitListAction(context, payload, done) {
+    __debug(" ==> Action: ClearVisitList");
     context.dispatch(Actions.VISIT_LIST_CLEAR);
     done();
 }
@@ -30,6 +31,9 @@ export function ClearVisitListAction(context, payload, done) {
  *
  */
 export function ReadVisitsAtStageAction(context, payload, done) {
+
+    __debug(" ==> Action: ReadVisisAtStage");
+
     context.service
         .read('VisitService')
         .params({
@@ -60,7 +64,6 @@ export function ReadVisitsAtStageAction(context, payload, done) {
             });
 
             Promise.all(promises).then(visits => {
-                __debug(visits);
                 context.dispatch(Actions.VISIT_LIST_UPDATE, visits);
                 done();
             });
@@ -68,24 +71,20 @@ export function ReadVisitsAtStageAction(context, payload, done) {
         });
 }
 
-/*
-export function RedirectRootAction(context, payload, done) {
-    var stages = context.getStore(StageStore).getStages();
-        stages = keyBy(stages, 'id');
-    var thisStage = stages[payload.params.stageID.split('-')[0]];
-    if(thisStage && thisStage.isRoot) {
-        __debug("Stage is root, redirecting");
-        context.executeAction(navigateAction, {
-            url: '/visits/' + thisStage.slug + '/new'
-        }, () => {
-            done();
-        });
-    } else {
-        __debug("Stage is not root, skipping extra navigateAction");
-        done();
-    }
+
+
+// ============================== \\
+
+
+
+/**
+ *
+ */
+export function ClearVisitAction(context, payload, done) {
+    __debug(" ==> Action: ClearVisit");
+    context.dispatch(Actions.VISIT_CLEAR);
+    done();
 }
-*/
 
 /*
  * Create and/or update a visit record with patient data.
@@ -273,6 +272,8 @@ export function MoveVisitAction(context, { id, destination }, done) {
  */
 export function GrabVisitAction(context, payload, done) {
 
+    __debug(" ==> Action: GrabVisit (id=%s)", payload.id);
+
     /*
      * Grab this visit's data.
      */
@@ -338,6 +339,12 @@ export function GrabVisitAction(context, payload, done) {
         });
 }
 
+
+
+// ============================== \\
+
+
+
 /**
  *
  */
@@ -381,5 +388,15 @@ export function SetDestinationAction(context, payload, done) {
  */
 export function SetOverviewModeAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_OVERVIEW_MODE, payload);
+    done();
+}
+
+
+/**
+ *
+ */
+export function SetRecentVisitDataAction(context, payload, done) {
+    __debug(" ==> Action: SetRecentVisitData");
+    context.dispatch(Actions.VISIT_SET_RECENT_DATA, payload);
     done();
 }

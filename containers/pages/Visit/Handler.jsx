@@ -391,7 +391,9 @@ class VisitHandler extends BaseComponent {
          */
         else {
             return (
-                <div className="ui loading segment"></div>
+                <div className="ui segment">
+                    <div className="basic ui loading segment"></div>
+                </div>
             );
         }
 

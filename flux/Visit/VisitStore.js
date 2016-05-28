@@ -68,7 +68,7 @@ class VisitStore extends BaseStore {
      * Clear the visit.
      */
     handleClearVisit() {
-        __debug("Clearing visit");
+        __debug("Clearing visit.");
         this.tab = null;
         this.modified = false;
         this.destination = null;
@@ -95,22 +95,24 @@ class VisitStore extends BaseStore {
     // =============================== \\
 
     /**
+     * Visit List
+     * => Stores an array of visits with respective patient information
+     *    for viewing on the "stage visits" page.
      *
+     * Values:
+     * -> null:   no visits loaded into visit list
+     * -> array:  array of visits w/ pre-loaded information
      */
+
     getList() {
         return this.list;
     }
 
-    /**
-     *
-     */
     handleClearList() {
-        this.list = [];
+        __debug("Clearing visit list.");
+        this.list = null;
     }
 
-    /**
-     *
-     */
     handleUpdateList(visits) {
         this.list = visits;
         this.emitChange();
