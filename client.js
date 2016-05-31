@@ -20,12 +20,12 @@ localStorage.debug = 'forcept:*';
 window.React = ReactDOM; // For chrome dev tool support
 window.$ = window.jQuery = require('jquery');
 
-window.console.log = window.console.error = window.console.info = function(message) {
-    var node = document.createElement("LI");
-    var textNode = document.createTextNode(message);
-    node.appendChild(textNode);
-    document.getElementById("debug").appendChild(node);
-};
+// window.console.log = window.console.error = window.console.info = function(message) {
+//     var node = document.createElement("LI");
+//     var textNode = document.createTextNode(message);
+//     node.appendChild(textNode);
+//     document.getElementById("debug").appendChild(node);
+// };
 
 function renderApp() {
 

@@ -303,7 +303,7 @@ class VisitHandler extends BaseComponent {
                         }
                     }
 
-                    __debug("index %s: %j (ci: %s)", index, style, currentIndex);
+                    // __debug("index %s: %j (ci: %s)", index, style, currentIndex);
 
                     return (
                         <div key={thisMenuStageID}

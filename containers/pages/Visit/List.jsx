@@ -151,7 +151,7 @@ class VisitList extends BaseComponent {
                                             }
 
                                         return (
-                                            <a className="teal card">
+                                            <div className="teal card">
                                                 <div className="content">
                                                     <div className="header">
                                                         {patient.fullName || "Unnamed patient"}
@@ -165,7 +165,7 @@ class VisitList extends BaseComponent {
                                                     <div>last updated  &nbsp; &rarr; {props.intl.formatRelative(patient.updatedAt)}</div>
                                                     <div>first visited  &nbsp; &nbsp; &rarr; {props.intl.formatRelative(patient.createdAt)}</div>
                                                 </div>
-                                            </a>
+                                            </div>
                                         );
                                     })}
 
