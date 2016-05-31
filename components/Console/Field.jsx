@@ -23,9 +23,18 @@ class Field extends BaseComponent {
         super();
     }
 
+    /*
+     *
+     */
+    shouldComponentUpdate = () => {
+        return true;
+    }
+
     componentDidMount() {
         $(".StageField .ui.dropdown")
-            .dropdown();
+            .dropdown({
+                onChange: this._change()
+            });
     }
 
     _change = (prop) => {
@@ -54,35 +63,10 @@ class Field extends BaseComponent {
 
         var props     = this.props,
             { field } = props,
-            mutable   = (field.mutable === true || field.mutable === 'true'),
+            mutable   = (field.mutable === true),
             typeSelectDOM, removeButtonDOM;
 
         if(mutable) {
-
-            typeSelectDOM = (
-                <div className="field">
-                    <label>Type:</label>
-                    <select className="ui dropdown" value={field.type} onChange={this._change('type')}>
-                        <optgroup label="Inputs">
-                            <option value="text">Text input</option>
-                            <option value="textarea">Textarea input</option>
-                            <option value="number">Number input</option>
-                            <option value="date">Date input</option>
-                        </optgroup>
-                        <optgroup label="Multiple-option fields">
-                            <option value="select">Select input with options</option>
-                            <option value="multiselect">Multi-select input with options</option>
-                            <option value="file">File input</option>
-                            <option value="yesno">Yes or no buttons</option>
-                        </optgroup>
-                        <optgroup label="Other">
-                            <option value="header">Group fields with a header</option>
-                            <option value="pharmacy">Pharmacy - show available medication</option>
-                        </optgroup>
-                    </select>
-                </div>
-            );
-
             removeButtonDOM = (
                 <button
                     onClick={this._removeField}
@@ -91,7 +75,6 @@ class Field extends BaseComponent {
                     Remove this field
                 </button>
             );
-
         }
 
         return (
@@ -102,7 +85,6 @@ class Field extends BaseComponent {
                             <label>Name:</label>
                             <input type="text" placeholder={"Enter a field name"} value={field.name} onChange={this._change('name')} />
                         </div>
-                        {typeSelectDOM}
                         <div className="field">
                             <label>Description:</label>
                             <textarea

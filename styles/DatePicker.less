@@ -1,0 +1,50 @@
+/**
+ *
+ */
+
+.date-picker {
+
+    // max-width: 700px;
+
+    /*
+     *
+     */
+    .dp-header, .dp-footer {
+        background: #eee;
+    }
+
+    /*
+     *
+     */
+    .dp-body {
+
+        .dp-row {
+
+            &.dp-week-day-names {
+                background: #fff;
+                .dp-cell:first-child, .dp-cell:last-child {
+                    background: #f4f4f4;
+                }
+            }
+
+            .dp-cell {
+                &.dp-day {
+                    &.dp-value {
+                        background: #2e99eb !important;
+                        color: #fff;
+                        opacity: 0.85;
+                    }
+                    &.dp-current:not(.dp-value) {
+                        background: #e2f0ff !important;
+                    }
+                    &.dp-weekend:not(.dp-value) {
+                        background: #f4f4f4;
+                    }
+                    &.dp-next:not(.dp-value), &.dp-prev:not(.dp-value) {
+                        color: #bbb;
+                    }
+                }
+            }
+        }
+    }
+}

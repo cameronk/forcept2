@@ -107,7 +107,7 @@ class Stages extends BaseComponent {
                         <StagesMenu
                             stages={props.stages}
                             isNavigateComplete={props.isNavigateComplete}
-                            location={props.currentStage.id || 0} 
+                            location={props.currentStage.id || 0}
                             isCacheModified={props.currentStage.isCacheModified} />
                     </div>
                     <div className="twelve wide computer eleven wide tablet right spaced column">

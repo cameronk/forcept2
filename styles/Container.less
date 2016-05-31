@@ -1,53 +1,107 @@
+html, body, #app, #Container {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 #Container {
+    display: flex;
 
-    .pusher {
-        min-height: 100%;
+    #Rail, #Handler {
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
-    .full.height {
-        display: flex;
-        flex-direction: row;
-        min-height: 100vh;
-
-        &>.toc {
-            z-index: 1;
-            background-color: #1b1c1d;
-            width: 250px;
-            flex: 0 0 auto;
-            min-height: 100%;
-        }
-
-    }
-
-    #SideRail {
-        border-radius: 0;
-        border-width: 0 1px 0 0;
-        box-shadow: none;
+    /*
+     * Rail-specific styling
+     */
+    #Rail {
+        background-color: #1b1c1d;
+        width: 250px;
+        flex: 0 0 auto;
         margin: 0;
-        width: inherit;
-        // overflow: hidden;
-        will-change: transform;
-    }
+        border-radius: 0;
 
-    #SideBar {
-        z-index: 999 !important;
-    }
-
-    #Handler {
-        -webkit-box-flex: 1;
-        flex: 1 1 auto;
-        min-width: 0px;
-
-        &>.ui.grid.top.spaced {
-            margin-top: 1rem;
+        &::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
         }
+        &::-webkit-scrollbar-button {
+          width: 0px;
+          height: 0px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: #333;
+          border: none;
+          border-radius: 0;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background: #222;
+        }
+        &::-webkit-scrollbar-thumb:active {
+          background: #111;
+        }
+        &::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.901961);
+          border: 0px none #ffffff;
+        }
+        &::-webkit-scrollbar-track:hover {
+          background: rgba(255, 255, 255, 0.901961);
+        }
+        &::-webkit-scrollbar-track:active {
+          background: rgba(255, 255, 255, 0.901961);
+        }
+        &::-webkit-scrollbar-corner {
+          background: transparent;
+        }
+    }
+
+    /*
+     *
+     */
+    #Handler {
+        flex: 1;
+
+        // &::-webkit-scrollbar {
+        //   width: 12px;
+        //   height: 12px;
+        // }
+        // &::-webkit-scrollbar-button {
+        //   width: 0px;
+        //   height: 0px;
+        // }
+        // &::-webkit-scrollbar-thumb {
+        //   background: #333;
+        //   border: none;
+        //   border-radius: 0;
+        // }
+        // &::-webkit-scrollbar-thumb:hover {
+        //   background: #222;
+        // }
+        // &::-webkit-scrollbar-thumb:active {
+        //   background: #111;
+        // }
+        // &::-webkit-scrollbar-track {
+        //   background: rgb(212, 212, 213);
+        //   border: 0px none #ffffff;
+        // }
+        // &::-webkit-scrollbar-track:hover {
+        //   background: rgb(212, 212, 213);
+        // }
+        // &::-webkit-scrollbar-track:active {
+        //   background: rgb(212, 212, 213);
+        // }
+        // &::-webkit-scrollbar-corner {
+        //   background: transparent;
+        // }
     }
 
 }
 
 /**
- * Sizing
- */
+* Sizing
+*/
 @media only screen and (min-width: 1145px) {
     #Container {
         #TopBar {
@@ -56,53 +110,32 @@
     }
 }
 
+
 @media only screen and (max-width: 1144px) {
     #Container {
-        .full.height > .toc {
+
+        #Rail {
             display: none;
         }
+
         #Handler {
-            margin-top: 40px;
+            padding-top: 40px;
         }
-    }
-}
 
-/**
- * Semantic modifications
- */
-.ui.grid {
-    & > .row.clear.top {
-        padding-top: 0;
-    }
-    & > .row.clear.bottom {
-        padding-bottom: 0;
-    }
 
-    .column.top.spaced {
-        padding-top: 1rem;
-    }
-    .column.bottom.spaced {
-        padding-bottom: 1rem;
-    }
 
-    /*
-     * Default is 1rem, make it 2.
-     */
-    .column.right.spaced {
-        padding-right: 2rem;
-    }
-    .column.left.spaced {
-        padding-left: 2rem;
-    }
-}
-
-.ui.segment {
-    &.expanded {
-        padding-left: 0;
-        padding-right: 0;
-    }
-    &.fully.expanded {
-        padding: 0;
-        margin: 0;
+        /*
+         * when the expand button is clicked
+         */
+        &.sidebar {
+            #Rail {
+                display: inherit;
+                width: 100%;
+                padding-top: 40px;
+            }
+            #Handler {
+                display: none;
+            }
+        }
     }
 }

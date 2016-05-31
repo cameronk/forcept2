@@ -1,0 +1,89 @@
+/**
+* Semantic modifications
+*/
+.ui.grid {
+    & > .row.clear.top {
+        padding-top: 0;
+    }
+    & > .row.clear.bottom {
+        padding-bottom: 0;
+    }
+
+    .column.top.spaced {
+        padding-top: 1rem;
+    }
+    .column.bottom.spaced {
+        padding-bottom: 1rem;
+    }
+
+    /*
+    * Default is 1rem, make it 2.
+    */
+    .column.right.spaced {
+        padding-right: 2rem;
+    }
+    .column.left.spaced {
+        padding-left: 2rem;
+    }
+}
+
+.ui.segment, .column {
+    &.expanded {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    &.fully.expanded {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.ui.secondary.vertical.pointing.menu.hoverable {
+    .item {
+        transition: all 150ms ease-out;
+    }
+    .item:not(.disabled):not([disabled]):hover {
+        padding-left: 2rem;
+        transition: all 150ms ease-out;
+    }
+    .item.active {
+        padding-left: 2rem;
+    }
+}
+
+.item[disabled] {
+    pointer-events: none;
+}
+
+/* =============================== */
+
+.forcept.responsive {
+    display: none;
+}
+
+/**
+ *
+ */
+@media only screen and (min-width: 1145px) {
+    .forcept.responsive[class*="desktop only"] {
+        display: inherit;
+    }
+}
+
+@media only screen and (max-width: 1144px) {
+    .forcept.responsive[class*="tablet only"] {
+        display: inherit;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .forcept.responsive[class*="mobile only"] {
+        display: inherit;
+    }
+}
+
+/* =============================== */
+
+#debug {
+    color: white;
+}

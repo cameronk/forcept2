@@ -10,8 +10,8 @@ export default keyMirror({
     'TEST_ACTION': null,
 
     /// Application
-    'APP_SET_LOADING_MODE': null,
-    'APP_SET_LOADING_CONTAINER': null,
+    'APP_LOADING': null,
+    'APP_FLASH': null,
 
     /// Authentication
     'AUTH_LOGOUT': null,
@@ -24,11 +24,39 @@ export default keyMirror({
     'STAGES_LOADED': null,
     'STAGES_LOAD_ERROR': null,
     'STAGES_SET_OPTION_SHIFT_CONTEXT': null,
-
     'STAGES_UPDATE_CACHE': null,
     'STAGES_CLEAR_CACHE': null,
     'STAGES_CACHE_MODIFIED': null,
-
     'STAGES_SET_STATUS': null,
 
+    /// Visit
+    'VISIT_SET_CURRENT_TAB': null,
+    'VISIT_SET_DESTINATION': null,
+    'VISIT_SET_RECENT_DATA': null,
+    'VISIT_SET_MODIFIED': null,
+    'VISIT_UPDATE_VISIT': null,
+    'VISIT_CLEAR': null,
+    'VISIT_SET_OVERVIEW_MODE': null,
+
+    'VISIT_LIST_CLEAR': null,
+    'VISIT_LIST_UPDATE': null,
+
+    /// Patient
+    'PATIENT_UPDATE': null,
+    'PATIENT_CLEAR_ALL': null,
+
+    ///
+    'RESOURCES_UPDATE_STATE': null,
+    'RESOURCES_UPDATE_CACHE': null,
+    'RESOURCES_SET_UPLOAD_CONTEXT': null,
+    'RESOURCES_SET_UPLOAD_PROGRESS': null,
+    'RESOURCES_PROCESS_FIELD': null,
+
+    ///
+    'USERS_UPDATE': null,
+    'USERS_UDPATE_NURSERY': null,
+
+    /// Test
+    'TEST_PUSH_MODEL': null,
+    'TEST_UPDATE_MODEL': null,
 });

@@ -38,7 +38,7 @@ export default function createNavLinkComponent (overwriteSpec) {
             /// forcept
             /// add disabled attr proptype
             disabled: React.PropTypes.bool,
-            
+
             stopPropagation: React.PropTypes.bool,
             routeName: React.PropTypes.string,
             navParams: React.PropTypes.object,

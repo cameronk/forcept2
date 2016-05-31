@@ -30,14 +30,22 @@ import db from './database/models';
 import UpdateStageDefinition from './database/StageDefinition';
 import { RunPageLoadActions } from './flux/App/AppActions';
 import { navigateAction } from './flux/Route/RouteActions';
+
+/// Services
 import AuthService from './flux/Auth/AuthService';
 import StageService from './flux/Stage/StageService';
+import PatientService from './flux/Patient/PatientService';
+import VisitService from './flux/Visit/VisitService';
+import RecordService from './flux/Record/RecordService';
+import ResourceService from './flux/Resource/ResourceService';
+import UserService from './flux/User/UserService';
+import TestService from './flux/Test/TestService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
 
 /// Constants
-const env = process.env.NODE_ENV;
+const env = process.env.NODE_ENV || "development";
 const port = process.env.PORT || 3000;
 const debugNamespace = process.env.DEBUG || "none";
 const __debug = debug('forcept:server');
@@ -53,18 +61,32 @@ __debug("---");
 /*
  * Synchronise models before setting up express server.
  */
-(db.sequelize).sync().then(function() {
+(db.sequelize).sync().then(() => {
 
     __debug("Database synchronized.");
 
+    db.RecordModels = {}; // "Patient" => 1
+    db.Record  = (function(model) {
+        if(this.RecordModels.hasOwnProperty(model)) {
+            return this.sequelize.models[model];
+        } else {
+            throw new Error(`Record ${model} not defined.`);
+            return;
+        }
+    }.bind(db));
+
+    /*
+     * Get all stages, update Sequelize stage definitions accordingly.
+     *
+     */
     db.Stage.findAll().then(stages => {
 
         stages.map(stage => {
             UpdateStageDefinition(stage, db);
         });
 
-        __debug("Available models:");
-        __debug(Object.keys(db.sequelize.models));
+        __debug("Available record models:");
+        __debug(Object.keys(db.RecordModels));
 
         /*
          * Configure Passport local strategy.
@@ -108,6 +130,7 @@ __debug("---");
 
         server.use('/public', express['static'](path.join(__dirname, '/dist')));
         server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
+        server.use('/resources', express['static'](path.join(__dirname, '/storage/resources')));
         server.use(compression());
         server.use(cookieParser());
         server.use(bodyParser.json());
@@ -129,6 +152,12 @@ __debug("---");
         const FetchrPlugin = app.getPlugin('FetchrPlugin');
               FetchrPlugin.registerService(AuthService.attach(db));
               FetchrPlugin.registerService(StageService.attach(db));
+              FetchrPlugin.registerService(PatientService.attach(db));
+              FetchrPlugin.registerService(VisitService.attach(db));
+              FetchrPlugin.registerService(RecordService.attach(db));
+              FetchrPlugin.registerService(ResourceService.attach(db));
+              FetchrPlugin.registerService(UserService.attach(db));
+              FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
@@ -154,6 +183,7 @@ __debug("---");
                     url: req.url,
                     method: req.method,
                 }
+
             });
 
             const thisContext   = context.getActionContext();

@@ -1,0 +1,67 @@
+#FORCEPT-VisitHandler {
+
+    #FORCEPT-Dropdown-MoveStage {
+        .item {
+            .ui.circular.label {
+                margin-right: 15px;
+            }
+        }
+        .item.disabled {
+
+            opacity: 1 !important;
+
+            & > span {
+                opacity: 0.45 !important;
+            }
+
+            .ui.circular.label {
+                margin-right: 25px !important;
+            }
+        }
+    }
+
+    .FORCEPT-FlexHeader {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+
+        & > div {
+            flex-grow: 1;
+        }
+
+        & > .ui.header {
+
+            margin: 0;
+            padding: 0.375em;
+
+            & > .icon {
+                padding: 0;
+            }
+
+        }
+
+        & > .aside {
+            padding: 0 10px;
+
+            & > .ui.buttons {
+                margin: 10px auto;
+                display: flex;
+                flex-wrap: wrap;
+
+                & > .ui.button {
+                    // min-width: 25%;
+                    flex-grow: 1;
+                    text-align: center;
+                    align-items: center;
+
+                    @media only screen and (max-width: 767px) {
+                        width: 100%;
+                    }
+                }
+            }
+
+        }
+
+    }
+}

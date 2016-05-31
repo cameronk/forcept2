@@ -11,10 +11,15 @@ import FetchrPlugin from 'fluxible-plugin-fetchr';
 import Root from './containers/Root';
 
 /// Stores
-import ApplicationStore from './flux/App/AppStore';
+import AppStore from './flux/App/AppStore';
 import AuthStore from './flux/Auth/AuthStore';
 import RouteStore from './flux/Route/RouteStore';
 import StageStore from './flux/Stage/StageStore';
+import VisitStore from './flux/Visit/VisitStore';
+import PatientStore from './flux/Patient/PatientStore';
+import ResourceStore from './flux/Resource/ResourceStore';
+import UserStore from './flux/User/UserStore';
+import TestStore from './flux/Test/TestStore';
 
 /// create new fluxible instance
 const app = new Fluxible({
@@ -125,8 +130,13 @@ app.plug({
 
 /// register stores
 app.registerStore(RouteStore);
-app.registerStore(ApplicationStore);
+app.registerStore(AppStore);
 app.registerStore(AuthStore);
 app.registerStore(StageStore);
+app.registerStore(VisitStore);
+app.registerStore(PatientStore);
+app.registerStore(ResourceStore);
+app.registerStore(UserStore);
+app.registerStore(TestStore);
 
 module.exports = app;

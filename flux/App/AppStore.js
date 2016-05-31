@@ -12,8 +12,8 @@ class AppStore extends BaseStore {
     static storeName = 'AppStore'
     static handlers  = {
         [Actions.NAVIGATE_SUCCESS]: 'handlePageTitle',
-        [Actions.APP_SET_LOADING_MODE]: 'handleSetLoadingMode',
-        [Actions.APP_SET_LOADING_CONTAINER]: 'handleSetLoadingMode'
+        [Actions.APP_LOADING]: 'handleLoading',
+        [Actions.APP_FLASH]: 'handleFlash',
     }
 
     constructor(dispatcher) {
@@ -27,43 +27,58 @@ class AppStore extends BaseStore {
             id: "meta.titles.loading",
             defaultMessage: "Loading..."
         };
-
-        this.loadingMode = "default";
-        this.loadingContainer = "#Handler";
+        this.loading = false;
+        this.flash   = false;
         this.req   = {};
         this.route = {};
     }
 
+    // =============================== \\
+
     /*
-     * Set the current loading mode.
+     *
      */
-    handleSetLoadingMode(mode) {
-        if(["default", "container"].indexOf(mode) > -1) {
-            this.loadingMode = mode;
+    isLoading() {
+        return this.loading;
+    }
+
+    /*
+     *
+     */
+    handleLoading(status) {
+        if(this.loading !== status)  {
+            this.loading = status;
             this.emitChange();
         }
     }
 
+    // =============================== \\
+
     /*
-     * Get the current loading mode.
+     *
      */
-    getLoadingMode() {
-        return this.loadingMode;
+    getFlash() {
+        return this.flash;
     }
 
     /*
-     * Set the loading container.
+     *
      */
-    setLoadingContainer(container) {
-        this.loadingContainer = container;
+    handleFlash(flash) {
+        if(typeof flash === "boolean") {
+            if(this.flash !== flash) {
+                this.flash = flash;
+                this.emitChange();
+            }
+        } else {
+            if(typeof flash === "object") {
+                this.flash = flash;
+                this.emitChange();
+            }
+        }
     }
 
-    /*
-     * get the loading container
-     */
-    getLoadingContainer() {
-        return this.loadingContainer;
-    }
+    // =============================== \\
 
     /*
      * Update current page title.
@@ -85,18 +100,22 @@ class AppStore extends BaseStore {
         return this.pageTitle;
     }
 
+    // =============================== \\
+
     /*
      * H20
      */
     dehydrate() {
         return {
             pageTitle: this.pageTitle,
-            loadingMode: this.loadingMode
+            loading: this.loading,
+            flash: this.flash
         };
     }
     rehydrate(state) {
         this.pageTitle = state.pageTitle;
-        this.loadingMode = state.loadingMode;
+        this.loading = state.loading;
+        this.flash = state.flash;
     }
 }
 

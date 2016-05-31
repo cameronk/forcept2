@@ -58,16 +58,17 @@ class FieldsAccordion extends BaseComponent {
                                         <div className="title" key={key + "-title"}>
                                             <div className="ui medium header">
                                                 <i className="dropdown icon"></i>
-                                                {thisField.name && thisField.name.length > 0 ? thisField.name : "Untitled field"}
-                                                {" "}
-                                                <div className="tiny ui teal label">
-                                                    {key}
-                                                    {(thisField.mutable === "false") ? (
-                                                        <div className="detail">
+                                                <div className="small ui right pointing label">
+                                                    {(thisField.mutable === false) ? (
                                                             <i className="lock icon"></i>
-                                                        </div>
                                                     ) : null}
+                                                    {key}
+                                                    <div className="detail">
+                                                        {thisField.type}
+                                                    </div>
                                                 </div>
+                                                {" "}
+                                                {thisField.name && thisField.name.length > 0 ? thisField.name : `New ${thisField.type} field`}
                                             </div>
                                         </div>
                                     ),

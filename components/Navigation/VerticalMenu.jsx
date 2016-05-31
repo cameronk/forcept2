@@ -44,6 +44,10 @@ const messages = defineMessages({
     consoleFieldDataItem: {
         id: "verticalmenu.user.consoleFieldDataItem",
         defaultMessage: "Field data"
+    },
+    consoleUsersItem: {
+        id: "verticalmenu.user.consoleUsersItem",
+        defaultMessage: "Users"
     }
 
 });
@@ -54,71 +58,85 @@ class VerticalMenu extends BaseComponent {
 
     render() {
 
-        let { formatMessage } = this.props.intl;
-
         var props = this.props,
             ctx = this.context,
+            { formatMessage } = this.props.intl,
             isAuthenticated = ctx.isAuthenticated(),
-            userItem, stagesItem;
+            stageKeys = Object.keys(props.stages),
+            stagesItem, userItem;
 
-        /// Show the user area if user is authenticated
+        /*
+         * Show the user area if user is authenticated
+         */
         if(isAuthenticated) {
-
-            var consoleLink,
-                consoleHeirarchy;
-
-            if(ctx.getUser("isAdmin") === true) {
-                consoleLink = (
-                    <NavLink href={"/console"} className="item">
-                        <i className="lock icon"></i> {formatMessage(messages.consoleItem)}
-                    </NavLink>
-                );
-
-                if(ctx.getStore('RouteStore').getCurrentRoute().namespace === "console") {
-                    consoleHeirarchy = (
-                        <div className="sub menu">
-                            <NavLink href={"/console/field-data"} className="item">
-                                <i className="database icon"></i> {formatMessage(messages.consoleFieldDataItem)}
-                            </NavLink>
-                            <NavLink href={"/console/stages"} className="item">
-                                <i className="list icon"></i> {formatMessage(messages.consoleStageItem)}
-                            </NavLink>
-                        </div>
-                    );
-                }
-            }
-
-            userItem = (
-                <div className="item">
-                    <div className="header">{formatMessage(messages.userPronoun)} {"\u2014"} {ctx.getUser("username")}</div>
-                    <div className="menu">
-                        {consoleLink}
-                        {consoleHeirarchy}
-                        <a className="item"><i className="globe icon"></i> {formatMessage(messages.chooseLanguage)}</a>
-                        <NavLink routeName={"logout"} className="item"><i className="sign out icon"></i> {formatMessage(messages.logout)}</NavLink>
-                    </div>
-                </div>
-            );
 
             stagesItem = (
                 <div className="item">
                     <div className="header">Stages</div>
                     <div className="menu">
-                        {props.stages.map((stage) => {
+                        {stageKeys.map((stageID) => {
+                            let thisStage = props.stages[stageID];
                             return (
-                                <div key={stage.id} className="item">{stage.name || "Untitled stage"}</div>
+                                <NavLink
+                                    href={"/visits/" + thisStage.slug}
+                                    key={thisStage.id}
+                                    className="item">
+                                    {thisStage.name || "Untitled stage"}
+                                </NavLink>
                             );
                         })}
                     </div>
                 </div>
             );
+
+            // ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console"
+
+            userItem = (
+                <div className="item">
+                    <div className="header">Administration</div>
+                    <div className="menu">
+                        {(() => {
+                            if(ctx.getUser("isAdmin") === true) {
+                                return (
+                                    <div>
+                                        <NavLink className="item" href="/console">
+                                            <i className="chevron down icon"></i>
+                                            {formatMessage(messages.consoleItem)}
+                                        </NavLink>
+                                        <div className="sub menu">
+                                            <NavLink href="/console/users" className="item">
+                                                <i className="users icon"></i>
+                                                {formatMessage(messages.consoleUsersItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/stages" className="item">
+                                                <i className="database icon"></i>
+                                                {formatMessage(messages.consoleStageItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/field-data" className="item">
+                                                <i className="list icon"></i>
+                                                {formatMessage(messages.consoleFieldDataItem)}
+                                            </NavLink>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                        })()}
+                        <a key="chooseLanguage" className="item">
+                            <i className="globe icon"></i>
+                            {formatMessage(messages.chooseLanguage)}
+                        </a>
+                        <NavLink key="logout" routeName="logout" className="item">
+                            <i className="sign out icon"></i>
+                            {formatMessage(messages.logout)}
+                        </NavLink>
+                    </div>
+                </div>
+            );
+
         }
 
         return (
-            <div id={this.props.id} className={["ui large inverted vertical menu", this.props.className].join(" ")}>
-                <span className="ui left corner label">
-                    <i className={!isAuthenticated ? "sign in icon" : "sign out icon"}></i>
-                </span>
+            <div id={props.id} className={["ui large inverted vertical menu", props.className].join(" ")}>
                 <div className="item logo">
                     <div className="ui large center aligned inverted statistic">
                         <div className="value">
@@ -129,15 +147,9 @@ class VerticalMenu extends BaseComponent {
                         </div>
                     </div>
                 </div>
-                <div className="item">
-                    <div className="header">Data</div>
-                    <div className="menu">
-                        <div className="item">New visit</div>
-                        <div className="item">Triage</div>
-                    </div>
-                </div>
                 {stagesItem}
                 {userItem}
+                <ul id="debug"></ul>
             </div>
         );
     }

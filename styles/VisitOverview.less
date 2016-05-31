@@ -1,0 +1,96 @@
+/**
+ *
+ */
+.VisitOverview {
+
+    /*
+     * Overview header
+     */
+    .top.attached.segment, .top.attached.header {
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        .icon {
+            transition: 200ms all ease;
+            float: right;
+        }
+    }
+
+    .top.attached.header {
+        .icon {
+            font-size: 1.125rem;
+        }
+    }
+
+    &:last-child {
+
+        .top.attached.segment, .top.attached.header {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        &.collapsed {
+            .top.attached.segment, .top.attached.header {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+        }
+    }
+    &:last-child.collapsed {
+        .top.attached.segment, .top.attached.header {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    }
+
+    /*
+     * Overview list container
+     */
+    .ListContainer {
+        margin-left: -1px !important;
+
+        .ui.list {
+            .item {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+            ul {
+                padding: 0;
+                margin: 0;
+                margin-top: 5px;
+                margin-left: -5px;
+                li {
+                    padding-left: 8px;
+                }
+            }
+        }
+
+    }
+
+    &.collapsed > .ListContainer {
+        display: none;
+    }
+
+    /*
+     *
+     */
+    .Forcept-OverviewSettings {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    &.collapsed > .Forcept-OverviewSettings {
+        display: none;
+    }
+
+}
+
+@media only screen and (min-width: 1145px) {
+    .VisitOverview {
+        padding-left: 1rem;
+    }
+}
