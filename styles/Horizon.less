@@ -11,44 +11,30 @@
 
     & > .item {
 
+        justify-content: space-between;
         border-radius: 0;
 
-        &#Dropdown-MoveStage {
-            .icon {
-                margin-left: 0.5rem;
-            }
-            .item {
-                zoom: 1;
-                .label {
-                    float: right;
-                    margin: 0;
-                }
-                &.disabled {
-                    opacity: 1;
-                }
-            }
-            .item:before,
-            .item:after {
-                content: "";
-                display: table;
-            }
-            .item:after {
-                clear:both;
-            }
-        }
-
         & > .label {
-            float: right !important;
+            margin-left: 0 !important;
+            margin-right: 1em;
+            @media only screen and (max-width: 767px) {
+                margin-right: 0 !important;
+            }
         }
 
-        &:not(.control) {
+        &.control {
+            font-weight: bolder;
 
-            opacity: 0.5;
-
-            &.active {
-                opacity: 1;
+            & > .icon {
+                font-size: 1.4em;
+                margin: 0;
+                padding-top: 1.5px;
             }
 
+            @media only screen and (max-width: 767px) {
+                border-left: 8px solid #00B5AD;
+                border-top: 1px solid #ccc;
+            }
         }
 
         /*

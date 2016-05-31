@@ -149,6 +149,7 @@ class VerticalMenu extends BaseComponent {
                 </div>
                 {stagesItem}
                 {userItem}
+                <ul id="debug"></ul>
             </div>
         );
     }

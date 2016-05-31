@@ -280,15 +280,16 @@ class VisitHandler extends BaseComponent {
 
                 var currentIndex = null;
 
+                /**
+                 * Destination selection menu builder.
+                 */
                 var menuDOM = stageKeys.map((thisMenuStageID, index) => {
 
                     var thisMenuStage = stages[thisMenuStageID];
                     var isCurrent = stageID === thisMenuStageID;
-                    var style
+                    var style;
 
-                    if(isCurrent) {
-                        currentIndex = index;
-                    }
+                    if(isCurrent) currentIndex = index;
 
                     if(thisMenuStage.order < thisStage.order) {
                         style = {
@@ -318,6 +319,12 @@ class VisitHandler extends BaseComponent {
                     );
                 });
 
+
+                /**
+                 * ---
+                 * #FORCEPT-VisitHandler
+                 * ---
+                 */
                 return (
                     <div id="FORCEPT-VisitHandler">
                         <div className="FORCEPT-FlexHeader fully expanded ui basic top attached segment">
@@ -331,6 +338,10 @@ class VisitHandler extends BaseComponent {
                             </div>
                             <div className="aside">
                                 <div className="basic ui buttons">
+
+                                    {/*
+                                      * Save button
+                                      */}
                                     <div key="save"
                                         className={BuildDOMClass("ui labeled icon button", {
                                             disabled: !props.isModified || props.isLoading
@@ -340,6 +351,10 @@ class VisitHandler extends BaseComponent {
                                         <i className="save icon"></i>
                                         Save visit
                                     </div>
+
+                                    {/*
+                                      * Destination dropdown
+                                      */}
                                     <div key="destination"
                                         id="FORCEPT-Dropdown-MoveStage"
                                         className={BuildDOMClass("ui floating dropdown labeled icon button", {
@@ -356,6 +371,10 @@ class VisitHandler extends BaseComponent {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/*
+                                      * Move button
+                                      */}
                                     <div key="move"
                                         className={BuildDOMClass("ui labeled icon button", {
                                             disabled: props.destination === null || props.isLoading
@@ -378,16 +397,16 @@ class VisitHandler extends BaseComponent {
                                             "teal active": props.tab == patientID
                                         })}
                                         onClick={this._setTab(patientID)}>
-                                        {fullName}
                                         <span className="teal ui label">
                                             {thisPatient.id}
                                         </span>
+                                        {fullName}
                                     </a>
                                 );
                             })}
                             {thisStage.isRoot ? (
                                 <a className="control item" onClick={this._createPatient}>
-                                    <i className="plus icon"></i>
+                                    <i className="fitted plus icon"></i>
                                     <span className="forcept responsive mobile only">Create a new patient</span>
                                 </a>
                             ) : null}
