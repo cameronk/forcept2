@@ -61,9 +61,10 @@ class VisitHandler extends BaseComponent {
     }
 
     componentDidUpdate() {
-        var moveStage = $("#Dropdown-MoveStage");
+        var moveStage = $("#FORCEPT-Dropdown-MoveStage");
         if(moveStage.length) {
             moveStage.dropdown({
+                preserveHTML: false,
                 onChange: (val) => {
                     this.context.executeAction(SetDestinationAction, {
                         stageID: val
@@ -277,22 +278,102 @@ class VisitHandler extends BaseComponent {
 
                 } /// end !props.isLoading
 
+                var currentIndex = null;
+
+                var menuDOM = stageKeys.map((thisMenuStageID, index) => {
+
+                    var thisMenuStage = stages[thisMenuStageID];
+                    var isCurrent = stageID === thisMenuStageID;
+                    var style
+
+                    if(isCurrent) {
+                        currentIndex = index;
+                    }
+
+                    if(thisMenuStage.order < thisStage.order) {
+                        style = {
+                            opacity: 1
+                        };
+                    } else {
+                        if(!isCurrent && currentIndex !== null) {
+                            style = {
+                                opacity: (stageKeys.length - index) / (stageKeys.length - currentIndex - 1)
+                            };
+                        }
+                    }
+
+                    __debug("index %s: %j (ci: %s)", index, style, currentIndex);
+
+                    return (
+                        <div key={thisMenuStageID}
+                            data-value={thisMenuStageID}
+                            className={BuildDOMClass("item", { disabled: isCurrent })}>
+                            <div className={BuildDOMClass("empty circular ui", {
+                                green:  isCurrent && thisMenuStage.order === thisStage.order,
+                                blue:  !isCurrent && thisMenuStage.order > thisStage.order,
+                                olive: !isCurrent && thisMenuStage.order < thisStage.order,
+                            }, "label")} style={style}></div>
+                            {index + 1} &mdash; {thisMenuStage.name}
+                        </div>
+                    );
+                });
+
                 return (
-                    <div>
-                        <h1 className="ui top attached header">
-                            <i className="hospital icon"></i>
-                            <div className="content">
-                                {props.intl.formatMessage(messages['pages.stages.stage.heading'], {
-                                    name: props.isNavigateComplete ? thisStage.name : "Loading..."
-                                })}
+                    <div id="FORCEPT-VisitHandler">
+                        <div className="FORCEPT-FlexHeader fully expanded ui basic top attached segment">
+                            <div className="large ui header">
+                                <i className="hospital icon"></i>
+                                <div className="content">
+                                    {props.intl.formatMessage(messages['pages.stages.stage.heading'], {
+                                        name: props.isNavigateComplete ? thisStage.name : "Loading..."
+                                    })}
+                                </div>
                             </div>
-                        </h1>
+                            <div className="aside">
+                                <div className="basic ui buttons">
+                                    <div key="save"
+                                        className={BuildDOMClass("ui labeled icon button", {
+                                            disabled: !props.isModified || props.isLoading
+                                        })}
+                                        disabled={!props.isModified}
+                                        onClick={props.isModified ? this._saveVisit : null}>
+                                        <i className="save icon"></i>
+                                        Save visit
+                                    </div>
+                                    <div key="destination"
+                                        id="FORCEPT-Dropdown-MoveStage"
+                                        className={BuildDOMClass("ui floating dropdown labeled icon button", {
+                                            disabled: visit.id === null || props.isLoading
+                                        })}
+                                        disabled={visit.id === null}>
+                                        <i className="location arrow icon"></i>
+                                        <span className="text">Choose a destination</span>
+                                        <div className="menu">
+                                            {menuDOM}
+                                            <div data-value={"checkout"} className="item">
+                                                <i className="fitted checkmark box icon"></i>
+                                                Checkout
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div key="move"
+                                        className={BuildDOMClass("ui labeled icon button", {
+                                            disabled: props.destination === null || props.isLoading
+                                        })}
+                                        disabled={props.destination === null}
+                                        onClick={this._moveVisit}>
+                                        <i className="level up icon"></i>
+                                        Move visit
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <Horizon>
                             {patientKeys.map(patientID => {
                                 var thisPatient = patients[patientID][rootStageID];
                                 var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
                                 return (
-                                    <a  key={patientID}
+                                    <a key={patientID}
                                         className={BuildDOMClass("item", {
                                             "teal active": props.tab == patientID
                                         })}
@@ -310,73 +391,6 @@ class VisitHandler extends BaseComponent {
                                     <span className="forcept responsive mobile only">Create a new patient</span>
                                 </a>
                             ) : null}
-                            {patientKeys.length > 0 ? [
-                                (
-                                    <a  key="save"
-                                        className={BuildDOMClass("right control item", {
-                                            disabled: !props.isModified || props.isLoading
-                                        })}
-                                        disabled={!props.isModified}
-                                        onClick={props.isModified ? this._saveVisit : null}>
-                                        <i className="save icon"></i>
-                                        Save visit
-                                    </a>
-                                ), (
-                                    <div key="destination"
-                                        id="Dropdown-MoveStage"
-                                        className={BuildDOMClass("inline ui dropdown control link item", {
-                                            disabled: visit.id === null || props.isLoading
-                                        })}
-                                        disabled={visit.id === null}>
-                                        Destination {" "} <i className="long right arrow icon"></i>
-                                        <div className="text">(choose a stage)</div>
-                                        <i className="dropdown icon"></i>
-                                        <div className="menu">
-                                            <div data-value={"checkout"} className="item">
-                                                <div className="small ui teal label">
-                                                    {props.intl.formatMessage(messages['pages.visit.handler.moveStage.nthStage'], {
-                                                        order: stageKeys.length + 1
-                                                    })}
-                                                </div>
-                                                Checkout
-                                            </div>
-                                            {reverse(stageKeys).map(thisMenuStageID => {
-                                                var thisMenuStage = stages[thisMenuStageID];
-                                                var isCurrent = stageID === thisMenuStageID;
-                                                return (
-                                                    <div key={thisMenuStageID} data-value={thisMenuStageID} className={BuildDOMClass("item", { disabled: isCurrent })}>
-                                                        {(thisMenuStage.order === thisStage.order + 1) ? (
-                                                            <i className="star icon"></i>
-                                                        ) : null}
-                                                        {isCurrent ? (
-                                                            <div className="empty circular ui olive label"></div>
-                                                        ) : (
-                                                            <div className="small ui teal label">
-                                                                {props.intl.formatMessage(messages['pages.visit.handler.moveStage.nthStage'], {
-                                                                    order: thisMenuStage.order
-                                                                })}
-                                                            </div>
-                                                        )}
-                                                        {isCurrent ? (
-                                                            <em>{thisMenuStage.name}</em>
-                                                        ) : thisMenuStage.name}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ), (
-                                    <a  key="move"
-                                        className={BuildDOMClass("control item", {
-                                            disabled: props.destination === null || props.isLoading
-                                        })}
-                                        disabled={props.destination === null}
-                                        onClick={this._moveVisit}>
-                                        <i className="level up icon"></i>
-                                        Move visit
-                                    </a>
-                                )
-                            ] : null}
                         </Horizon>
                         {stageDOM}
                     </div>
