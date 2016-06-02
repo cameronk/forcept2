@@ -28,18 +28,17 @@ export function LoadStagesAction(context, payload, done) {
         .params({
             order: ['order']
         }).end()
-        .then(({data}) => {
+        .then(({ data }) => {
             __debug(" | LoadStages: stages fetched.");
-            context.dispatch(
-                Actions.STAGES_LOADED,
-                keyBy(data, "id")
-            );
+            context.dispatch(Actions.STAGES_LOADED, data);
+            done();
             return;
         })
         .catch(err => {
             __debug("Error occurred when fetching all stages");
             __debug(err);
             context.dispatch(Actions.STAGES_LOAD_ERROR, err);
+            done();
             return;
         });
 }
@@ -59,7 +58,7 @@ export function GrabStageAction(context, { id }) {
         .params({
             where: { id: id }
         }).end()
-        .then(({data}) => {
+        .then(({ data }) => {
             __debug(" | GrabStage: grabbed stage #%s", id);
             if(data.length > 0) {
                 context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));

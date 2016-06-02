@@ -11,7 +11,7 @@ import debug from "debug";
 import StageStore from '../../../flux/Stage/StageStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import StageBuilder    from '../../../components/Console/StageBuilder';
-import StagesMenu      from '../../../components/Console/StagesMenu';
+import SideMenu      from '../../../components/Console/SideMenu';
 import MessageScaffold from '../../../components/Scaffold/Message';
 import BaseComponent, { grabContext } from '../../../components/Base';
 
@@ -104,10 +104,12 @@ class Stages extends BaseComponent {
                 </div>
                 <div className="row clear top">
                     <div className="four wide computer five wide tablet column">
-                        <StagesMenu
-                            stages={props.stages}
+                        <SideMenu
+                            iterable={props.stages}
                             isNavigateComplete={props.isNavigateComplete}
                             location={props.currentStage.id || 0}
+                            basePath="/console/stages"
+                            context="stage"
                             isCacheModified={props.currentStage.isCacheModified} />
                     </div>
                     <div className="twelve wide computer eleven wide tablet right spaced column">

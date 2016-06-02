@@ -59,7 +59,6 @@ export default {
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-
         title: "pages.login.title"
     },
 
@@ -101,6 +100,15 @@ export default {
         admin: true,
         handler: getPage('Console/Stages'),
         title: messages["pages.console.stages.stage.title"]
+    },
+    consoleDisplays: {
+        path: '/console/displays',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Displays'),
+        title: null
     },
 
 

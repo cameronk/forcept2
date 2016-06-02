@@ -3,6 +3,7 @@
  * @author Azuru Technology
  */
 
+import keyBy from 'lodash/keyBy';
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
 import UpdateStageDefinition, { BaseStageDefinition } from '../../database/StageDefinition';
@@ -18,7 +19,7 @@ export default {
              */
             read: function(req, resource, params, config, callback) {
                 db.Stage.findAll(params).then(stages => {
-                    callback(null, stages, null);
+                    callback(null, keyBy(stages, "id"), null);
                 });
             },
 

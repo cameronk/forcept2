@@ -6,7 +6,6 @@
 import debug from 'debug';
 import pick from 'lodash/pick';
 import isNil from 'lodash/isNil';
-import keyBy from 'lodash/keyBy';
 import sortBy from 'lodash/sortBy';
 import omitBy from 'lodash/omitBy';
 

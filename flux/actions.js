@@ -29,6 +29,9 @@ export default keyMirror({
     'STAGES_CACHE_MODIFIED': null,
     'STAGES_SET_STATUS': null,
 
+    /// Displays
+    'DISPLAY_GROUP_UPDATE': null,
+
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
     'VISIT_SET_DESTINATION': null,

@@ -41,6 +41,10 @@ const messages = defineMessages({
         id: "verticalmenu.user.consoleStageItem",
         defaultMessage: "Stages"
     },
+    consoleDisplaysItem: {
+        id: "verticalmenu.user.consoleDisplaysItem",
+        defaultMessage: "Displays"
+    },
     consoleFieldDataItem: {
         id: "verticalmenu.user.consoleFieldDataItem",
         defaultMessage: "Field data"
@@ -104,13 +108,17 @@ class VerticalMenu extends BaseComponent {
                                             {formatMessage(messages.consoleItem)}
                                         </NavLink>
                                         <div className="sub menu">
-                                            <NavLink href="/console/users" className="item">
-                                                <i className="users icon"></i>
-                                                {formatMessage(messages.consoleUsersItem)}
-                                            </NavLink>
                                             <NavLink href="/console/stages" className="item">
                                                 <i className="database icon"></i>
                                                 {formatMessage(messages.consoleStageItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/displays" className="item">
+                                                <i className="list icon"></i>
+                                                {formatMessage(messages.consoleDisplaysItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/users" className="item">
+                                                <i className="users icon"></i>
+                                                {formatMessage(messages.consoleUsersItem)}
                                             </NavLink>
                                             <NavLink href="/console/field-data" className="item">
                                                 <i className="list icon"></i>

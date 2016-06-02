@@ -19,6 +19,7 @@ import VisitStore from './flux/Visit/VisitStore';
 import PatientStore from './flux/Patient/PatientStore';
 import ResourceStore from './flux/Resource/ResourceStore';
 import UserStore from './flux/User/UserStore';
+import DisplayStore from './flux/Display/DisplayStore';
 import TestStore from './flux/Test/TestStore';
 
 /// create new fluxible instance
@@ -136,6 +137,7 @@ app.registerStore(StageStore);
 app.registerStore(VisitStore);
 app.registerStore(PatientStore);
 app.registerStore(ResourceStore);
+app.registerStore(DisplayStore);
 app.registerStore(UserStore);
 app.registerStore(TestStore);
 

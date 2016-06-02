@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/StageBuilder.jsx
+ * forcept - components/Console/DisplayBuilder.jsx
  * @author Azuru Technology
  */
 
@@ -16,12 +16,12 @@ import HeadingScaffold from '../Scaffold/Heading';
 import MessageScaffold from '../Scaffold/Message';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 
-const __debug = debug("forcept:components:Console:StageBuilder");
-const root = "components.console.stagebuilder";
+const __debug = debug("forcept:components:Console:DisplayBuilder");
+const root = "components.console.DisplayBuilder";
 const messages = defineMessages({
     [root + ".name"]: {
         id:  root + ".name",
-        defaultMessage: "Stage name"
+        defaultMessage: "Display group name"
     }
 });
 
@@ -29,7 +29,7 @@ if(process.env.BROWSER) {
     require('../../styles/Builder.less');
 }
 
-class StageBuilder extends BaseComponent {
+class DisplayBuilder extends BaseComponent {
 
     static contextTypes = grabContext()
 
@@ -38,13 +38,19 @@ class StageBuilder extends BaseComponent {
     }
 
     componentDidMount() {
+        var { props } = this;
+
+        if(props.group.id && !props.displays) {
+
+        }
+
         this.componentDidUpdate();
     }
 
     componentDidUpdate() {
-        $("#Forcept-StageBuilder .ui.dropdown")
+        $("#Forcept-DisplayBuilder .ui.dropdown")
             .dropdown();
-        $("#Forcept-StageBuilder .ui.accordion")
+        $("#Forcept-DisplayBuilder .ui.accordion")
             .accordion();
     }
 
@@ -108,78 +114,78 @@ class StageBuilder extends BaseComponent {
             FieldsAccordionDOM, FieldsAccordionDividerDOM;
 
         /// Enable some fields when ID is set.
-        if(stage.id) {
+        // if(stage.id) {
+        //
+        //     /// Add a new field
+        //     AddNewFieldButtonDOM = (
+        //         <button
+        //             className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
+        //             <i className="plus icon"></i>
+        //             Add a new field
+        //             <div className="menu">
+        //                 <div className="item" onClick={this._addField("text")}>Text field</div>
+        //                 <div className="item" onClick={this._addField("textarea")}>Textarea field</div>
+        //                 <div className="item" onClick={this._addField("number")}>Number field</div>
+        //                 <div className="item" onClick={this._addField("date")}>Date field</div>
+        //                 <div className="item" onClick={this._addField("radio")}>Radio/button field</div>
+        //                 <div className="item" onClick={this._addField("select")}>Select field</div>
+        //                 <div className="item" onClick={this._addField("file")}>File field</div>
+        //                 <div className="item" onClick={this._addField("header")}>Group fields with a header</div>
+        //                 <div className="item" onClick={this._addField("pharmacy")}>Pharmacy - show available medication</div>
+        //             </div>
+        //         </button>
+        //     );
+        //
+        //     /// Upload/download configuration files
+        //     PresetControlsDOM = (
+        //         <div className="ui tiny right floated buttons">
+        //             <label
+        //                 htmlFor="DisplayBuilder-UploadConfig"
+        //                 onClick={this._upload}
+        //                 className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+        //                 <i className="upload icon"></i>
+        //                 Upload
+        //             </label>
+        //             <input type="file" id="DisplayBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
+        //             <button
+        //                 onClick={this._download}
+        //                 className={"ui right labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
+        //                 <i className="download icon"></i>
+        //                 Download
+        //             </button>
+        //         </div>
+        //     );
+        //
+        //     /// FieldsAccordion
+        //     FieldsAccordionDOM = (
+        //         <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
+        //             <FieldsAccordion fields={cache.fields} />
+        //         </div>
+        //     );
+        //
+        //     /// FieldsAccordion bottom divider
+        //     FieldsAccordionDividerDOM = (
+        //         <div className="ui divider"></div>
+        //     );
+        //
+        // }
 
-            /// Add a new field
-            AddNewFieldButtonDOM = (
-                <button
-                    className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
-                    <i className="plus icon"></i>
-                    Add a new field
-                    <div className="menu">
-                        <div className="item" onClick={this._addField("text")}>Text field</div>
-                        <div className="item" onClick={this._addField("textarea")}>Textarea field</div>
-                        <div className="item" onClick={this._addField("number")}>Number field</div>
-                        <div className="item" onClick={this._addField("date")}>Date field</div>
-                        <div className="item" onClick={this._addField("radio")}>Radio/button field</div>
-                        <div className="item" onClick={this._addField("select")}>Select field</div>
-                        <div className="item" onClick={this._addField("file")}>File field</div>
-                        <div className="item" onClick={this._addField("header")}>Group fields with a header</div>
-                        <div className="item" onClick={this._addField("pharmacy")}>Pharmacy - show available medication</div>
-                    </div>
-                </button>
-            );
-
-            /// Upload/download configuration files
-            PresetControlsDOM = (
-                <div className="ui tiny right floated buttons">
-                    <label
-                        htmlFor="StageBuilder-UploadConfig"
-                        onClick={this._upload}
-                        className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
-                        <i className="upload icon"></i>
-                        Upload
-                    </label>
-                    <input type="file" id="StageBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
-                    <button
-                        onClick={this._download}
-                        className={"ui right labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
-                        <i className="download icon"></i>
-                        Download
-                    </button>
-                </div>
-            );
-
-            /// FieldsAccordion
-            FieldsAccordionDOM = (
-                <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <FieldsAccordion fields={cache.fields} />
-                </div>
-            );
-
-            /// FieldsAccordion bottom divider
-            FieldsAccordionDividerDOM = (
-                <div className="ui divider"></div>
-            );
-
-        }
-
-        switch(status) {
-            case "saved":
-                messageDOM = (
-                    <MessageScaffold
-                        type="success"
-                        text="Stage saved successfully." />
-                );
-                break;
-        }
+        // switch(status) {
+        //     case "saved":
+        //         messageDOM = (
+        //             <MessageScaffold
+        //                 type="success"
+        //                 text="Stage saved successfully." />
+        //         );
+        //         break;
+        // }
 
         return (
-            <div className="ui basic expanded segment" id="Forcept-StageBuilder">
+            <div className="ui basic expanded segment" id="Forcept-DisplayBuilder">
                 <HeadingScaffold
                     label={{
                         className: 'teal',
-                        text: stage.id || 'Unsaved'
+                        text: group.id || 'Unsaved'
                     }}
                     text={cache.name.length === 0 ? "Untitled stage" : cache.name} />
                 {messageDOM}
@@ -225,4 +231,4 @@ class StageBuilder extends BaseComponent {
     }
 }
 
-export default injectIntl(StageBuilder);
+export default injectIntl(DisplayBuilder);
