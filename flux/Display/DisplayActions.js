@@ -3,11 +3,14 @@
  */
 
 import debug from 'debug';
+import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
 
-import { navigateAction } from '../Route/RouteActions';
 import Actions from '../actions';
+import { navigateAction } from '../Route/RouteActions';
 import DisplayStore from './DisplayStore';
 import { JsonModel } from '../../database/helper';
+import { SetConsoleStatusAction } from '../Console/ConsoleActions';
 
 const __debug = debug('forcept:flux:Display:DisplayActions');
 
@@ -24,22 +27,36 @@ export function LoadDisplayGroupsAction(context, payload, done) {
         });
 }
 
-export function GrabDisplayGroupAction(context, { id }) {
-   __debug(" ==> Action: GrabDisplayGroup (id=%s)", id);
-   return context.service
-       .read("DisplayGroupService")
-       .params({
-           where: { id: id }
-       }).end()
-       .then(({ data }) => {
-           __debug(" | GrabDisplayGroup: grabbed group #%s", id);
-           if(data.hasOwnProperty(id)) {
-               context.dispatch(Actions.DISPLAY_GROUP_CACHE_UPDATE, JsonModel(data[id]));
-           } else {
-               throw new Error("Display group not found");
-           }
-           return;
-       })
+export function GrabDisplayGroupAction(context, { id }, done) {
+    __debug(" ==> Action: GrabDisplayGroup (id=%s)", id);
+    return context.service
+        .read("DisplayGroupService")
+        .params({
+            where: { id: id }
+        }).end()
+        .then(({ data }) => {
+            __debug(" | GrabDisplayGroup: grabbed group #%s", id);
+            if(data.hasOwnProperty(id)) {
+                var group = JsonModel(data[id]);
+
+                return context.service
+                    .read("DisplayService")
+                    .params({
+                        where: {
+                            group: group.id
+                        }
+                    }).end()
+                    .then(({ data }) => {
+                        group.displays = data;
+                        context.dispatch(Actions.DISPLAY_GROUP_CACHE_UPDATE, group);
+                        done();
+                    });
+
+            } else {
+                throw new Error("Display group not found");
+            }
+            return;
+        })
        .catch(err => {
            __debug("Error occurred when fetching display group %s", id);
            __debug(err);
@@ -67,7 +84,10 @@ export function SaveDisplayGroupAction(context, payload, done) {
 
     context.dispatch(Actions.CONSOLE_SET_STATUS, "saving");
 
-    let cache = context.getStore(DisplayStore).getGroupCache();
+    var cache = context.getStore(DisplayStore).getGroupCache();
+    var withoutDisplays = omit(cache, ["displays"]);
+
+    let promises = [];
     let id    = payload.id;
     let query;
 
@@ -79,35 +99,85 @@ export function SaveDisplayGroupAction(context, payload, done) {
             .params({
                 id: id
             })
-            .body(cache).end();
+            .body(withoutDisplays).end();
     } else {
         query = context.service
             .create('DisplayGroupService')
-            .body(cache).end();
+            .body(withoutDisplays).end();
     }
 
     query.then(({ data }) => {
 
+        var groupRecordID = data.id;
+
         __debug("SaveDisplayGroup query complete.");
-        __debug(" - group.id = %s", data.id);
+        __debug(" - group.id = %s", groupRecordID);
         __debug(" - id       = %s", id);
 
-        /// If the id has changed (the stage was created)
-        if(data.id != id) {
-            context.executeAction(navigateAction, {
-                url: '/console/displays/' + data.id
-            });
+        var promises = [];
+
+        if(cache.displays) {
+            for(var display in cache.displays) {
+                let thisDisplay = cache.displays[display];
+                promises.push(
+                    context.service
+                        .update('DisplayService')
+                        .params({
+                            id: thisDisplay.id
+                        }).body(omit(thisDisplay, ['id', 'group'])).end()
+                );
+            }
         }
 
-        context.dispatch(Actions.CONSOLE_SET_STATUS, "saved");
-        context.executeAction(LoadDisplayGroupsAction, {}, (err) => {
-            done();
+        Promise.all(promises).then(() => {
+
+
+            /// If the id has changed (the stage was created)
+            if(groupRecordID != id) {
+                context.executeAction(navigateAction, {
+                    url: '/console/displays/' + groupRecordID
+                });
+            }
+
+            context.dispatch(Actions.CONSOLE_SET_STATUS, "saved");
+            context.executeAction(LoadDisplayGroupsAction, {}, (err) => {
+                done();
+            });
+
         });
-        done();
 
     }).catch((err) => {
         __debug(err);
         done();
     });
 
+}
+
+/** ============================= **/
+
+export function CreateDisplayAction(context, { groupID, type, name, settings }, done) {
+    context.executeAction(SetConsoleStatusAction, "creating")
+        .then(() => {
+
+            var body = {
+                group: groupID,
+                name: name,
+                type: type,
+                settings: settings
+            };
+
+            __debug("Creating a new display: %j", body);
+            context.service
+                .create("DisplayService")
+                .body(body)
+                .end().then(({ data }) => {
+                    context.executeAction(UpdateDisplayGroupCacheAction, {
+                        displays: {
+                            [data.id]: data
+                        }
+                    }).then(() => {
+                        return context.executeAction(SetConsoleStatusAction, "created");
+                    }).then(() => done());
+                });
+        });
 }

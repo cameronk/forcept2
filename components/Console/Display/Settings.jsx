@@ -1,23 +1,22 @@
 /**
- * forcept - components/Console/FieldSettings.jsx
+ * forcept - components/Console/Display/Settings.jsx
  * @author Azuru Technology
  */
 
 import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
-import isEqual from 'lodash/isEqual';
 
-import { UpdateCacheAction } from '../../flux/Stage/StageActions';
-import OptionList from './Setting/OptionList';
-import SettingText      from './Setting/Text';
-import SettingCheckbox  from './Setting/Checkbox';
-import SettingSelect    from './Setting/Select';
-import BaseComponent, { grabContext } from '../Base';
+import { UpdateDisplayGroupCacheAction } from '../../../flux/Display/DisplayActions';
+import OptionList from '../Setting/OptionList';
+import SettingText      from '../Setting/Text';
+import SettingCheckbox  from '../Setting/Checkbox';
+import SettingSelect    from '../Setting/Select';
+import BaseComponent, { grabContext } from '../../Base';
 
-const __debug = debug('forcept:components:Console:FieldSettings');
+const __debug = debug('forcept:components:Console:Display:Settings');
 
-class FieldSettings extends BaseComponent {
+class DisplaySettings extends BaseComponent {
 
     static contextTypes = grabContext()
 
@@ -27,13 +26,13 @@ class FieldSettings extends BaseComponent {
 
     _change = (prop) => {
         return (evt) => {
-            this.context.executeAction(UpdateCacheAction, {
-                fields: {
-                    [this.props._key]: {
-                        [prop]: evt.target.value
-                    }
-                }
-            });
+            // this.context.executeAction(UpdateCacheAction, {
+            //     fields: {
+            //         [this.props._key]: {
+            //             [prop]: evt.target.value
+            //         }
+            //     }
+            // });
         }
     };
 
@@ -51,18 +50,6 @@ class FieldSettings extends BaseComponent {
             );
 
         switch(type) {
-            case "text":
-			case "textarea":
-			case "header":
-			case "pharmacy":
-                return (
-                    <div className="ui fluid blue message">
-                        <div className="header">
-                            No configuration is required for {type} fields.
-                        </div>
-                    </div>
-                );
-                break;
             case "radio":
                 var settingsDOM = (
                     <div className="Controls">
@@ -76,7 +63,7 @@ class FieldSettings extends BaseComponent {
                     </div>
                 );
                 return (
-                    <div className="FieldSettings">
+                    <div className="DisplaySettings">
                         {settingsDOM}
                         <OptionList
                             field={props._key}
@@ -128,21 +115,21 @@ class FieldSettings extends BaseComponent {
                         {settingsHeader}
                         <SettingCheckbox
                             field={props._key}
-                            id="FieldSettings-multiple"
+                            id="DisplaySettings-multiple"
                             label="Allow multiple selections"
                             checked={settings.multiple || false}
                             setting="multiple"
                             imply={["searchable"]} />
                         <SettingCheckbox
                             field={props._key}
-                            id="FieldSettings-customizable"
+                            id="DisplaySettings-customizable"
                             label="Allow custom field data"
                             checked={settings.customizable || false}
                             setting="customizable"
                             imply={["searchable"]} />
                         <SettingCheckbox
                             field={props._key}
-                            id="FieldSettings-searchable"
+                            id="DisplaySettings-searchable"
                             label="Enable searching through options"
                             checked={settings.searchable || false}
                             disabled={settings.customizable || settings.multiple}
@@ -150,7 +137,7 @@ class FieldSettings extends BaseComponent {
                     </div>
                 );
                 return (
-                    <div className="FieldSettings">
+                    <div className="DisplaySettings">
                         {settingsDOM}
                         <OptionList
                             field={props._key}
@@ -175,10 +162,10 @@ class FieldSettings extends BaseComponent {
                 break;
             default:
                 return (
-                    <div className="ui fluid error message">
+                    <div className="ui fluid red message">
                         <div className="header">
                             <i className="warning icon"></i>
-                            Warning: unrecognized field type.
+                            Warning: unrecognized display type.
                         </div>
                     </div>
                 );
@@ -188,4 +175,4 @@ class FieldSettings extends BaseComponent {
 
 }
 
-export default injectIntl(FieldSettings);
+export default injectIntl(DisplaySettings);

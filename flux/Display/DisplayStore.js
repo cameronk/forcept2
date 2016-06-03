@@ -3,9 +3,13 @@
  * @author Azuru Technology
  */
 
+import debug from 'debug';
+
 import Actions from '../actions';
 import BaseStore from 'fluxible/addons/BaseStore';
 import RouteStore from '../Route/RouteStore';
+
+const __debug = debug('forcept:flux:Display:DisplayStore');
 
 class DisplayStore extends BaseStore {
 
@@ -34,8 +38,34 @@ class DisplayStore extends BaseStore {
     getGroupCache = () => this.groupCache;
 
     updateGroupCache = (data) => {
-        for(var key in data) {
-            this.groupCache[key] = data[key];
+        __debug(data);
+        for(var column in data) {
+            if(column === "displays") {
+                var displays = data.displays;
+                if(!this.groupCache.hasOwnProperty("displays")) {
+                    this.groupCache.displays = displays;
+                } else {
+                    for(var displayKey in displays) {
+                        var thisDisplay = displays[displayKey];
+                        if(!this.groupCache.displays.hasOwnProperty(displayKey)) {
+                            this.groupCache.displays[displayKey] = thisDisplay;
+                        } else {
+                            for(var displayProp in thisDisplay) {
+                                var thisProp = thisDisplay[displayProp];
+                                if(displayProp === "settings") {
+                                    for(var setting in thisProp) {
+                                        this.groupCache.displays[displayKey].settings = thisProp[setting];
+                                    }
+                                } else {
+                                    this.groupCache.displays[displayKey][displayProp] = thisProp;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                this.groupCache[column] = data[column];
+            }
         }
         this.emitChange();
     }

@@ -14,11 +14,19 @@ module.exports = {
             },
             name: {
                 type: Sequelize.STRING,
-                allowNull: false
+                allowNull: true
             },
             type: {
                 type: Sequelize.STRING,
                 allowNull: false
+            },
+            description: {
+                type: Sequelize.TEXT,
+                allowNull: true
+            },
+            order: {
+                type: Sequelize.INTEGER,
+                allowNull: true
             },
             settings: {
                 type: Sequelize.TEXT,

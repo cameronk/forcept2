@@ -8,7 +8,9 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import pick from 'lodash/pick';
 
-import { UpdateDisplayGroupCacheAction, SaveDisplayGroupAction } from '../../../flux/Display/DisplayActions';
+import { CreateDisplayAction,
+        UpdateDisplayGroupCacheAction,
+        SaveDisplayGroupAction } from '../../../flux/Display/DisplayActions';
 import StageStore from '../../../flux/Stage/StageStore';
 import BaseComponent, { grabContext } from '../../Base';
 import HeadingScaffold from '../../Scaffold/Heading';
@@ -44,9 +46,9 @@ class DisplayBuilder extends BaseComponent {
     }
 
     componentDidUpdate() {
-        $("#Forcept-DisplayBuilder .ui.dropdown")
+        $("#Forcept-Builder .ui.dropdown")
             .dropdown();
-        $("#Forcept-DisplayBuilder .ui.accordion")
+        $("#Forcept-Builder .ui.accordion")
             .accordion();
     }
 
@@ -62,17 +64,13 @@ class DisplayBuilder extends BaseComponent {
         this.context.executeAction(SaveDisplayGroupAction, { id: this.props.group.id || null });
     }
 
-    _addField = (type) => {
+    _addDisplay = (type) => {
         return () => {
-            this.context.executeAction(UpdateCacheAction, {
-                fields: {
-                    [new Date().getTime()]: {
-        				name: "",
-        				type: type,
-        				mutable: true,
-        				settings: this.context.getStore(StageStore).getDefaultSettings(),
-        			}
-                }
+            this.context.executeAction(CreateDisplayAction, {
+                groupID: this.props.group.id,
+                name: "",
+                type: type,
+                settings: this.context.getDisplayTypes()[type].defaultSettings
             });
         }
     }
@@ -82,32 +80,32 @@ class DisplayBuilder extends BaseComponent {
             ctx = this.context,
             { group } = props,
             { cache, status } = group,
-            availableFields = this.context.getFieldTypes(),
-            availableFieldKeys = Object.keys(availableFields);
+            availableDisplays = this.context.getDisplayTypes(),
+            availableDisplayKeys = Object.keys(availableDisplays);
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
         var messageDOM, AddNewDisplayButtonDOM,
             DisplaysAccordionDOM, DisplaysAccordionDividerDOM;
 
         __debug(group);
-        __debug(cache);
 
-        /// Enable some fields when ID is set.
+        /// Enable some Displays when ID is set.
         if(group.id) {
 
-            /// Add a new field
+            /// Add a new Display
             AddNewDisplayButtonDOM = (
                 <button
                     className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
                     Add a new display
                     <div className="menu">
-                        {availableFieldKeys.map(key => {
-                            let thisField = availableFields[key];
+                        {availableDisplayKeys.map(key => {
+                            let thisDisplay = availableDisplays[key];
                             return (
-                                <div className="item" onClick={this._addField(key)}>
-                                    <span className="description">{thisField.description || ""}</span>
-                                    <span className="text">{thisField.name || ""}</span>
+                                <div key={key} className="item" onClick={this._addDisplay(key)}>
+                                    <i className={(thisDisplay.icon || "") + " icon"}></i>
+                                    <div className="text">{thisDisplay.name || ""}</div>
+                                    <div className="description">{thisDisplay.description || ""}</div>
                                 </div>
                             );
                         })}
@@ -115,14 +113,14 @@ class DisplayBuilder extends BaseComponent {
                 </button>
             );
 
-            /// FieldsAccordion
+            /// DisplaysAccordion
             DisplaysAccordionDOM = (
                 <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
                     <DisplayAccordion displays={cache.displays} />
                 </div>
             );
 
-            /// FieldsAccordion bottom divider
+            /// DisplaysAccordion bottom divider
             DisplaysAccordionDividerDOM = (
                 <div className="ui divider"></div>
             );
@@ -140,7 +138,7 @@ class DisplayBuilder extends BaseComponent {
         }
 
         return (
-            <div className="ui basic expanded segment" id="Forcept-DisplayBuilder">
+            <div className="ui basic expanded segment" id="Forcept-Builder">
                 <HeadingScaffold
                     label={{
                         className: 'teal',

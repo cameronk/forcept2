@@ -6,13 +6,25 @@ var kebabCase = require('lodash/kebabCase');
 
 module.exports = function(sequelize, DataTypes) {
     var Display = sequelize.define('Display', {
-        order: {
+        group: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        order: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
         },
         settings: {
             type: DataTypes.TEXT,
@@ -37,9 +49,7 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     }, {
-        getterMethods: {
-
-        },
+        getterMethods: { },
         classMethods: {
             associate: function(models) {
                 // associations can be defined here

@@ -39,6 +39,7 @@ import VisitService from './flux/Visit/VisitService';
 import RecordService from './flux/Record/RecordService';
 import ResourceService from './flux/Resource/ResourceService';
 import UserService from './flux/User/UserService';
+import DisplayService from './flux/Display/DisplayService';
 import DisplayGroupService from './flux/Display/DisplayGroupService';
 import TestService from './flux/Test/TestService';
 
@@ -158,6 +159,7 @@ __debug("---");
               FetchrPlugin.registerService(RecordService.attach(db));
               FetchrPlugin.registerService(ResourceService.attach(db));
               FetchrPlugin.registerService(UserService.attach(db));
+              FetchrPlugin.registerService(DisplayService.attach(db));
               FetchrPlugin.registerService(DisplayGroupService.attach(db));
               FetchrPlugin.registerService(TestService.attach(db));
 

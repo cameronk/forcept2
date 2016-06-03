@@ -221,6 +221,7 @@ app.plug({
         var displayTypes = {
             "chart": {
                 name: "Chart",
+                icon: "line chart",
                 description: "Display data in a chart",
                 defaultSettings: {}
             }

@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/FieldsAccordion.jsx
+ * forcept - components/Console/Display/Accordion.jsx
  * @author Azuru Technology
  */
 
@@ -16,12 +16,12 @@ import Display from './Display';
 const __debug = debug("forcept:components:Console:Display:Accordion");
 const root = "components.console.Display.Accordion";
 const messages = defineMessages({
-    [root + ".errors.noFields.heading"]: {
-        id: root + ".errors.noFields.heading",
+    [root + ".errors.noDisplays.heading"]: {
+        id: root + ".errors.noDisplays.heading",
         defaultMessage: "No displays created."
     },
-    [root + ".errors.noFields"]: {
-        id: root + ".errors.noFields",
+    [root + ".errors.noDisplays"]: {
+        id: root + ".errors.noDisplays",
         defaultMessage: "Use the 'Add a new display' button below to get started."
     },
     [root + ".name"]: {
@@ -32,44 +32,47 @@ const messages = defineMessages({
 
 class DisplayAccordion extends BaseComponent {
 
+    static contextTypes = grabContext()
+
     render() {
         var props = this.props,
-            { fields } = props,
+            { displays } = props,
+            availableDisplays = this.context.getDisplayTypes(),
             accordionDOM;
 
-        var fieldKeys = fields ? Object.keys(fields) : [];
+        var displayKeys = displays ? Object.keys(displays) : [];
 
-        if(fieldKeys.length > 0) {
+        if(displayKeys.length > 0) {
             accordionDOM = (
                 <div className="ui fluid accordion">
                     {
                         flatten(
-                            fieldKeys.map((key, i) => {
-                                let thisField = fields[key];
+                            displayKeys.map((key, i) => {
+                                let thisDisplay = displays[key];
                                 return [
                                     (
                                         <div className="title" key={key + "-title"}>
                                             <div className="ui medium header">
                                                 <i className="dropdown icon"></i>
                                                 <div className="small ui right pointing label">
-                                                    {(thisField.mutable === false) ? (
-                                                            <i className="lock icon"></i>
+                                                    {(availableDisplays[thisDisplay.type].icon) ? (
+                                                        <i className={availableDisplays[thisDisplay.type].icon + " icon"}></i>
                                                     ) : null}
                                                     {key}
                                                     <div className="detail">
-                                                        {thisField.type}
+                                                        {thisDisplay.type}
                                                     </div>
                                                 </div>
                                                 {" "}
-                                                {thisField.name && thisField.name.length > 0 ? thisField.name : `New ${thisField.type} field`}
+                                                {thisDisplay.name && thisDisplay.name.length > 0 ? thisDisplay.name : `New ${thisDisplay.type} display`}
                                             </div>
                                         </div>
                                     ),
                                     (
                                         <div className="content" key={key + "-content"}>
-                                            <Field
+                                            <Display
                                                 _key={key}
-                                                field={thisField} />
+                                                display={thisDisplay} />
                                         </div>
                                     )
                                 ];
@@ -82,10 +85,10 @@ class DisplayAccordion extends BaseComponent {
             accordionDOM = (
                 <div className="ui error message">
                     <div className="header">
-                        {props.intl.formatMessage(messages[root + ".errors.noFields.heading"])}
+                        {props.intl.formatMessage(messages[root + ".errors.noDisplays.heading"])}
                     </div>
                     <p>
-                        {props.intl.formatMessage(messages[root + ".errors.noFields"])}
+                        {props.intl.formatMessage(messages[root + ".errors.noDisplays"])}
                     </p>
                 </div>
             );

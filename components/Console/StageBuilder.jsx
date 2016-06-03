@@ -122,7 +122,7 @@ class StageBuilder extends BaseComponent {
                         {availableFieldKeys.map(key => {
                             let thisField = availableFields[key];
                             return (
-                                <div className="item" onClick={this._addField(key)}>
+                                <div key={key} className="item" onClick={this._addField(key)}>
                                     <div className="text">{thisField.name || ""}</div>
                                     <div className="description">{thisField.description || ""}</div>
                                 </div>
