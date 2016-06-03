@@ -13,6 +13,9 @@ export default keyMirror({
     'APP_LOADING': null,
     'APP_FLASH': null,
 
+    //
+    'CONSOLE_SET_STATUS': null,
+
     /// Authentication
     'AUTH_LOGOUT': null,
     'AUTH_ERROR': null,
@@ -31,6 +34,9 @@ export default keyMirror({
 
     /// Displays
     'DISPLAY_GROUP_UPDATE': null,
+    'DISPLAY_GROUP_CACHE_CLEAR': null,
+    'DISPLAY_GROUP_CACHE_UPDATE': null,
+    'DISPLAY_GROUP_CACHE_MODIFIED': null,
 
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,

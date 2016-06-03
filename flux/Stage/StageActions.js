@@ -30,7 +30,10 @@ export function LoadStagesAction(context, payload, done) {
         }).end()
         .then(({ data }) => {
             __debug(" | LoadStages: stages fetched.");
-            context.dispatch(Actions.STAGES_LOADED, data);
+            context.dispatch(
+                Actions.STAGES_LOADED,
+                keyBy(data, 'id')
+            );
             done();
             return;
         })
@@ -50,9 +53,7 @@ export function LoadStagesAction(context, payload, done) {
  *  STAGES_LOAD_ERROR   -> Stage/StageStore
  */
 export function GrabStageAction(context, { id }) {
-
     __debug(" ==> Action: GrabStage (id=%s)", id);
-
     return context.service
         .read("StageService")
         .params({
@@ -111,7 +112,7 @@ export function UploadFieldsAction(context, { fields }) {
  */
 export function SaveStageAction(context, payload, done) {
 
-    context.dispatch(Actions.STAGES_SET_STATUS, "saving");
+    context.dispatch(Actions.CONSOLE_SET_STATUS, "saving");
 
     let cache = context.getStore(StageStore).getCache();
     let id    = payload.id;

@@ -110,6 +110,15 @@ export default {
         handler: getPage('Console/Displays'),
         title: null
     },
+    consoleDisplaysGroup: {
+        path: '/console/displays/:groupID',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Displays'),
+        title: null
+    },
 
 
     /*

@@ -11,7 +11,10 @@ class DisplayStore extends BaseStore {
 
     static storeName = 'DisplayStore'
     static handlers  = {
-        [Actions.DISPLAY_GROUP_UPDATE]: "updateGroups"
+        [Actions.DISPLAY_GROUP_UPDATE]: "updateGroups",
+        [Actions.DISPLAY_GROUP_CACHE_CLEAR]: "clearGroupCache",
+        [Actions.DISPLAY_GROUP_CACHE_UPDATE]: "updateGroupCache",
+        [Actions.DISPLAY_GROUP_CACHE_MODIFIED]: "cacheWasModified"
     }
 
     constructor(dispatcher) {
@@ -21,11 +24,45 @@ class DisplayStore extends BaseStore {
 
     setInitialState() {
         this.groups = null;
+        this.cacheModified = false;
+        this.consoleStatus = null;
+        this.clearGroupCache();
+    }
+
+    /** ============================ **/
+
+    getGroupCache = () => this.groupCache;
+
+    updateGroupCache = (data) => {
+        for(var key in data) {
+            this.groupCache[key] = data[key];
+        }
+        this.emitChange();
+    }
+
+    clearGroupCache = () => {
+        this.groupCache  = {
+            name: ""
+        };
+        this.cacheModified = false;
+    }
+
+    /** ============================ **/
+
+    isCacheModified = () => this.cacheModified;
+
+    cacheWasModified = () => {
+        if(this.cacheModified === false) {
+            this.cacheModified = true;
+            this.emitChange();
+        }
     }
 
     /** ============================ **/
 
     getGroups = () => this.groups;
+
+    hasLoadedGroups = () => (this.groups !== null);
 
     updateGroups = (groups) => {
         if(this.groups === null) {
@@ -44,16 +81,34 @@ class DisplayStore extends BaseStore {
         this.emitChange();
     }
 
+    /** ============================ **/
+
+    getDisplays = (group) => {
+        if(group && this.displays.hasOwnProperty(group)) {
+            return this.displays[group];
+        } else {
+            return this.displays;
+        }
+    }
+
+    /** ============================ **/
+
     /*
      * H20
      */
     dehydrate() {
         return {
-            groups: this.groups
+            groups: this.groups,
+            groupCache: this.groupCache,
+            consoleStatus: this.consoleStatus,
+            cacheModified: this.cacheModified
         };
     }
     rehydrate(state) {
         this.groups = state.groups;
+        this.groupCache = state.groupCache;
+        this.consoleStatus = state.consoleStatus;
+        this.cacheModified = state.cacheModified;
     }
 }
 

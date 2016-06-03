@@ -8,6 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import StageStore from '../../flux/Stage/StageStore';
+import DisplayStore from '../../flux/Display/DisplayStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import NavLink from './NavLink';
@@ -67,7 +68,8 @@ class VerticalMenu extends BaseComponent {
             { formatMessage } = this.props.intl,
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
-            stagesItem, userItem;
+            groupKeys = Object.keys(props.groups),
+            stagesItem, groupsItem, userItem;
 
         /*
          * Show the user area if user is authenticated
@@ -89,6 +91,33 @@ class VerticalMenu extends BaseComponent {
                                 </NavLink>
                             );
                         })}
+                    </div>
+                </div>
+            );
+
+            groupsItem = (
+                <div className="item">
+                    <div className="header">Displays</div>
+                    <div className="menu">
+                        {(() => {
+                            if(groupKeys.length > 0) {
+                                return groupKeys.map((groupID) => {
+                                    let thisGroup = props.groups[groupID];
+                                    return (
+                                        <NavLink
+                                            href={"/displays/" + thisGroup.slug}
+                                            key={thisGroup.id}
+                                            className="item">
+                                            {thisGroup.name || "Untitled group"}
+                                        </NavLink>
+                                    );
+                                });
+                            } else {
+                                return (
+                                    <div className="item"><em>No display groups available.</em></div>
+                                );
+                            }
+                        })()}
                     </div>
                 </div>
             );
@@ -156,6 +185,7 @@ class VerticalMenu extends BaseComponent {
                     </div>
                 </div>
                 {stagesItem}
+                {groupsItem}
                 {userItem}
                 <ul id="debug"></ul>
             </div>
@@ -168,7 +198,8 @@ VerticalMenu = connectToStores(
     [StageStore],
     function(context, props) {
         return {
-            stages: context.getStore(StageStore).getStages()
+            stages: context.getStore(StageStore).getStages(),
+            groups: context.getStore(DisplayStore).getGroups()
         }
     }
 )

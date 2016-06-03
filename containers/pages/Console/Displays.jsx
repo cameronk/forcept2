@@ -9,6 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from "debug";
 
 import StageStore from '../../../flux/Stage/StageStore';
+import ConsoleStore from '../../../flux/Console/ConsoleStore';
 import DisplayStore from '../../../flux/Display/DisplayStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import MessageScaffold from '../../../components/Scaffold/Message';
@@ -36,9 +37,6 @@ class Displays extends BaseComponent {
     }
 
     componentDidMount() {
-        if(this.props.groups === null) {
-            this.context.executeAction(LoadDisplayGroupsAction);
-        }
     }
 
     render() {
@@ -61,7 +59,8 @@ class Displays extends BaseComponent {
             );
         } else {
             displayDOM = (
-                <DisplayBuilder />
+                <DisplayBuilder
+                    group={props.currentGroup} />
             );
         }
 
@@ -92,12 +91,13 @@ class Displays extends BaseComponent {
 
 Displays = connectToStores(
     Displays,
-    [DisplayStore],
+    ["RouteStore", ConsoleStore, DisplayStore],
     function(context, props) {
 
         var routeStore = context.getStore('RouteStore');
         var stageStore = context.getStore(StageStore);
         var displayStore = context.getStore(DisplayStore);
+        var consoleStore = context.getStore(ConsoleStore);
 
         return {
             /// Meta
@@ -111,8 +111,10 @@ Displays = connectToStores(
             /// Current group
             currentGroup: {
                 id: routeStore.getCurrentRoute().params.groupID || null,
+                cache: displayStore.getGroupCache(),
+                status: consoleStore.getStatus(),
+                isCacheModified: displayStore.isCacheModified()
             }
-
         };
     }
 );

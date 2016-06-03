@@ -8,7 +8,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import pick from 'lodash/pick';
 
-import { UpdateCacheAction, SaveStageAction, UploadFieldsAction } from '../../flux/Stage/StageActions';
+import { UpdateDisplayGroupCacheAction, SaveDisplayGroupAction, /*UploadFieldsAction */ } from '../../flux/Display/DisplayActions';
 import StageStore from '../../flux/Stage/StageStore';
 import BaseComponent, { grabContext } from '../Base';
 import FieldsAccordion from './FieldsAccordion';
@@ -40,10 +40,6 @@ class DisplayBuilder extends BaseComponent {
     componentDidMount() {
         var { props } = this;
 
-        if(props.group.id && !props.displays) {
-
-        }
-
         this.componentDidUpdate();
     }
 
@@ -55,15 +51,15 @@ class DisplayBuilder extends BaseComponent {
     }
 
     _nameChange = (evt) => {
-        this.context.executeAction(UpdateCacheAction, { name: evt.target.value });
+        this.context.executeAction(UpdateDisplayGroupCacheAction, { name: evt.target.value });
     }
 
     _typeChange = (evt) => {
-        this.context.executeAction(UpdateCacheAction, { type: evt.target.value });
+        this.context.executeAction(UpdateDisplayGroupCacheAction, { type: evt.target.value });
     }
 
     _save = (evt) => {
-        this.context.executeAction(SaveStageAction, { id: this.props.stage.id || null });
+        this.context.executeAction(SaveDisplayGroupAction, { id: this.props.group.id || null });
     }
 
     _addField = (type) => {
@@ -106,12 +102,16 @@ class DisplayBuilder extends BaseComponent {
 
         var props = this.props,
             ctx = this.context,
-            { stage } = props,
-            { cache, status } = stage;
+            { group } = props,
+            { cache, status } = group;
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
         var messageDOM, AddNewFieldButtonDOM, PresetControlsDOM,
             FieldsAccordionDOM, FieldsAccordionDividerDOM;
+
+
+        __debug(group);
+        __debug(cache);
 
         /// Enable some fields when ID is set.
         // if(stage.id) {
@@ -187,7 +187,7 @@ class DisplayBuilder extends BaseComponent {
                         className: 'teal',
                         text: group.id || 'Unsaved'
                     }}
-                    text={cache.name.length === 0 ? "Untitled stage" : cache.name} />
+                    text={cache.name.length === 0 ? "Untitled display group" : cache.name} />
                 {messageDOM}
                 <div className="ui divider"></div>
 
@@ -196,14 +196,6 @@ class DisplayBuilder extends BaseComponent {
                         <div className="eight wide field">
                             <label>{nameLabel}</label>
                             <input type="text" value={cache.name} onChange={this._nameChange} placeholder={nameLabel} />
-                        </div>
-                        <div className="eight wide field">
-                            <label>Type</label>
-                            <select className="ui dropdown" value={cache.type} onChange={this._typeChange}>
-                                <option value="">Type</option>
-                                <option value="basic">Basic</option>
-                                <option value="pharmacy">Pharmacy</option>
-                            </select>
                         </div>
                     </div>
                 </form>
@@ -218,7 +210,7 @@ class DisplayBuilder extends BaseComponent {
                         onClick={this._save}
                         className={
                             "ui right labeled positive icon button" +
-                            ((!stage.isCacheModified || status === 'saving') ? ' disabled' : '') +
+                            ((!group.isCacheModified || status === 'saving') ? ' disabled' : '') +
                             ((status === 'saving') ? ' loading' : '')}>
                         Save
                         <i className="save icon"></i>

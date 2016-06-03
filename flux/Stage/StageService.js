@@ -19,7 +19,7 @@ export default {
              */
             read: function(req, resource, params, config, callback) {
                 db.Stage.findAll(params).then(stages => {
-                    callback(null, keyBy(stages, "id"), null);
+                    callback(null, stages, null);
                 });
             },
 
