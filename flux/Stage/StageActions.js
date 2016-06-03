@@ -146,7 +146,7 @@ export function SaveStageAction(context, payload, done) {
             });
         }
 
-        context.dispatch(Actions.STAGES_SET_STATUS, "saved");
+        context.dispatch(Actions.CONSOLE_SET_STATUS, "saved");
         context.executeAction(LoadStagesAction, {}, (err) => {
             done();
         });

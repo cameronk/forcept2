@@ -9,6 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from "debug";
 
 import StageStore from '../../../flux/Stage/StageStore';
+import ConsoleStore from '../../../flux/Console/ConsoleStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import StageBuilder    from '../../../components/Console/StageBuilder';
 import SideMenu      from '../../../components/Console/SideMenu';
@@ -123,11 +124,12 @@ class Stages extends BaseComponent {
 
 Stages = connectToStores(
     Stages,
-    [StageStore],
+    [ConsoleStore, StageStore],
     function(context, props) {
 
         var routeStore = context.getStore('RouteStore');
         var stageStore = context.getStore(StageStore);
+        var consoleStore = context.getStore(ConsoleStore);
 
         return {
             /// Meta
@@ -141,7 +143,7 @@ Stages = connectToStores(
                 id: routeStore.getCurrentRoute().params.stageID || null,
                 cache: stageStore.getCache(),
                 isCacheModified: stageStore.isCacheModified(),
-                status: stageStore.getStatus(),
+                status: consoleStore.getStatus(),
                 error:  stageStore.getError(),
             }
         };

@@ -14,6 +14,7 @@ import { ClearAllPatientsAction } from '../Patient/PatientActions';
 import { LoadStagesAction, GrabStageAction, ClearCacheAction as ClearStageCacheAction } from '../Stage/StageActions';
 import { ClearVisitAction, GrabVisitAction, SetRecentVisitDataAction } from '../Visit/VisitActions';
 import { LoadDisplayGroupsAction, GrabDisplayGroupAction, ClearDisplayGroupCacheAction } from '../Display/DisplayActions';
+import { SetConsoleStatusAction } from '../Console/ConsoleActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -59,6 +60,13 @@ var PreNavigateActions = function(context, payload, done) {
          * data entered for one group doesn't carry over to another.
          */
         context.executeAction(ClearDisplayGroupCacheAction),
+
+        /*
+         * The console status maintains the "status" of the current
+         * builder page ("saving", "saved", etc), which needs to be reset
+         * when the page changes.
+         */
+        context.executeAction(SetConsoleStatusAction, null),
 
         /*
          * VisitStore maintains data about the visit

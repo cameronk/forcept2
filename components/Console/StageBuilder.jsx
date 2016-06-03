@@ -42,9 +42,9 @@ class StageBuilder extends BaseComponent {
     }
 
     componentDidUpdate() {
-        $("#Forcept-StageBuilder .ui.dropdown")
+        $("#Forcept-Builder .ui.dropdown")
             .dropdown();
-        $("#Forcept-StageBuilder .ui.accordion")
+        $("#Forcept-Builder .ui.accordion")
             .accordion();
     }
 
@@ -68,7 +68,7 @@ class StageBuilder extends BaseComponent {
         				name: "",
         				type: type,
         				mutable: true,
-        				settings: this.context.getStore(StageStore).getDefaultSettings(),
+        				settings: this.context.getFieldTypes()[type].defaultSettings
         			}
                 }
             });
@@ -101,7 +101,9 @@ class StageBuilder extends BaseComponent {
         var props = this.props,
             ctx = this.context,
             { stage } = props,
-            { cache, status } = stage;
+            { cache, status } = stage,
+            availableFields = this.context.getFieldTypes(),
+            availableFieldKeys = Object.keys(availableFields);
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
         var messageDOM, AddNewFieldButtonDOM, PresetControlsDOM,
@@ -117,15 +119,15 @@ class StageBuilder extends BaseComponent {
                     <i className="plus icon"></i>
                     Add a new field
                     <div className="menu">
-                        <div className="item" onClick={this._addField("text")}>Text field</div>
-                        <div className="item" onClick={this._addField("textarea")}>Textarea field</div>
-                        <div className="item" onClick={this._addField("number")}>Number field</div>
-                        <div className="item" onClick={this._addField("date")}>Date field</div>
-                        <div className="item" onClick={this._addField("radio")}>Radio/button field</div>
-                        <div className="item" onClick={this._addField("select")}>Select field</div>
-                        <div className="item" onClick={this._addField("file")}>File field</div>
-                        <div className="item" onClick={this._addField("header")}>Group fields with a header</div>
-                        <div className="item" onClick={this._addField("pharmacy")}>Pharmacy - show available medication</div>
+                        {availableFieldKeys.map(key => {
+                            let thisField = availableFields[key];
+                            return (
+                                <div className="item" onClick={this._addField(key)}>
+                                    <div className="text">{thisField.name || ""}</div>
+                                    <div className="description">{thisField.description || ""}</div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </button>
             );
@@ -175,7 +177,7 @@ class StageBuilder extends BaseComponent {
         }
 
         return (
-            <div className="ui basic expanded segment" id="Forcept-StageBuilder">
+            <div className="ui basic expanded segment" id="Forcept-Builder">
                 <HeadingScaffold
                     label={{
                         className: 'teal',
@@ -184,7 +186,6 @@ class StageBuilder extends BaseComponent {
                     text={cache.name.length === 0 ? "Untitled stage" : cache.name} />
                 {messageDOM}
                 <div className="ui divider"></div>
-
                 <form className={"ui form" + (status === 'saving' ? " loading" : "")}>
                     <div className="fields">
                         <div className="eight wide field">

@@ -69,39 +69,6 @@ class StageStore extends BaseStore {
         return this.error;
     }
 
-    /**
-     * Get default settings for a field type.
-     * @return Object
-     */
-    getDefaultSettings(type) {
-        switch(type) {
-            case "date":
-                return {
-                    useBroadSelector: false
-                };
-                break;
-            case "select":
-                return {
-                    options: {},
-                    allowCustomData: false
-                };
-                break;
-            case "multiselect":
-                return {
-                    options: {}
-                };
-                break;
-            case "file":
-                return {
-                    accept: []
-                };
-                break;
-            default:
-                return {};
-                break;
-        }
-    }
-
     /*
      * The cache was modified.
      */

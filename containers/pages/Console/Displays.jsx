@@ -15,7 +15,7 @@ import HeaderBar  from '../../../components/Meta/HeaderBar';
 import MessageScaffold from '../../../components/Scaffold/Message';
 import BaseComponent, { grabContext } from '../../../components/Base';
 import SideMenu from '../../../components/Console/SideMenu';
-import DisplayBuilder from '../../../components/Console/DisplayBuilder';
+import DisplayBuilder from '../../../components/Console/Display/Builder';
 
 import { LoadDisplayGroupsAction } from '../../../flux/Display/DisplayActions';
 
@@ -53,9 +53,7 @@ class Displays extends BaseComponent {
             );
         } else if(!props.isNavigateComplete || props.groups === null) {
             displayDOM = (
-                <div className="ui basic segment">
-                    <div className="ui active loader"></div>
-                </div>
+                <div className="ui active loader"></div>
             );
         } else {
             displayDOM = (
@@ -106,6 +104,7 @@ Displays = connectToStores(
             /// All stages
             stages: stageStore.getStages(),
 
+            ///
             groups: displayStore.getGroups(),
 
             /// Current group
