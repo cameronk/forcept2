@@ -219,10 +219,16 @@ app.plug({
             }
         };
         var displayTypes = {
-            "chart": {
-                name: "Chart",
+            "pie chart": {
+                name: "Pie Chart",
+                icon: "pie chart",
+                description: "Display data in a pie chart",
+                defaultSettings: {}
+            },
+            "line chart": {
+                name: "Line Chart",
                 icon: "line chart",
-                description: "Display data in a chart",
+                description: "Display data in a line chart",
                 defaultSettings: {}
             }
         };

@@ -72,6 +72,7 @@ class DisplayAccordion extends BaseComponent {
                                         <div className="content" key={key + "-content"}>
                                             <Display
                                                 _key={key}
+                                                stages={props.stages}
                                                 display={thisDisplay} />
                                         </div>
                                     )

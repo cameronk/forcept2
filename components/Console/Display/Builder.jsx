@@ -95,7 +95,7 @@ class DisplayBuilder extends BaseComponent {
             /// Add a new Display
             AddNewDisplayButtonDOM = (
                 <button
-                    className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
+                    className={BuildDOMClass("ui labeled dropdown descriptive icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
                     Add a new display
                     <div className="menu">
@@ -116,7 +116,9 @@ class DisplayBuilder extends BaseComponent {
             /// DisplaysAccordion
             DisplaysAccordionDOM = (
                 <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <DisplayAccordion displays={cache.displays} />
+                    <DisplayAccordion
+                        stages={props.stages}
+                        displays={cache.displays} />
                 </div>
             );
 

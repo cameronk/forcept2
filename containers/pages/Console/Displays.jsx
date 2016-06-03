@@ -58,6 +58,7 @@ class Displays extends BaseComponent {
         } else {
             displayDOM = (
                 <DisplayBuilder
+                    stages={props.stages}
                     group={props.currentGroup} />
             );
         }

@@ -115,7 +115,7 @@ class StageBuilder extends BaseComponent {
             /// Add a new field
             AddNewFieldButtonDOM = (
                 <button
-                    className={BuildDOMClass("ui labeled dropdown icon button" , { "disabled": status === 'saving' })}>
+                    className={BuildDOMClass("ui labeled dropdown descriptive icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
                     Add a new field
                     <div className="menu">

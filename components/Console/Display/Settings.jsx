@@ -11,6 +11,7 @@ import { UpdateDisplayGroupCacheAction } from '../../../flux/Display/DisplayActi
 import OptionList from '../Setting/OptionList';
 import SettingText      from '../Setting/Text';
 import SettingCheckbox  from '../Setting/Checkbox';
+import CascadingFieldSelector  from '../Setting/CascadingFieldSelector';
 import SettingSelect    from '../Setting/Select';
 import BaseComponent, { grabContext } from '../../Base';
 
@@ -50,6 +51,14 @@ class DisplaySettings extends BaseComponent {
             );
 
         switch(type) {
+            case "pie chart":
+                return (
+                    <div>
+                        <CascadingFieldSelector
+                            stages={props.stages} />
+                    </div>
+                );
+                break;
             case "radio":
                 var settingsDOM = (
                     <div className="Controls">
@@ -165,7 +174,7 @@ class DisplaySettings extends BaseComponent {
                     <div className="ui fluid red message">
                         <div className="header">
                             <i className="warning icon"></i>
-                            Warning: unrecognized display type.
+                            Warning: unrecognized display type "{type}".
                         </div>
                     </div>
                 );

@@ -76,7 +76,7 @@ class Display extends BaseComponent {
         return (
             <div className="ui stackable form grid">
                 <div className="row StageField">
-                    <div className="six wide column">
+                    <div className="five wide column">
                         <div className="field">
                             <label>Name:</label>
                             <input type="text" placeholder={"Enter a display name"} value={display.name} onChange={this._change('name')} />
@@ -91,11 +91,12 @@ class Display extends BaseComponent {
                         </div>
                         {removeButtonDOM}
                     </div>
-                    <div className="ten wide field">
+                    <div className="eleven wide field">
                         <div className="ui basic segment">
                             <DisplaySettings
                                 type={display.type}
                                 settings={display.settings}
+                                stages={props.stages}
                                 _key={props._key} />
                         </div>
                     </div>
