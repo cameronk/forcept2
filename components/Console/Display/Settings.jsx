@@ -54,7 +54,21 @@ class DisplaySettings extends BaseComponent {
             case "pie chart":
                 return (
                     <div>
+                        {settingsHeader}
                         <CascadingFieldSelector
+                            onChange={((value) => {
+                                this.context.executeAction(UpdateDisplayGroupCacheAction, {
+                                    displays: {
+                                        [props.displayID]: {
+                                            settings: {
+                                                context: value
+                                            }
+                                        }
+                                    }
+                                });
+                            })}
+                            displayID={props.displayID}
+                            context={settings.context || null}
                             stages={props.stages} />
                     </div>
                 );

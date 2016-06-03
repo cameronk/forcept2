@@ -8,8 +8,6 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import $ from 'jquery';
 
-// import StageStore from '../../../flux/Stage/StageStore';
-// import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../../Base';
 
 const __debug = debug('forcept:components:Console:Setting:Checkbox');
@@ -22,6 +20,20 @@ class CascadingFieldSelector extends BaseComponent {
         super();
     }
 
+    componentDidMount() {
+        var elem = $(`#${this.getID()}`);
+        __debug(elem);
+        elem.dropdown({
+            onChange: this.props.onChange || (() => { })
+        });
+        if(this.props.context) {
+            elem.dropdown("set selected", [ this.props.context ]);
+        }
+    }
+
+
+    getID = (() => "FORCEPT-Dropdown-DataComparisonFieldSelector-" + this.props.displayID);
+
     render() {
         var props = this.props,
             { stages } = props,
@@ -29,7 +41,8 @@ class CascadingFieldSelector extends BaseComponent {
             availableFields = this.context.getFieldTypes();
 
         return (
-            <div className="ui floating labeled icon dropdown button">
+            <div id={this.getID()}
+                className="ui floating labeled icon dropdown button">
                 <span className="text">Compare data from...</span>
                 <i className="dropdown icon"></i>
                 <div className="menu">
@@ -45,9 +58,9 @@ class CascadingFieldSelector extends BaseComponent {
                                         if(availableFields.hasOwnProperty(thisField.type)
                                             && availableFields[thisField.type].storageMethod !== "none") {
                                             return (
-                                                <div className="item">
-                                                    <div className="text">{thisField.name || "Untitled field"}</div>
-                                                    <div className="description">{thisField.type}</div>
+                                                <div className="item" data-value={`${stageID}.${fieldID}`}>
+                                                    <span className="description">{thisField.type}</span>
+                                                    <span className="text">{thisField.name || "Untitled field"}</span>
                                                 </div>
                                             );
                                         }

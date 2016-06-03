@@ -30,10 +30,10 @@ class Display extends BaseComponent {
     }
 
     componentDidMount() {
-        $(".StageField .ui.dropdown")
-            .dropdown({
-                onChange: this._change()
-            });
+        // $(".StageField .ui.dropdown")
+        //     .dropdown({
+        //         onChange: this._change()
+        //     });
     }
 
     _change = (prop) => {
@@ -71,8 +71,6 @@ class Display extends BaseComponent {
                 </button>
             );
 
-
-
         return (
             <div className="ui stackable form grid">
                 <div className="row StageField">
@@ -97,7 +95,7 @@ class Display extends BaseComponent {
                                 type={display.type}
                                 settings={display.settings}
                                 stages={props.stages}
-                                _key={props._key} />
+                                displayID={props._key} />
                         </div>
                     </div>
                 </div>

@@ -38,7 +38,6 @@ class DisplayStore extends BaseStore {
     getGroupCache = () => this.groupCache;
 
     updateGroupCache = (data) => {
-        __debug(data);
         for(var column in data) {
             if(column === "displays") {
                 var displays = data.displays;
@@ -54,7 +53,7 @@ class DisplayStore extends BaseStore {
                                 var thisProp = thisDisplay[displayProp];
                                 if(displayProp === "settings") {
                                     for(var setting in thisProp) {
-                                        this.groupCache.displays[displayKey].settings = thisProp[setting];
+                                        this.groupCache.displays[displayKey].settings[setting] = thisProp[setting];
                                     }
                                 } else {
                                     this.groupCache.displays[displayKey][displayProp] = thisProp;

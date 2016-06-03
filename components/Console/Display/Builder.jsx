@@ -40,13 +40,7 @@ class DisplayBuilder extends BaseComponent {
     }
 
     componentDidMount() {
-        var { props } = this;
-
-        this.componentDidUpdate();
-    }
-
-    componentDidUpdate() {
-        $("#Forcept-Builder .ui.dropdown")
+        $("#Forcept-Builder #FORCEPT-Dropdown-AddDisplay")
             .dropdown();
         $("#Forcept-Builder .ui.accordion")
             .accordion();
@@ -94,7 +88,7 @@ class DisplayBuilder extends BaseComponent {
 
             /// Add a new Display
             AddNewDisplayButtonDOM = (
-                <button
+                <button id="FORCEPT-Dropdown-AddDisplay"
                     className={BuildDOMClass("ui labeled dropdown descriptive icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
                     Add a new display
