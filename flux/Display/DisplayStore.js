@@ -18,7 +18,9 @@ class DisplayStore extends BaseStore {
         [Actions.DISPLAY_GROUP_UPDATE]: "updateGroups",
         [Actions.DISPLAY_GROUP_CACHE_CLEAR]: "clearGroupCache",
         [Actions.DISPLAY_GROUP_CACHE_UPDATE]: "updateGroupCache",
-        [Actions.DISPLAY_GROUP_CACHE_MODIFIED]: "cacheWasModified"
+        [Actions.DISPLAY_GROUP_CACHE_MODIFIED]: "cacheWasModified",
+        [Actions.DISPLAY_ADD_LOADING_CONTEXT]: "addLoadingContext",
+        [Actions.DISPLAY_REMOVE_LOADING_CONTEXT]: "removeLoadingContext"
     }
 
     constructor(dispatcher) {
@@ -29,7 +31,7 @@ class DisplayStore extends BaseStore {
     setInitialState() {
         this.groups = null;
         this.cacheModified = false;
-        this.consoleStatus = null;
+        this.loadingContext = [];
         this.clearGroupCache();
     }
 
@@ -117,6 +119,23 @@ class DisplayStore extends BaseStore {
             return this.displays[group];
         } else {
             return this.displays;
+        }
+    }
+
+    /** ============================ **/
+
+    getLoadingContext = () => this.loadingContext;
+
+    addLoadingContext = (ctx) => {
+        if(this.loadingContext.indexOf(ctx) === -1) {
+            this.loadingContext.push(ctx);
+        }
+    }
+
+    removeLoadingContext = (ctx) => {
+        var index = this.loadingContext.indexOf(ctx);
+        if(index !== -1) {
+            this.loadingContext.splice(index, 1);
         }
     }
 

@@ -141,6 +141,19 @@ export default {
        auth: true,
        handler: getPage('Visit/Handler'),
        title: messages["pages.console.stages.stage.title"]
-    }
+   },
+
+   /*
+    * Displays
+    */
+    displayGroup: {
+        path: '/displays/:groupID',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Display/Group'),
+        title: null
+    },
+
 
 };

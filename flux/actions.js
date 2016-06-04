@@ -37,6 +37,8 @@ export default keyMirror({
     'DISPLAY_GROUP_CACHE_CLEAR': null,
     'DISPLAY_GROUP_CACHE_UPDATE': null,
     'DISPLAY_GROUP_CACHE_MODIFIED': null,
+    'DISPLAY_ADD_LOADING_CONTEXT': null,
+    'DISPLAY_REMOVE_LOADING_CONTEXT': null,
 
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,

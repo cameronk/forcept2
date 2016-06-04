@@ -37,7 +37,7 @@ const messages = defineMessages({
 });
 
 if(process.env.BROWSER) {
-    require('../../../styles/VisitList.less');
+    require('../../../styles/FlexGrouper.less');
 }
 
 class VisitList extends BaseComponent {
@@ -123,7 +123,7 @@ class VisitList extends BaseComponent {
                 listDOM = list.map(visit => {
                     var visitLink = "/visits/" + props.stageSlug + "/" + visit.id;
                     return (
-                        <div className="FORCEPT-Visit-Listing">
+                        <div className="flex container">
                             <div className="huge ui top attached header">
                                 <div className="basic large right pointing ui teal label">
                                     Visit ID
@@ -219,7 +219,7 @@ class VisitList extends BaseComponent {
         }
 
         return (
-            <div id="VisitList">
+            <div id="FORCEPT-FlexGrouper">
                 <h1 className="ui top attached header">
                     <i className="hospital icon"></i>
                     <div className="content">

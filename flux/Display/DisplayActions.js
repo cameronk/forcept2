@@ -181,3 +181,27 @@ export function CreateDisplayAction(context, { groupID, type, name, settings }, 
                 });
         });
 }
+
+/** ============================= **/
+
+export function AddLoadingContextAction(context, { id }, done) {
+    context.dispatch(Actions.DISPLAY_ADD_LOADING_CONTEXT, id);
+    done();
+}
+
+export function RemoveLoadingContextAction(context, { id }, done) {
+    context.dispatch(Actions.DISPLAY_REMOVE_LOADING_CONTEXT, id);
+    done();
+}
+
+/** ============================= **/
+
+export function RefreshDisplayAction(context, { display }, done) {
+    context.executeAction(AddLoadingContextAction, {
+        id: display.id
+    }).then(() => {
+        context.executeAction(RemoveLoadingContextAction, {
+            id: display.id
+        }).then(() => done());
+    });
+}
