@@ -88,18 +88,18 @@ export function SaveMedicationAction(context, payload, done) {
 
             var promises = [];
 
-            // if(cache.displays) {
-            //     for(var display in cache.displays) {
-            //         let thisDisplay = cache.displays[display];
-            //         promises.push(
-            //             context.service
-            //                 .update('DisplayService')
-            //                 .params({
-            //                     id: thisDisplay.id
-            //                 }).body(omit(thisDisplay, ['id', 'group'])).end()
-            //         );
-            //     }
-            // }
+            if(cache.quantities) {
+                for(var quantity in cache.quantities) {
+                    let thisQuantity = cache.quantities[quantity];
+                    promises.push(
+                        context.service
+                            .update('MedQuantityService')
+                            .params({
+                                id: thisQuantity.id
+                            }).body(omit(thisQuantity, ['id', 'medication'])).end()
+                    );
+                }
+            }
 
             Promise.all(promises).then(() => {
 

@@ -12,6 +12,7 @@ import isEqual from 'lodash/isEqual';
 // import StageStore from '../../flux/Stage/StageStore';
 import BaseComponent, { grabContext } from '../Base';
 // import Field from './Field';
+import Quantity from './Quantity';
 
 const __debug = debug("forcept:components:Pharmacy:QuantitiesAccordion");
 const root = "components.pharmacy.QuantitiesAccordion";
@@ -41,42 +42,36 @@ class QuantitiesAccordion extends BaseComponent {
 
     render() {
         var props = this.props,
-            { fields } = props,
+            { quantities } = props,
             accordionDOM;
 
-        var fieldKeys = fields ? Object.keys(fields) : [];
+        var quantityKeys = quantities ? Object.keys(quantities) : [];
 
-        if(fieldKeys.length > 0) {
+        if(quantityKeys.length > 0) {
             accordionDOM = (
                 <div className="ui fluid accordion">
                     {
                         flatten(
-                            fieldKeys.map((key, i) => {
-                                let thisField = fields[key];
+                            quantityKeys.map((key, i) => {
+                                let thisQuantity = quantities[key];
                                 return [
                                     (
                                         <div className="title" key={key + "-title"}>
                                             <div className="ui medium header">
                                                 <i className="dropdown icon"></i>
                                                 <div className="small ui right pointing label">
-                                                    {(thisField.mutable === false) ? (
-                                                            <i className="lock icon"></i>
-                                                    ) : null}
                                                     {key}
-                                                    <div className="detail">
-                                                        {thisField.type}
-                                                    </div>
                                                 </div>
                                                 {" "}
-                                                {thisField.name && thisField.name.length > 0 ? thisField.name : `New ${thisField.type} field`}
+                                                {thisQuantity.name && thisQuantity.name.length > 0 ? thisQuantity.name : `New quantity`}
                                             </div>
                                         </div>
                                     ),
                                     (
                                         <div className="content" key={key + "-content"}>
-                                            <Field
+                                            <Quantity
                                                 _key={key}
-                                                field={thisField} />
+                                                quantity={thisQuantity} />
                                         </div>
                                     )
                                 ];
