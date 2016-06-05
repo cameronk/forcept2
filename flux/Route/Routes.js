@@ -133,7 +133,6 @@ export default {
         action: ClearVisitListAction,
         title: messages["pages.console.stages.stage.title"]
     },
-
     visitStageHandle: {
        path: '/visits/:stageID/:visitID',
        namespace: 'visit',
@@ -155,5 +154,15 @@ export default {
         title: null
     },
 
-
+    /*
+     * Pharmacy
+     */
+    pharmacyManager: {
+        path: '/pharmacy',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Pharmacy/Manager'),
+        title: null
+    }
 };

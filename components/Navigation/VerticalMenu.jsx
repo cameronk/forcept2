@@ -69,7 +69,7 @@ class VerticalMenu extends BaseComponent {
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
             groupKeys = Object.keys(props.groups),
-            stagesItem, groupsItem, userItem;
+            stagesItem, groupsItem, pharmacyItem, userItem;
 
         /*
          * Show the user area if user is authenticated
@@ -118,6 +118,18 @@ class VerticalMenu extends BaseComponent {
                                 );
                             }
                         })()}
+                    </div>
+                </div>
+            );
+
+            pharmacyItem = (
+                <div className="item">
+                    <div className="header">Pharmacy</div>
+                    <div className="menu">
+                        <NavLink className="item" href={"/pharmacy"}>
+                            <i className="treatment icon"></i>
+                            Manage medications
+                        </NavLink>
                     </div>
                 </div>
             );
@@ -186,6 +198,7 @@ class VerticalMenu extends BaseComponent {
                 </div>
                 {stagesItem}
                 {groupsItem}
+                {pharmacyItem}
                 {userItem}
                 <ul id="debug"></ul>
             </div>

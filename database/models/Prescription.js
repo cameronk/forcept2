@@ -3,7 +3,7 @@
 var ModelHelper = require('../helper.js');
 
 module.exports = function(sequelize, DataTypes) {
-    var PrescriptionSet = sequelize.define('PrescriptionSet', {
+    var Prescription = sequelize.define('Prescription', {
         visit: DataTypes.INTEGER,
         patient: DataTypes.INTEGER,
         createdBy: DataTypes.INTEGER,
@@ -25,5 +25,5 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     });
-    return PrescriptionSet;
+    return Prescription;
 };
