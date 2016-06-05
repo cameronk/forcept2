@@ -1,24 +1,16 @@
 'use strict';
 module.exports = {
     up: function(queryInterface, Sequelize) {
-        return queryInterface.createTable('PrescriptionSets', {
+        return queryInterface.createTable('Medications', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            visit: {
-                type: Sequelize.INTEGER
-            },
-            patient: {
-                type: Sequelize.INTEGER
-            },
-            createdBy: {
-                type: Sequelize.INTEGER
-            },
-            prescriptions: {
-                type: Sequelize.TEXT
+            name: {
+                type: Sequelize.STRING,
+                allowNull: true
             },
             createdAt: {
                 allowNull: false,
@@ -31,6 +23,6 @@ module.exports = {
         });
     },
     down: function(queryInterface, Sequelize) {
-        return queryInterface.dropTable('PrescriptionSets');
+        return queryInterface.dropTable('Medications');
     }
 };
