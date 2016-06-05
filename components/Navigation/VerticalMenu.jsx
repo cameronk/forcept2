@@ -126,7 +126,7 @@ class VerticalMenu extends BaseComponent {
                 <div className="item">
                     <div className="header">Pharmacy</div>
                     <div className="menu">
-                        <NavLink className="item" href={"/pharmacy"}>
+                        <NavLink className="item" href="/pharmacy/manage">
                             <i className="treatment icon"></i>
                             Manage medications
                         </NavLink>

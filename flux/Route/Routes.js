@@ -4,10 +4,12 @@
  */
 
 import debug from 'debug';
+import { defineMessages } from 'react-intl';
+
 import { LogoutAction } from '../Auth/AuthActions';
 import { LoadStagesAction } from '../Stage/StageActions';
 import { ClearVisitListAction } from '../Visit/VisitActions';
-import { defineMessages } from 'react-intl';
+import { LoadMedicationPageActions } from '../Pharmacy/MedicationActions';
 
 const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
@@ -157,12 +159,22 @@ export default {
     /*
      * Pharmacy
      */
-    pharmacyManager: {
-        path: '/pharmacy',
+    pharmacyManage: {
+        path: '/pharmacy/manage',
         namespace: 'display',
         method: 'get',
         auth: true,
         handler: getPage('Pharmacy/Manager'),
-        title: null
+        title: null,
+        action: LoadMedicationPageActions
+    },
+    pharmacyManageMedication: {
+        path: '/pharmacy/manage/:medicationID',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Pharmacy/Manager'),
+        title: null,
+        action: LoadMedicationPageActions
     }
 };

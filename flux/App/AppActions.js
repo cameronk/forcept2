@@ -13,3 +13,8 @@ export function FlashAppDataAction(context, payload, done) {
     context.dispatch(Actions.APP_FLASH, payload);
     done();
 }
+
+export function SetAppStatusAction(context, payload, done) {
+    context.dispatch(Actions.APP_SET_STATUS, payload);
+    done();
+}

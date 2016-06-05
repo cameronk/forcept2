@@ -14,6 +14,7 @@ class AppStore extends BaseStore {
         [Actions.NAVIGATE_SUCCESS]: 'handlePageTitle',
         [Actions.APP_LOADING]: 'handleLoading',
         [Actions.APP_FLASH]: 'handleFlash',
+        [Actions.APP_SET_STATUS]: 'setStatus'
     }
 
     constructor(dispatcher) {
@@ -31,6 +32,7 @@ class AppStore extends BaseStore {
         this.flash   = false;
         this.req   = {};
         this.route = {};
+        this.status = null;
     }
 
     // =============================== \\
@@ -102,6 +104,17 @@ class AppStore extends BaseStore {
 
     // =============================== \\
 
+    getStatus = () => this.status;
+
+    setStatus = (status) => {
+        if(this.status !== status) {
+            this.status = status;
+            this.emitChange();
+        }
+    }
+
+    // =============================== \\
+
     /*
      * H20
      */
@@ -109,13 +122,15 @@ class AppStore extends BaseStore {
         return {
             pageTitle: this.pageTitle,
             loading: this.loading,
-            flash: this.flash
+            flash: this.flash,
+            status: this.status
         };
     }
     rehydrate(state) {
         this.pageTitle = state.pageTitle;
         this.loading = state.loading;
         this.flash = state.flash;
+        this.status = state.status;
     }
 }
 

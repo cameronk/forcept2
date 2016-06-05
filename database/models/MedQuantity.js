@@ -4,7 +4,7 @@ var ModelHelper = require('../helper.js');
 
 module.exports = function(sequelize, DataTypes) {
     var MedQuantity = sequelize.define('MedQuantity', {
-        medicatin: DataTypes.INTEGER,
+        medication: DataTypes.INTEGER,
         name: DataTypes.STRING,
         quantity: DataTypes.INTEGER
     }, {

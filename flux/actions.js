@@ -11,10 +11,17 @@ export default keyMirror({
 
     /// Application
     'APP_LOADING': null,
+    'APP_SET_STATUS': null,
     'APP_FLASH': null,
 
     //
     'CONSOLE_SET_STATUS': null,
+
+    /// Pharmacy
+    'PHARMACY_MEDS_CACHE_UPDATE': null,
+    'PHARMACY_MEDS_CACHE_MODIFIED': null,
+    'PHARMACY_MEDS_CACHE_CLEAR': null,
+    'PHARMACY_MEDS_UPDATE': null,
 
     /// Authentication
     'AUTH_LOGOUT': null,
