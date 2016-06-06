@@ -23,12 +23,14 @@ export function SetPharmacyStatusAction(context, payload, done) {
 /** ========================== **/
 
 export function LoadMedicationsAction(context, payload, done) {
+    __debug("Loading medications.");
     context.service
         .read('MedicationService')
         .params({}).end()
         .then(({ data }) => {
             context.dispatch(Actions.PHARMACY_MEDS_UPDATE, data);
-            done();
+            context.dispatch(Actions.PHARMACY_MEDS_LOADED, true);
+                done();
         });
 }
 
@@ -186,4 +188,58 @@ export function AddMedQuantityAction(context, payload, done) {
                 }, () => done());
             });
     }
+}
+
+/** ========================== **/
+
+export function LoadPrescriptionSetAction(context, payload, done) {
+
+    __debug("Loading prescription set for patient %s in visit %s", payload.patient, payload.visit);
+
+    var medicationStore = context.getStore(MedicationStore);
+    var identifiers = {
+        visit: payload.visit,
+        patient: payload.patient
+    };
+
+    var afterSetLoaded  = (set) => {
+        context.dispatch(Actions.PHARMACY_PSET_UPDATE, set);
+        context.executeAction(SetPharmacyStatusAction, "loaded", () => {
+            done();
+        });
+    };
+
+    var afterMedsLoaded = () => {
+        context.service
+            .read('PrescriptionService')
+            .params({
+                where: identifiers
+            }).end()
+            .then(({ data }) => {
+                if(data.length > 0) {
+                    /// Set was found
+                    afterSetLoaded(data[0]);
+                } else {
+                    /// No set found, create one
+                    context.service
+                        .create('PrescriptionService')
+                        .params({})
+                        .body(identifiers).end()
+                        .then(({ data }) => {
+                            if(data) {
+                                afterSetLoaded(data);
+                            } else {
+                                throw new Error("Unable to create set - no data returned.");
+                            }
+                        });
+                }
+            });
+    };
+
+    context.executeAction(SetPharmacyStatusAction, "loading", () => {
+        if(!medicationStore.areMedicationsLoaded()) {
+            context.executeAction(LoadMedicationsAction, {}, afterMedsLoaded);
+        } else afterMedsLoaded();
+    });
+
 }

@@ -43,6 +43,7 @@ import DisplayService from './flux/Display/DisplayService';
 import DisplayGroupService from './flux/Display/DisplayGroupService';
 import MedicationService from './flux/Pharmacy/MedicationService';
 import MedQuantityService from './flux/Pharmacy/MedQuantityService';
+import PrescriptionService from './flux/Pharmacy/PrescriptionService';
 import TestService from './flux/Test/TestService';
 
 /// Containers
@@ -165,6 +166,7 @@ __debug("---");
               FetchrPlugin.registerService(DisplayGroupService.attach(db));
               FetchrPlugin.registerService(MedicationService.attach(db));
               FetchrPlugin.registerService(MedQuantityService.attach(db));
+              FetchrPlugin.registerService(PrescriptionService.attach(db));
               FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());

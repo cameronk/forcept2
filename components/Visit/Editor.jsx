@@ -119,6 +119,7 @@ class Editor extends BaseComponent {
                         case "pharmacy":
                             fieldDOM = (
                                 <PharmacyField
+                                    visitID={visit.id}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

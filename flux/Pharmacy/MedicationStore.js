@@ -17,7 +17,8 @@ class MedicationStore extends BaseStore {
         [Actions.PHARMACY_MEDS_CACHE_UPDATE]: "updateCache",
         [Actions.PHARMACY_MEDS_CACHE_MODIFIED]: "cacheWasModified",
         [Actions.PHARMACY_MEDS_CACHE_CLEAR]: "clearCache",
-        [Actions.PHARMACY_MEDS_UPDATE]: "updateMedications"
+        [Actions.PHARMACY_MEDS_UPDATE]: "updateMedications",
+        [Actions.PHARMACY_MEDS_LOADED]: "medicationsWereLoaded"
     }
 
     constructor(dispatcher) {
@@ -27,6 +28,7 @@ class MedicationStore extends BaseStore {
 
     setInitialState() {
         this.medications = {};
+        this.medicationsLoaded = false;
         this.status = null;
         this.clearCache();
     }
@@ -38,6 +40,17 @@ class MedicationStore extends BaseStore {
     setStatus = (status) => {
         if(this.status !== status) {
             this.status = status;
+            this.emitChange();
+        }
+    }
+
+    /** ========================= **/
+
+    areMedicationsLoaded = () => this.medicationsLoaded;
+
+    medicationsWereLoaded = (status) => {
+        if(this.medicationsLoaded !== status) {
+            this.medicationsLoaded = status;
             this.emitChange();
         }
     }
@@ -100,6 +113,7 @@ class MedicationStore extends BaseStore {
     dehydrate() {
         return {
             medications: this.medications,
+            medicationsLoaded: this.medicationsLoaded,
             cache: this.cache,
             statis: this.status,
             cacheModified: this.cacheModified
@@ -108,6 +122,7 @@ class MedicationStore extends BaseStore {
 
     rehydrate(state) {
         this.medications = state.medications;
+        this.medicationsLoaded = state.medicationsLoaded
         this.cache = state.cache;
         this.status = state.status;
         this.cacheModified = state.cacheModified;
