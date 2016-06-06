@@ -85,7 +85,7 @@ class QuantityEditor extends BaseComponent {
             /// QuantitiesAccordion
             QuantitiesAccordionDOM = (
                 <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <QuantitiesAccordion fields={cache.fields} />
+                    <QuantitiesAccordion quantities={cache.quantities} />
                 </div>
             );
 

@@ -4,14 +4,23 @@
 
 import debug from 'debug';
 import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
 
 import Actions from '../actions';
-import { SetAppStatusAction } from '../App/AppActions';
 import MedicationStore from './MedicationStore';
 import { navigateAction } from '../Route/RouteActions';
 import { JsonModel } from '../../database/helper';
 
 const __debug = debug('forcept:flux:Pharmacy:MedicationActions');
+
+/** ========================== **/
+
+export function SetPharmacyStatusAction(context, payload, done) {
+    context.dispatch(Actions.PHARMACY_SET_STATUS, payload);
+    done();
+}
+
+/** ========================== **/
 
 export function LoadMedicationsAction(context, payload, done) {
     context.service
@@ -33,8 +42,22 @@ export function GrabMedicationAction(context, { id }, done) {
         }).end()
         .then(({ data }) => {
             if(data.hasOwnProperty(id)) {
-                context.dispatch(Actions.PHARMACY_MEDS_CACHE_UPDATE, data[id]);
-                done();
+                var medication = JsonModel(data[id]);
+
+                context.service
+                    .read('MedQuantityService')
+                    .params({
+                        where: {
+                            medication: medication.id
+                        },
+                        attributes: ['id', 'name', 'quantity']
+                    }).end()
+                    .then(({ data }) => {
+                        medication.quantities = data || {};
+                        context.dispatch(Actions.PHARMACY_MEDS_CACHE_UPDATE, medication);
+                        done();
+                    });
+
             } else throw new Error("GrabMedication response data missing requested medication");
         })
         .catch(err => {
@@ -57,13 +80,13 @@ export function ClearMedicationCacheAction(context, payload, done) {
 }
 
 export function SaveMedicationAction(context, payload, done) {
-    context.executeAction(SetAppStatusAction, "saving", () => {
+    context.executeAction(SetPharmacyStatusAction, "saving", () => {
 
         let cache = context.getStore(MedicationStore).getCache();
         let id    = payload.id;
         let query;
 
-        __debug("Saving stage '%s' to id '%s'", cache.name, id);
+        __debug("Saving medication '%s' to id '%s'", cache.name, id);
 
         if(id) {
             query = context.service
@@ -89,8 +112,9 @@ export function SaveMedicationAction(context, payload, done) {
             var promises = [];
 
             if(cache.quantities) {
-                for(var quantity in cache.quantities) {
-                    let thisQuantity = cache.quantities[quantity];
+                for(var qID in cache.quantities) {
+                    var thisQuantity = cache.quantities[qID];
+                    __debug(" - Updating quantity ID %s", thisQuantity.id);
                     promises.push(
                         context.service
                             .update('MedQuantityService')
@@ -110,7 +134,7 @@ export function SaveMedicationAction(context, payload, done) {
                     });
                 }
 
-                context.executeAction(SetAppStatusAction, "saved", () => {
+                context.executeAction(SetPharmacyStatusAction, "saved", () => {
                     context.executeAction(LoadMedicationsAction, {}, (err) => {
                         done();
                     });
@@ -129,13 +153,15 @@ export function SaveMedicationAction(context, payload, done) {
 /** ========================== **/
 
 export function LoadMedicationPageActions(context, route, done) {
-    context.executeAction(ClearMedicationCacheAction, {}, () => {
-        context.executeAction(LoadMedicationsAction, {}, () => {
-            if(route.params.hasOwnProperty("medicationID")) {
-                context.executeAction(GrabMedicationAction, {
-                    id: route.params.medicationID
-                }, () => done());
-            } else done();
+    context.executeAction(SetPharmacyStatusAction, null, () => {
+        context.executeAction(ClearMedicationCacheAction, {}, () => {
+            context.executeAction(LoadMedicationsAction, {}, () => {
+                if(route.params.hasOwnProperty("medicationID")) {
+                    context.executeAction(GrabMedicationAction, {
+                        id: route.params.medicationID
+                    }, () => done());
+                } else done();
+            });
         });
     });
 }

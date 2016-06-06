@@ -91,11 +91,10 @@ class PharmacyManager extends BaseComponent {
 
 PharmacyManager = connectToStores(
     PharmacyManager,
-    ["RouteStore", "AppStore", MedicationStore],
+    ["RouteStore",  MedicationStore],
     function(context, props) {
 
         var routeStore = context.getStore('RouteStore');
-        var appStore = context.getStore('AppStore');
         var medicationStore = context.getStore(MedicationStore);
 
         return {
@@ -110,7 +109,7 @@ PharmacyManager = connectToStores(
                 id: routeStore.getCurrentRoute().params.medicationID || null,
                 cache: medicationStore.getCache(),
                 isCacheModified: medicationStore.isCacheModified(),
-                status: appStore.getStatus()
+                status: medicationStore.getStatus()
             }
         };
     }

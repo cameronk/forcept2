@@ -41,7 +41,7 @@ class Quantity extends BaseComponent {
         return (
             <div className="ui stackable form grid">
                 <div className="row StageField">
-                    <div className="six wide column">
+                    <div className="eight wide column">
                         <div className="field">
                             <label>Name:</label>
                             <input type="text"
@@ -50,14 +50,13 @@ class Quantity extends BaseComponent {
                                 onChange={this._change('name')} />
                         </div>
                     </div>
-                    <div className="ten wide field">
-                        <div className="ui basic segment">
-                            <div className="field">
-                                <input type="number"
-                                    placeholder={"Enter a quantity amount"}
-                                    quantity={quantity.quantity}
-                                    onChange={this._change('quantity')} />
-                            </div>
+                    <div className="eight wide field">
+                        <div className="field">
+                            <label>Quantity:</label>
+                            <input type="number"
+                                placeholder={"Enter a quantity amount"}
+                                value={quantity.quantity}
+                                onChange={this._change('quantity')} />
                         </div>
                     </div>
                 </div>

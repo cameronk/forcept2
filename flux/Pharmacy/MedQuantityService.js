@@ -58,9 +58,9 @@ export default {
                 }).then((med) => {
                     if(!med) {
                         callback(
-                            BuildError('Requested medication not found.', {
+                            BuildError('Requested medication quantity not found.', {
                                 output: {
-                                    message: 'Requested medication not found.'
+                                    message: 'Requested medication quantity not found.'
                                 },
                                 statusCode: HttpStatus.NOT_FOUND
                             })

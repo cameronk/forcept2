@@ -18,6 +18,7 @@ export default keyMirror({
     'CONSOLE_SET_STATUS': null,
 
     /// Pharmacy
+    'PHARMACY_SET_STATUS': null,
     'PHARMACY_MEDS_CACHE_UPDATE': null,
     'PHARMACY_MEDS_CACHE_MODIFIED': null,
     'PHARMACY_MEDS_CACHE_CLEAR': null,
