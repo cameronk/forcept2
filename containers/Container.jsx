@@ -13,6 +13,7 @@ import debug from 'debug';
 
 import AppStore from '../flux/App/AppStore';
 import VerticalMenu from '../components/Navigation/VerticalMenu';
+import StoreDebugger from '../components/Console/StoreDebugger';
 
 const __debug = debug('forcept:containers:Container')
 
@@ -76,7 +77,8 @@ class Container extends React.Component {
                 <div id="Handler">
                     {content}
                 </div>
-
+                <StoreDebugger />
+                
             </div>
         );
     }

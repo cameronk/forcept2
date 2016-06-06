@@ -13,7 +13,7 @@ class PrescriptionStore extends BaseStore {
 
     static storeName = 'PrescriptionStore'
     static handlers = {
-        [Actions.PHARMACY_PSET_UPDATE]: "updateSet"
+        [Actions.PHARMACY_PSET_UPDATE]: "updateSets"
     }
 
     constructor(dispatcher) {
@@ -22,15 +22,27 @@ class PrescriptionStore extends BaseStore {
     }
 
     setInitialState() {
-        this.set = {};
+        this.sets = {};
     }
 
     /** ========================= **/
 
-    getSet = () => this.set;
+    getSets = () => this.sets;
 
-    updateSet = (data) => {
-        this.set = data;
+    updateSets = (sets) => {
+
+        __debug(sets);
+        for(var patientID in sets) {
+            var thisSet = sets[patientID];
+            if(this.sets.hasOwnProperty(patientID)) {
+                for(var prop in thisSet) {
+                    this.sets[patientID][prop] = thisSet[prop];
+                }
+            } else {
+                this.sets[patientID] = thisSet;
+            }
+        }
+        this.emitChange();
     }
 
     /** ========================= **/
@@ -40,12 +52,12 @@ class PrescriptionStore extends BaseStore {
      */
     dehydrate() {
         return {
-            set: this.set
+            sets: this.sets
         };
     }
 
     rehydrate(state) {
-        this.set = state.set
+        this.sets = state.sets
     }
 
 }

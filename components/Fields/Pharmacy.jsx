@@ -8,10 +8,12 @@ import { connectToStores } from 'fluxible-addons-react';
 import BaseComponent, { grabContext } from '../Base';
 
 import Label from './Label';
+import PrescriptionTable from '../Pharmacy/PrescriptionTable';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
-import MedicationStore from '../../flux/Pharmacy/MedicationStore';
 import { LoadPrescriptionSetAction } from '../../flux/Pharmacy/MedicationActions';
+import MedicationStore from '../../flux/Pharmacy/MedicationStore';
+import PrescriptionStore from '../../flux/Pharmacy/PrescriptionStore';
 
 class PharmacyField extends BaseComponent {
 
@@ -25,12 +27,8 @@ class PharmacyField extends BaseComponent {
     }
 
     componentDidMount = () => {
-        this.componentDidUpdate(this.props);
     }
 
-    componentDidUpdate = () => {
-        var { props } = this;
-    }
 
     /**
      *
@@ -58,29 +56,25 @@ class PharmacyField extends BaseComponent {
      *
      */
     render() {
-        
+
         var props = this.props,
             { field, value } = props,
             pharmacyDOM;
 
-        switch(props.status) {
-            case "loading":
-                pharmacyDOM = (
-                    <div className="ui basic segment">
-                        <div className="ui active loader"></div>
-                    </div>
-                );
-                break;
-            default:
-                pharmacyDOM = (
-                    <div className="ui basic segment">
-                        <div className="ui blue labeled icon button" onClick={this.loadSet}>
-                            <i className="refresh icon"></i>
-                            Load prescription set
-                        </div>
-                    </div>
-                );
-                break;
+        if(!props.set) {
+            pharmacyDOM = (
+                <div onClick={this.loadSet}
+                    className={BuildDOMClass("ui blue labeled icon button", { loading: props.status === "loading" })}>
+                    <i className="refresh icon"></i>
+                    Load prescription set
+                </div>
+            );
+        } else {
+            pharmacyDOM = (
+                <PrescriptionTable
+                    set={props.set}
+                    medications={props.medications} />
+            );
         }
 
         return (
@@ -95,11 +89,14 @@ class PharmacyField extends BaseComponent {
 
 PharmacyField = connectToStores(
     PharmacyField,
-    ["RouteStore", MedicationStore],
+    ["RouteStore", MedicationStore, PrescriptionStore],
     function(context, props) {
 
         var routeStore = context.getStore('RouteStore');
         var medicationStore = context.getStore(MedicationStore);
+        var prescriptionStore = context.getStore(PrescriptionStore);
+
+        var sets = prescriptionStore.getSets();
 
         return {
             /// Meta
@@ -107,7 +104,8 @@ PharmacyField = connectToStores(
 
             ///
             medications: medicationStore.getMedications(),
-            status: medicationStore.getStatus()
+            status: medicationStore.getStatus(),
+            set: sets.hasOwnProperty(props.patientID) ? sets[props.patientID] : null
         };
 
     }

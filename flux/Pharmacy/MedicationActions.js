@@ -5,6 +5,7 @@
 import debug from 'debug';
 import keyBy from 'lodash/keyBy';
 import omit from 'lodash/omit';
+import flatten from 'lodash/flatten';
 
 import Actions from '../actions';
 import MedicationStore from './MedicationStore';
@@ -28,44 +29,104 @@ export function LoadMedicationsAction(context, payload, done) {
         .read('MedicationService')
         .params({}).end()
         .then(({ data }) => {
-            context.dispatch(Actions.PHARMACY_MEDS_UPDATE, data);
-            context.dispatch(Actions.PHARMACY_MEDS_LOADED, true);
+
+            var promises = [];
+            var medications = data;
+
+            for(var medicationID in medications) {
+                let thisMedID = medicationID;
+                medications[medicationID].quantities = {}; /// build initial quantities object
+                promises.push(
+                    context.service
+                        .read('MedQuantityService')
+                        .params({
+                            where: {
+                                medication: medicationID
+                            },
+                            attributes: ['id', 'name', 'quantity']
+                        }).end().then(({ data }) => {
+                            var resp = {};
+                            for(var quID in data) {
+                                __debug(Object.assign(JsonModel(data[quID]), { medication: thisMedID }));
+                                resp[quID] = Object.assign(JsonModel(data[quID]), { medication: thisMedID });
+                            }
+                            __debug(resp);
+                            return resp;
+                        })
+                )
+            }
+
+            Promise.all(promises).then((quantities) => {
+                __debug(quantities);
+                quantities.map(quantityRecords => {
+                    for(var recordID in quantityRecords) {
+                        let record = quantityRecords[recordID];
+                        medications[record.medication].quantities[record.id] = {
+                            id: record.id,
+                            name: record.name,
+                            available: record.quantity
+                        };
+                    }
+                });
+
+                context.dispatch(Actions.PHARMACY_MEDS_UPDATE, medications);
+                context.dispatch(Actions.PHARMACY_MEDS_LOADED, true);
                 done();
+            });
+
         });
 }
 
 export function GrabMedicationAction(context, { id }, done) {
-    context.service
-        .read('MedicationService')
-        .params({
-            where: {
-                id: id
-            }
-        }).end()
-        .then(({ data }) => {
-            if(data.hasOwnProperty(id)) {
-                var medication = JsonModel(data[id]);
+    __debug("Grabbing medication %s", id);
 
-                context.service
-                    .read('MedQuantityService')
-                    .params({
-                        where: {
-                            medication: medication.id
-                        },
-                        attributes: ['id', 'name', 'quantity']
-                    }).end()
-                    .then(({ data }) => {
-                        medication.quantities = data || {};
-                        context.dispatch(Actions.PHARMACY_MEDS_CACHE_UPDATE, medication);
-                        done();
-                    });
+    var finish = (medication) => {
+        context.dispatch(Actions.PHARMACY_MEDS_CACHE_UPDATE, medication);
+        done();
+    };
 
-            } else throw new Error("GrabMedication response data missing requested medication");
-        })
-        .catch(err => {
-            __debug(err);
-            done();
-        });
+    var loadSpecific = () => {
+        __debug(" - medication not yet loaded, grabbing from database");
+        context.service
+            .read('MedicationService')
+            .params({
+                where: {
+                    id: id
+                }
+            }).end()
+            .then(({ data }) => {
+                if(data.hasOwnProperty(id)) {
+                    var medication = JsonModel(data[id]);
+
+                    context.service
+                        .read('MedQuantityService')
+                        .params({
+                            where: {
+                                medication: medication.id
+                            },
+                            attributes: ['id', 'name', 'quantity']
+                        }).end()
+                        .then(({ data }) => {
+                            medication.quantities = data || {};
+                            finish(medication);
+                        });
+
+                } else throw new Error("GrabMedication response data missing requested medication");
+            })
+            .catch(err => {
+                __debug(err);
+                done();
+            });
+    }
+
+    var medicationStore = context.getStore(MedicationStore);
+    if(medicationStore.areMedicationsLoaded()) {
+        var medications = medicationStore.getMedications();
+        if(medications.hasOwnProperty(id)) {
+            __debug(" - already loaded this medication, grabbing from store");
+            finish(medications[id]);
+        } else loadSpecific();
+    }
 }
 
 /** ========================== **/
@@ -203,7 +264,7 @@ export function LoadPrescriptionSetAction(context, payload, done) {
     };
 
     var afterSetLoaded  = (set) => {
-        context.dispatch(Actions.PHARMACY_PSET_UPDATE, set);
+        context.dispatch(Actions.PHARMACY_PSET_UPDATE, { [set.patient]: set });
         context.executeAction(SetPharmacyStatusAction, "loaded", () => {
             done();
         });

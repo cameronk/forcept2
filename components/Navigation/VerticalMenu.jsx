@@ -189,7 +189,9 @@ class VerticalMenu extends BaseComponent {
                 <div className="item logo">
                     <div className="ui large center aligned inverted statistic">
                         <div className="value">
-                            <i className="heartbeat icon"></i>
+                            <i className="heartbeat icon" onClick={() => {
+                                $("#FORCEPT-StoreDebugger").toggleClass("visible");
+                            }}></i>
                         </div>
                         <div className="label">
                             <h2>Forcept</h2>
