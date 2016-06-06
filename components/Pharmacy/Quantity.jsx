@@ -67,4 +67,4 @@ class Quantity extends BaseComponent {
 
 }
 
-export default injectIntl(Field);
+export default injectIntl(Quantity);
