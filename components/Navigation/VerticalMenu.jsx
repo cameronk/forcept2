@@ -13,13 +13,17 @@ import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import NavLink from './NavLink';
 
+import StageMessages from '../../lang/Stage';
+import DisplayMessages from '../../lang/Display';
+import PharmacyMessages from '../../lang/Pharmacy';
+
 if(process.env.BROWSER) {
     require('../../styles/VerticalMenu.less');
 }
 
 const messages = defineMessages({
 
-    /* User item */
+    /// User
     userPronoun: {
         id: "verticalmenu.user.pronoun",
         defaultMessage: "You"
@@ -33,7 +37,7 @@ const messages = defineMessages({
         defaultMessage: "Sign out"
     },
 
-    /* Console item extension */
+    /// Console items
     consoleItem: {
         id: "verticalmenu.user.consoleItem",
         defaultMessage: "Console"
@@ -53,8 +57,19 @@ const messages = defineMessages({
     consoleUsersItem: {
         id: "verticalmenu.user.consoleUsersItem",
         defaultMessage: "Users"
-    }
+    },
 
+    /// Displays
+    noDisplayGroupsAvailable: {
+        id: "verticalmenu.displays.noneavailable",
+        defaultMessage: "No display groups available"
+    },
+
+    /// Pharmacy
+    pharmacyManageMedications: {
+        id: "verticalmenu.pharmacy.manageMedications",
+        defaultMessage: "Manage medications"
+    }
 });
 
 class VerticalMenu extends BaseComponent {
@@ -78,7 +93,7 @@ class VerticalMenu extends BaseComponent {
 
             stagesItem = (
                 <div className="item">
-                    <div className="header">Stages</div>
+                    <div className="header">{formatMessage(StageMessages.pluralNoun)}</div>
                     <div className="menu">
                         {stageKeys.map((stageID) => {
                             let thisStage = props.stages[stageID];
@@ -87,7 +102,7 @@ class VerticalMenu extends BaseComponent {
                                     href={"/visits/" + thisStage.slug}
                                     key={thisStage.id}
                                     className="item">
-                                    {thisStage.name || "Untitled stage"}
+                                    {thisStage.name || formatMessage(StageMessages.untitled)}
                                 </NavLink>
                             );
                         })}
@@ -97,7 +112,7 @@ class VerticalMenu extends BaseComponent {
 
             groupsItem = (
                 <div className="item">
-                    <div className="header">Displays</div>
+                    <div className="header">{formatMessage(DisplayMessages.pluralNoun)}</div>
                     <div className="menu">
                         {(() => {
                             if(groupKeys.length > 0) {
@@ -108,13 +123,15 @@ class VerticalMenu extends BaseComponent {
                                             href={"/displays/" + thisGroup.slug}
                                             key={thisGroup.id}
                                             className="item">
-                                            {thisGroup.name || "Untitled group"}
+                                            {thisGroup.name || formatMessage(DisplayMessages.untitledGroup)}
                                         </NavLink>
                                     );
                                 });
                             } else {
                                 return (
-                                    <div className="item"><em>No display groups available.</em></div>
+                                    <div className="item">
+                                        <em>{formatMessage(messages.noDisplayGroupsAvailable)}.</em>
+                                    </div>
                                 );
                             }
                         })()}
@@ -124,11 +141,11 @@ class VerticalMenu extends BaseComponent {
 
             pharmacyItem = (
                 <div className="item">
-                    <div className="header">Pharmacy</div>
+                    <div className="header">{formatMessage(PharmacyMessages.noun)}</div>
                     <div className="menu">
                         <NavLink className="item" href="/pharmacy/manage">
                             <i className="treatment icon"></i>
-                            Manage medications
+                            {formatMessage(messages.pharmacyManageMedications)}
                         </NavLink>
                     </div>
                 </div>
@@ -138,7 +155,7 @@ class VerticalMenu extends BaseComponent {
 
             userItem = (
                 <div className="item">
-                    <div className="header">Administration</div>
+                    <div className="header">{formatMessage(messages.userPronoun)} &mdash; {ctx.getUser('username')}</div>
                     <div className="menu">
                         {(() => {
                             if(ctx.getUser("isAdmin") === true) {
@@ -194,7 +211,7 @@ class VerticalMenu extends BaseComponent {
                             }}></i>
                         </div>
                         <div className="label">
-                            <h2>Forcept</h2>
+                            <h2>FORCEPT</h2>
                         </div>
                     </div>
                 </div>
