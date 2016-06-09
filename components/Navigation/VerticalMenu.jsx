@@ -80,7 +80,7 @@ class VerticalMenu extends BaseComponent {
 
         var props = this.props,
             ctx = this.context,
-            { formatMessage } = this.props.intl,
+            { formatMessage } = props.intl,
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
             groupKeys = Object.keys(props.groups),

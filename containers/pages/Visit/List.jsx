@@ -3,12 +3,14 @@
  * @author Azuru Technology
  */
 
+/// Modules
 import React, { PropTypes } from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import chunk from 'lodash/chunk';
 
+/// Components
 import BaseComponent, { grabContext } from '../../../components/Base';
 import NavLink    from '../../../components/Navigation/NavLink';
 import Horizon    from '../../../components/Meta/Horizon';
@@ -19,20 +21,41 @@ import PhotoScaffold   from '../../../components/Scaffold/Photo';
 import { SetCurrentTabAction, ReadVisitsAtStageAction,
         ClearVisitListAction, CreatePatientAction } from '../../../flux/Visit/VisitActions';
 
+/// Stores
 import AppStore   from '../../../flux/App/AppStore';
 import StageStore from '../../../flux/Stage/StageStore';
 import VisitStore from '../../../flux/Visit/VisitStore';
 import RouteStore from '../../../flux/Route/RouteStore';
 import PatientStore from '../../../flux/Patient/PatientStore';
 
+/// Messages
+import VisitMessages from '../../../lang/Visit';
+import PatientMessages from '../../../lang/Patient';
+
+/// Constants
 const __debug = debug('forcept:containers:pages:Visit:List');
 const messages = defineMessages({
+    stageHeader: {
+        id: 'pages.visit.list.stageHeader',
+        defaultMessage: `{count, plural,
+            one {# visit}
+            other {# visits}
+        }`
+    },
     visitHeader: {
         id: 'pages.visit.list.visitHeader',
         defaultMessage: `{count, plural,
             one {# patient}
             other {# patients}
         }`
+    },
+    handleVisit: {
+        id: 'pages.visit.list.handleVisit',
+        defaultMessage: 'Handle visit'
+    },
+    emptyList: {
+        id: 'pages.visit.list.empty',
+        defaultMessage: 'No visits currently at this stage.'
     }
 });
 
@@ -49,7 +72,6 @@ class VisitList extends BaseComponent {
     }
 
     componentDidUpdate(lastProps) {
-
         /// Fetch new data when the navigation promise completes.
         /// (is this the correct implementation?)
         if(this.props.isNavigateComplete !== lastProps.isNavigateComplete
@@ -67,7 +89,8 @@ class VisitList extends BaseComponent {
     render() {
 
         var { props } = this,
-            { list, stage } = props;
+            { list, stage } = props,
+            { formatMessage } = props.intl;
 
         var horizonDOM, listDOM;
 
@@ -82,7 +105,7 @@ class VisitList extends BaseComponent {
                         href={"/visits/" + props.stageSlug + "/new"}
                         className="control item">
                         <i className="plus icon"></i>
-                        Create a new visit
+                        {formatMessage(VisitMessages.createNew)}
                     </NavLink>
                 </Horizon>
             );
@@ -91,7 +114,7 @@ class VisitList extends BaseComponent {
         /*
          *
          */
-        if(!props.isNavigateComplete) {
+        if(!props.isNavigateComplete || list === null) {
             listDOM = (
                 <div className="ui basic bottom attached segment">
                     <div className="ui basic loading segment"></div>
@@ -102,18 +125,7 @@ class VisitList extends BaseComponent {
         /*
          *
          */
-        else if(list === null) {
-
-            listDOM = (
-                <div className="ui basic bottom attached segment">
-                    <MessageScaffold
-                        type="info"
-                        icon="loading notched circle"
-                        text="Fetching visits, one moment..." />
-                </div>
-            );
-
-        } else {
+        else {
 
             /*
              * Show the list if we've populated it with items;
@@ -126,11 +138,11 @@ class VisitList extends BaseComponent {
                         <div className="flex container">
                             <div className="huge ui top attached header">
                                 <div className="basic large right pointing ui teal label">
-                                    Visit ID
-                                    <div className="detail">{visit.id}</div>
+                                    ID <div className="detail">{visit.id}</div>
                                 </div>
-                                {" "}
-                                {props.intl.formatMessage(messages['visitHeader'], { count: visit.patients.length })}
+                                {props.intl.formatMessage(messages['visitHeader'], {
+                                    count: visit.patients.length
+                                })}
                             </div>
                             <div className="ui bottom attached segment">
                                 <div className="ui stackable cards">
@@ -138,23 +150,23 @@ class VisitList extends BaseComponent {
 
                                         var photoDOM;
                                         if(patient.photo !== null
-                                            && Array.isArray(patient.photo)
-                                            && patient.photo.length > 0) {
-                                                let photo = patient.photo[0];
-                                                photoDOM = (
-                                                    <div className="image">
-                                                        <PhotoScaffold
-                                                            id={`Forcept-visit-${visit.id}-patient-${patient.id}-${photo.id}`}
-                                                            src={["/resources/", photo.id, photo.ext].join("")} />
-                                                    </div>
-                                                );
-                                            }
+                                         && Array.isArray(patient.photo)
+                                         && patient.photo.length > 0) {
+                                            let photo = patient.photo[0];
+                                            photoDOM = (
+                                                <div className="image">
+                                                    <PhotoScaffold
+                                                        id={`FORCEPT-visit-${visit.id}-patient-${patient.id}-${photo.id}`}
+                                                        src={["/resources/", photo.id, photo.ext].join("")} />
+                                                </div>
+                                            );
+                                        }
 
                                         return (
-                                            <div className="teal card">
+                                            <div className="teal card" key={patient.id}>
                                                 <div className="content">
                                                     <div className="header">
-                                                        {patient.fullName || "Unnamed patient"}
+                                                        {patient.fullName || formatMessage(PatientMessages.untitled)}
                                                     </div>
                                                     <div className="meta">
                                                         age {patient.birthday ? props.intl.formatRelative(patient.birthday, { style: 'numeric', units: 'year' }) : "unknown"}
@@ -173,12 +185,13 @@ class VisitList extends BaseComponent {
                                         <div className="content">
                                             <div className="header">
                                                 <div className="tiny right floated basic ui teal label">
-                                                    Visit ID
-                                                    <div className="detail">{visit.id}</div>
+                                                    ID <div className="detail">{visit.id}</div>
                                                 </div>
                                                 <i className="yellow star icon"></i>
                                                 {" "}
-                                                {props.intl.formatMessage(messages['visitHeader'], { count: visit.patients.length })}
+                                                {props.intl.formatMessage(messages['visitHeader'], {
+                                                    count: visit.patients.length
+                                                })}
                                             </div>
                                         </div>
                                         <div className="extra content">
@@ -189,7 +202,7 @@ class VisitList extends BaseComponent {
                                             href={visitLink}
                                             className="ui bottom attached button">
                                             <i className="level up icon"></i>
-                                            Handle visit
+                                            {formatMessage(messages.handleVisit)}
                                         </NavLink>
                                     </div>
 
@@ -209,7 +222,7 @@ class VisitList extends BaseComponent {
                     <div className="basic ui segment">
                         <MessageScaffold
                             type="info"
-                            header="No visits currently at this stage."
+                            header={formatMessage(messages.emptyList)}
                             icon="" />
                     </div>
                 );
@@ -225,7 +238,9 @@ class VisitList extends BaseComponent {
                     <div className="content">
                         {stage.name}
                         {" "} &mdash; {" "}
-                        {Array.isArray(list) ? `${list.length} visits` : (<i className="fitted notched circle loading icon"></i>)}
+                        {Array.isArray(list)
+                            ? formatMessage(messages.stageHeader, { count: list.length })
+                            : (<i className="fitted notched circle loading icon"></i>)}
                     </div>
                 </h1>
                 {horizonDOM}
