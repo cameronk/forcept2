@@ -8,7 +8,6 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import dropRightWhile from 'lodash/dropRightWhile';
-import reverse from 'lodash/reverse';
 
 import BaseComponent, { grabContext } from '../../../components/Base';
 import { BuildDOMClass } from '../../../utils/CSSClassHelper';

@@ -31,11 +31,13 @@ export function LoadMedicationsAction(context, payload, done) {
         .then(({ data }) => {
 
             var promises = [];
-            var medications = data;
+            var medications = Object.assign({}, JsonModel(data));
 
             for(var medicationID in medications) {
                 let thisMedID = medicationID;
-                medications[medicationID].quantities = {}; /// build initial quantities object
+                var thisMed = medications[thisMedID];
+                // medications[thisMedID].quantities = { test: true }; /// build initial quantities object
+                __debug(" thisMed: %j", medications[thisMedID]);
                 promises.push(
                     context.service
                         .read('MedQuantityService')
@@ -47,20 +49,31 @@ export function LoadMedicationsAction(context, payload, done) {
                         }).end().then(({ data }) => {
                             var resp = {};
                             for(var quID in data) {
-                                __debug(Object.assign(JsonModel(data[quID]), { medication: thisMedID }));
+                                __debug(" - quID loop: %j", Object.assign(JsonModel(data[quID]), { medication: thisMedID }));
                                 resp[quID] = Object.assign(JsonModel(data[quID]), { medication: thisMedID });
                             }
-                            __debug(resp);
-                            return resp;
+                            __debug("full resp: %j", resp);
+                            return Object.assign({ test: true }, thisMed, {
+                                "test2": false,
+                                quants: resp
+                            });
                         })
                 )
             }
 
             Promise.all(promises).then((quantities) => {
-                __debug(quantities);
+                __debug(" quants: %j", quantities);
+                __debug(" typeof: %s", typeof medications);
+                __debug(" meds: %j", medications);
+
                 quantities.map(quantityRecords => {
                     for(var recordID in quantityRecords) {
                         let record = quantityRecords[recordID];
+                        __debug(" - recID: %j", record);
+                        if(!medications[record.medication].hasOwnProperty('quantities')) {
+                            medications[record.medication].quantities = {};
+                        }
+                        __debug(" - cached: %j", medications[record.medication]);
                         medications[record.medication].quantities[record.id] = {
                             id: record.id,
                             name: record.name,

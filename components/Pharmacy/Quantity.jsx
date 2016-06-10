@@ -55,7 +55,7 @@ class Quantity extends BaseComponent {
                             <label>Quantity:</label>
                             <input type="number"
                                 placeholder={"Enter a quantity amount"}
-                                value={quantity.quantity}
+                                value={quantity.available}
                                 onChange={this._change('quantity')} />
                         </div>
                     </div>
