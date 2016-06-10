@@ -28,22 +28,67 @@ import VisitStore from '../../../flux/Visit/VisitStore';
 import PatientStore from '../../../flux/Patient/PatientStore';
 import ResourceStore from '../../../flux/Resource/ResourceStore';
 
+///
+import BasicMessages from '../../../lang/Basic';
+import StageMessages from '../../../lang/Stage';
+
 const __debug = debug('forcept:containers:pages:Visit:Handler');
+const root = 'pages.visit.handler.';
 const messages = defineMessages({
-    'pages.stages.stage.heading': {
-        id: 'pages.stages.stage.heading',
-        defaultMessage: '{name}'
+    ///
+    saveVisit: {
+        id: root + 'saveVisit',
+        defaultMessage: 'Save visit'
     },
-    'pages.visit.handler.moveStage.nthStage': {
-        id: 'pages.visit.handler.moveStage.nthStage',
-        defaultMessage: `{
-            order,
-            selectordinal,
-            one {#st}
-            two {#nd}
-            few {#rd}
-            other {#th}
-        }`
+
+    ///
+    createNewPatient: {
+        id: root + 'createNewPatient',
+        defaultMessage: 'Create a new patient'
+    },
+    noPatients: {
+        id: root + 'noPatients',
+        defaultMessage: 'No patients in this visit.'
+    },
+    addPatients: {
+        id: root + 'addPatients',
+        defaultMessage: 'Add some with the controls above.'
+    },
+    choosePatient: {
+        id: root + 'choosePatient',
+        defaultMessage: 'Choose a tab to view and update patient information.'
+    },
+
+    /// errors
+    missingStageID: {
+        id: root + 'errors.missingStageID',
+        defaultMessage: 'FORCEPT is missing a stage ID.'
+    },
+    missingPatient: {
+        id: root + 'errors.missingPatient',
+        defaultMessage: 'FORCEPT is missing patient ID #{patient}'
+    },
+
+    /// move visit
+    chooseDestination: {
+        id: root + 'chooseDestination',
+        defaultMessage: 'Choose a destination'
+    },
+    moveVisit: {
+        id: root + 'moveVisit',
+        defaultMessage: 'Move visit'
+    },
+    followVisit: {
+        id: root + 'followVisit',
+        defaultMessage: 'Follow this visit to {stage}'
+    },
+    moveCompletionHeader: {
+        id: root + 'moveCompletionHeader',
+        defaultMessage: 'Visit moved successfully.'
+    },
+    checkoutComplete: {
+        id: root + 'checkoutComplete',
+        defaultMessage: 'Check-out complete.'
     }
 });
 
@@ -106,6 +151,7 @@ class VisitHandler extends BaseComponent {
 
         var props = this.props,
             { stages, stageID, visit, patients, tab } = props,
+            { formatMessage } = props.intl,
             stageKeys   = Object.keys(stages),
             patientKeys = Object.keys(patients);
 
@@ -133,8 +179,8 @@ class VisitHandler extends BaseComponent {
                         <MessageScaffold
                             type="error"
                             icon="warning"
-                            header="An error occurred."
-                            text="Forcept is missing a stage ID." />
+                            header={formatMessage(BasicMessages.errorOccurred)}
+                            text={formatMessage(messages.missingStageID)} />
                     </div>
                 );
             } else {
@@ -144,7 +190,6 @@ class VisitHandler extends BaseComponent {
                 var stagesBeneath = dropRightWhile(stageKeys, key => key != stageID);
 
                 __debug("Stages beneath:", stagesBeneath);
-
 
                 /*
                  * Is a visit/patient action executing?
@@ -171,19 +216,31 @@ class VisitHandler extends BaseComponent {
                         if(props.recentData.stage !== "checkout") {
                             var stageRecentlyMovedTo = stages[props.recentData.stage];
                             stageLink = (
-                                <NavLink href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>Follow it to {stageRecentlyMovedTo.name}</NavLink>
+                                <NavLink className="tiny green ui labeled icon button"
+                                    href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>
+                                    <i className="right chevron icon"></i>
+                                    {formatMessage(messages.followVisit, {
+                                        stage: stageRecentlyMovedTo.name || formatMessage(Stagemessages.untitled)
+                                    })}
+                                </NavLink>
                             );
                         } else {
-                            stageLink = "Check-out complete."
+                            stageLink = (
+                                <div className="sub header">
+                                    {formatMessage(messages.checkoutComplete)}
+                                </div>
+                            );
                         }
 
                         stageDOM = (
                             <div className="ui bottom attached segment">
-                                <MessageScaffold
-                                    type="success"
-                                    icon="check mark"
-                                    header="Visit moved!"
-                                    text={stageLink} />
+                                <div className="large ui header">
+                                    <i className="circular check mark icon"></i>
+                                    <div className="content">
+                                        <div>{formatMessage(messages.moveCompletionHeader)}</div>
+                                        {stageLink}
+                                    </div>
+                                </div>
                             </div>
                         );
                     }
@@ -192,14 +249,25 @@ class VisitHandler extends BaseComponent {
                      * No patients in this visit.
                      */
                     else if(patientKeys.length === 0) {
-                        stageDOM = (
-                            <div className="ui bottom attached segment">
-                                <MessageScaffold
-                                    icon="add user"
-                                    header="No patients in this visit"
-                                    text={thisStage.isRoot ? "Add some with the controls above." : "An error may have occurred."} />
-                            </div>
-                        );
+                        if(thisStage.isRoot) {
+                            stageDOM = (
+                                <div className="ui bottom attached segment">
+                                    <MessageScaffold
+                                        icon="add user"
+                                        header={formatMessage(messages.noPatients)}
+                                        text={formatMessage(messages.addPatients)} />
+                                </div>
+                            );
+                        } else {
+                            stageDOM = (
+                                <div className="ui bottom attached segment">
+                                    <MessageScaffold
+                                        icon="delete"
+                                        header={formatMessage(BasicMessages.errorOccurred)}
+                                        text={formatMessage(messages.noPatients)} />
+                                </div>
+                            );
+                        }
                     }
 
                     /*
@@ -210,7 +278,7 @@ class VisitHandler extends BaseComponent {
                             <div className="ui bottom attached segment">
                                 <MessageScaffold
                                     icon="flag"
-                                    header="Choose a tab to modify a patient." />
+                                    header={formatMessage(messages.choosePatient)} />
                             </div>
                         );
                     }
@@ -224,8 +292,10 @@ class VisitHandler extends BaseComponent {
                                 <MessageScaffold
                                     type="error"
                                     icon="warning"
-                                    header="An error occurred."
-                                    text="The selected patient seems to be missing." />
+                                    header={formatMessage(BasicMessages.errorOccurred)}
+                                    text={formatMessage(messages.missingPatient, {
+                                        patient: tab
+                                    })} />
                             </div>
                         );
                     }
@@ -251,8 +321,7 @@ class VisitHandler extends BaseComponent {
                                             })()}
                                             {stagesBeneath.map((stageBeneathID, index) => {
                                                 return (
-                                                    <Overview
-                                                        key={stageBeneathID}
+                                                    <Overview key={stageBeneathID}
                                                         mode={props.overviewModes[stageBeneathID] || "checklist"}
                                                         isLast={(index === (stagesBeneath.length - 1))}
                                                         patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
@@ -271,7 +340,6 @@ class VisitHandler extends BaseComponent {
                                 </div>
                             </div>
                         );
-                        // resource={props.resource}
 
                     }
 
@@ -284,21 +352,17 @@ class VisitHandler extends BaseComponent {
                  */
                 var menuDOM = stageKeys.map((thisMenuStageID, index) => {
 
-                    var thisMenuStage = stages[thisMenuStageID];
-                    var isCurrent = stageID === thisMenuStageID;
-                    var style;
+                    var thisMenuStage = stages[thisMenuStageID],
+                        isCurrent = stageID === thisMenuStageID,
+                        style = {};
 
                     if(isCurrent) currentIndex = index;
 
                     if(thisMenuStage.order < thisStage.order) {
-                        style = {
-                            opacity: 1
-                        };
+                        style.opacity = 1;
                     } else {
                         if(!isCurrent && currentIndex !== null) {
-                            style = {
-                                opacity: (stageKeys.length - index) / (stageKeys.length - currentIndex - 1)
-                            };
+                            style.opacity = ((stageKeys.length - index) / (stageKeys.length - currentIndex - 1));
                         }
                     }
 
@@ -330,9 +394,7 @@ class VisitHandler extends BaseComponent {
                             <div className="large ui header">
                                 <i className="hospital icon"></i>
                                 <div className="content">
-                                    {props.intl.formatMessage(messages['pages.stages.stage.heading'], {
-                                        name: props.isNavigateComplete ? thisStage.name : "Loading..."
-                                    })}
+                                    {props.isNavigateComplete ? thisStage.name : (<i className="notched loading icon"></i>)}
                                 </div>
                             </div>
                             <div className="aside">
@@ -348,7 +410,7 @@ class VisitHandler extends BaseComponent {
                                         disabled={!props.isModified}
                                         onClick={props.isModified ? this._saveVisit : null}>
                                         <i className="save icon"></i>
-                                        Save visit
+                                        {formatMessage(messages.saveVisit)}
                                     </div>
 
                                     {/*
@@ -361,12 +423,12 @@ class VisitHandler extends BaseComponent {
                                         })}
                                         disabled={visit.id === null}>
                                         <i className="location arrow icon"></i>
-                                        <span className="text">Choose a destination</span>
+                                        <span className="text">{formatMessage(messages.chooseDestination)}</span>
                                         <div className="menu">
                                             {menuDOM}
-                                            <div data-value={"checkout"} className="item">
+                                            <div data-value="checkout" className="item">
                                                 <i className="fitted checkmark box icon"></i>
-                                                Checkout
+                                                {formatMessage(StageMessages.checkOut)}
                                             </div>
                                         </div>
                                     </div>
@@ -381,11 +443,12 @@ class VisitHandler extends BaseComponent {
                                         disabled={props.destination === null}
                                         onClick={this._moveVisit}>
                                         <i className="level up icon"></i>
-                                        Move visit
+                                        {formatMessage(messages.moveVisit)}
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+
+                                </div> {/** end .buttons **/}
+                            </div> {/** end .aside **/}
+                        </div> {/** end .FORCEPT-FlexHeader **/}
                         <Horizon>
                             {patientKeys.map(patientID => {
                                 var thisPatient = patients[patientID][rootStageID];
@@ -406,7 +469,9 @@ class VisitHandler extends BaseComponent {
                             {thisStage.isRoot ? (
                                 <a className="control item" onClick={this._createPatient}>
                                     <i className="fitted plus icon"></i>
-                                    <span className="forcept responsive mobile only">Create a new patient</span>
+                                    <span className="forcept responsive mobile only">
+                                        {formatMessage(messages.createNewPatient)}
+                                    </span>
                                 </a>
                             ) : null}
                         </Horizon>

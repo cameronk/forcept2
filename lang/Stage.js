@@ -21,6 +21,12 @@ export default defineMessages({
     untitled: {
         id: root + "untitled",
         defaultMessage: "Untitled stage"
+    },
+
+    ///
+    checkOut: {
+        id: root + "checkOut",
+        defaultMessage: "Check out"
     }
 
 });
