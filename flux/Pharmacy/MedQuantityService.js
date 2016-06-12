@@ -34,8 +34,8 @@ export default {
                  * Create patient record.
                  */
                 (db.MedQuantity).create(body).then(med => {
-                    __debug("[create]: MedQuantity created.");
-                    callback(null, med, null);
+                    __debug("[create]: MedQuantity %s created.", med.id);
+                    callback(null, med.toJSON(), null);
                 }).catch(err => {
                     __debug("[create]: ERROR:");
                     __debug(err);

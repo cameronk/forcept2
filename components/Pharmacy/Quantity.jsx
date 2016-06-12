@@ -45,18 +45,18 @@ class Quantity extends BaseComponent {
                         <div className="field">
                             <label>Name:</label>
                             <input type="text"
-                                placeholder={"Enter a quantity name"}
+                                placeholder="Enter a quantity name"
                                 value={quantity.name}
                                 onChange={this._change('name')} />
                         </div>
                     </div>
                     <div className="eight wide field">
                         <div className="field">
-                            <label>Quantity:</label>
+                            <label>Available:</label>
                             <input type="number"
-                                placeholder={"Enter a quantity amount"}
+                                placeholder="How much of this quantity is available?"
                                 value={quantity.available}
-                                onChange={this._change('quantity')} />
+                                onChange={this._change('available')} />
                         </div>
                     </div>
                 </div>

@@ -27,66 +27,13 @@ export function LoadMedicationsAction(context, payload, done) {
     __debug("Loading medications.");
     context.service
         .read('MedicationService')
-        .params({}).end()
+        .params({
+            getQuantities: true
+        }).end()
         .then(({ data }) => {
-
-            var promises = [];
-            var medications = Object.assign({}, JsonModel(data));
-
-            for(var medicationID in medications) {
-                let thisMedID = medicationID;
-                var thisMed = medications[thisMedID];
-                // medications[thisMedID].quantities = { test: true }; /// build initial quantities object
-                __debug(" thisMed: %j", medications[thisMedID]);
-                promises.push(
-                    context.service
-                        .read('MedQuantityService')
-                        .params({
-                            where: {
-                                medication: medicationID
-                            },
-                            attributes: ['id', 'name', 'quantity']
-                        }).end().then(({ data }) => {
-                            var resp = {};
-                            for(var quID in data) {
-                                __debug(" - quID loop: %j", Object.assign(JsonModel(data[quID]), { medication: thisMedID }));
-                                resp[quID] = Object.assign(JsonModel(data[quID]), { medication: thisMedID });
-                            }
-                            __debug("full resp: %j", resp);
-                            return Object.assign({ test: true }, thisMed, {
-                                "test2": false,
-                                quants: resp
-                            });
-                        })
-                )
-            }
-
-            Promise.all(promises).then((quantities) => {
-                __debug(" quants: %j", quantities);
-                __debug(" typeof: %s", typeof medications);
-                __debug(" meds: %j", medications);
-
-                quantities.map(quantityRecords => {
-                    for(var recordID in quantityRecords) {
-                        let record = quantityRecords[recordID];
-                        __debug(" - recID: %j", record);
-                        if(!medications[record.medication].hasOwnProperty('quantities')) {
-                            medications[record.medication].quantities = {};
-                        }
-                        __debug(" - cached: %j", medications[record.medication]);
-                        medications[record.medication].quantities[record.id] = {
-                            id: record.id,
-                            name: record.name,
-                            available: record.quantity
-                        };
-                    }
-                });
-
-                context.dispatch(Actions.PHARMACY_MEDS_UPDATE, medications);
-                context.dispatch(Actions.PHARMACY_MEDS_LOADED, true);
-                done();
-            });
-
+            context.dispatch(Actions.PHARMACY_MEDS_UPDATE, data);
+            context.dispatch(Actions.PHARMACY_MEDS_LOADED, true);
+            done();
         });
 }
 
@@ -255,6 +202,7 @@ export function AddMedQuantityAction(context, payload, done) {
                 medication: payload.id
             }).end()
             .then(({ data }) => {
+                __debug("Received a new MedQuantity: %j", data);
                 context.executeAction(UpdateMedicationCacheAction, {
                     quantities: {
                         [data.id]: data

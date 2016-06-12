@@ -76,7 +76,7 @@ class MedicationStore extends BaseStore {
                     }
                 }
             } else {
-                this.cache[prop] = data[prop];
+                this.cache[prop] = thisProp;
             }
         }
         this.emitChange();

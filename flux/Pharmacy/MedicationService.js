@@ -6,6 +6,7 @@
 import keyBy from 'lodash/keyBy';
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
+import { JsonModel } from '../../database/helper';
 const __debug = require('debug')('forcept:flux:Pharmacy:MedicationService')
 
 export default {
@@ -17,7 +18,26 @@ export default {
              *
              */
             read: function(req, resource, params, config, callback) {
-                db.Medication.findAll(params).then(meds => {
+
+                __debug("[read] ...");
+
+                var config = {};
+
+                if(params.getQuantities) {
+                    __debug("[read] getting quantities");
+                    config.include = [{
+                        model: db.MedQuantity,
+                        as: 'quantities'
+                    }];
+                }
+
+                db.Medication.findAll(config).then(meds => {
+                    meds = meds.map(med => {
+                        med = med.toJSON();
+                        med.quantities = keyBy(med.quantities, 'id')
+                        return med;
+                    });
+                    __debug("[read] found %s medications", meds.length);
                     callback(null, keyBy(meds, 'id'), null);
                 })
             },

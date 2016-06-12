@@ -29,6 +29,7 @@ fs.readdirSync(__dirname)
 
 Object.keys(db).forEach(function(modelName) {
     if (db[modelName].associate) {
+        __debug(" - associating: %s", modelName);
         db[modelName].associate(db);
     }
 });
