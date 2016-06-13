@@ -12,6 +12,14 @@ export default defineMessages({
         id: root + "save",
         defaultMessage: "Save"
     },
+    import: {
+        id: root + "import",
+        defaultMessage: "Import"
+    },
+    create: {
+        id: root + "create",
+        defaultMessage: "Create"
+    },
 
     ///
     errorOccurred: {

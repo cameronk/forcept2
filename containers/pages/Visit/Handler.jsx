@@ -42,9 +42,13 @@ const messages = defineMessages({
     },
 
     ///
-    createNewPatient: {
-        id: root + 'createNewPatient',
+    createPatient: {
+        id: root + 'createPatient',
         defaultMessage: 'Create a new patient'
+    },
+    importPatient: {
+        id: root + 'importPatient',
+        defaultMessage: 'Import a patient'
     },
     noPatients: {
         id: root + 'noPatients',
@@ -445,10 +449,9 @@ class VisitHandler extends BaseComponent {
                                         <i className="level up icon"></i>
                                         {formatMessage(messages.moveVisit)}
                                     </div>
-
-                                </div> {/** end .buttons **/}
-                            </div> {/** end .aside **/}
-                        </div> {/** end .FORCEPT-FlexHeader **/}
+                                </div>{/** end .buttons **/}
+                            </div>{/** end .aside **/}
+                        </div>{/** end .FORCEPT-FlexHeader **/}
                         <Horizon>
                             {patientKeys.map(patientID => {
                                 var thisPatient = patients[patientID][rootStageID];
@@ -466,14 +469,34 @@ class VisitHandler extends BaseComponent {
                                     </a>
                                 );
                             })}
-                            {thisStage.isRoot ? (
-                                <a className="control item" onClick={this._createPatient}>
-                                    <i className="fitted plus icon"></i>
-                                    <span className="forcept responsive mobile only">
-                                        {formatMessage(messages.createNewPatient)}
-                                    </span>
-                                </a>
-                            ) : null}
+                            {(() => {
+                                if(thisStage.isRoot) {
+                                    return [
+                                        <a key="create"
+                                            className="control item"
+                                            onClick={this._createPatient}>
+                                            <i className="fitted plus icon"></i>
+                                            <span className="forcept responsive desktop only">
+                                                {formatMessage(BasicMessages.create)}
+                                            </span>
+                                            <span className="forcept responsive mobile only">
+                                                {formatMessage(messages.createPatient)}
+                                            </span>
+                                        </a>,
+                                        <a key="import"
+                                            className="control item"
+                                            onClick={this._importPatient}>
+                                            <i className="fitted download icon"></i>
+                                            <span className="forcept responsive desktop only">
+                                                {formatMessage(BasicMessages.import)}
+                                            </span>
+                                            <span className="forcept responsive mobile only">
+                                                {formatMessage(messages.importPatient)}
+                                            </span>
+                                        </a>
+                                    ];
+                                }
+                            })()}
                         </Horizon>
                         {stageDOM}
                     </div>
