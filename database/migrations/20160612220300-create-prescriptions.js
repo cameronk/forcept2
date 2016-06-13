@@ -3,30 +3,37 @@ module.exports = {
     up: function(queryInterface, Sequelize) {
         return queryInterface.createTable('Prescriptions', {
             id: {
+                type: Sequelize.INTEGER,
                 allowNull: false,
                 autoIncrement: true,
-                primaryKey: true,
+                primaryKey: true
+            },
+            setID: {
                 type: Sequelize.INTEGER
             },
-            visit: {
+            quantityID: {
                 type: Sequelize.INTEGER
             },
-            patient: {
-                type: Sequelize.INTEGER
+            amount: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                defaultValue: 1
+            },
+            completed: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             },
             createdBy: {
                 type: Sequelize.INTEGER
             },
-            prescriptions: {
-                type: Sequelize.TEXT
-            },
             createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
+                allowNull: false
             },
             updatedAt: {
-                allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
+                allowNull: false
             }
         });
     },
