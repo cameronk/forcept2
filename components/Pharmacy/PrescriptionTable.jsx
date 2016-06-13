@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
 
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
+import { PrescribeAction } from '../../flux/Prescription/PrescriptionActions';
 
 class PrescriptionTable extends BaseComponent {
 
@@ -25,12 +26,23 @@ class PrescriptionTable extends BaseComponent {
         });
     }
 
+    prescribe = (medID, quID) => {
+        var { set } = this.props;
+        return () => {
+            this.context.executeAction(PrescribeAction, {
+                setID: set.id,
+                medicationID: medID,
+                quantityID: quID,
+                patientID: set.patient
+            });
+        };
+    }
 
     render() {
         var { props } = this;
 
-        var prescriptionKeys = Object.keys(props.set.prescriptions);
-        var medicationKeys   = Object.keys(props.medications);
+        var prescriptionKeys  = Object.keys(props.set.prescriptions),
+            medicationKeys    = Object.keys(props.medications);
 
         if(medicationKeys.length === 0) {
             return (
@@ -58,6 +70,40 @@ class PrescriptionTable extends BaseComponent {
                                         </td>
                                     </tr>
                                 );
+                            } else {
+                                return prescriptionKeys.map(prescriptionID => {
+                                    var thisPrescription = props.set.prescriptions[prescriptionID];
+                                    var thisMedication   = props.medications[thisPrescription.medicationID];
+                                    return (
+                                        <tr>
+                                            <td>
+                                                {thisMedication.name}
+                                            </td>
+                                            <td>
+                                                {thisMedication.quantities[thisPrescription.quantityID].name}
+                                            </td>
+                                            <td>
+                                                {thisPrescription.amount}
+                                            </td>
+                                            <td>
+                                                {thisPrescription.completed ? "Yes" : "No"}
+                                            </td>
+                                        </tr>
+                                    );
+                                });
+                            }
+                        })()}
+                        {(() => {
+                            switch(props.status) {
+                                case "prescribing":
+                                    return (
+                                        <tr>
+                                            <td colSpan="4" className="center aligned">
+                                                <div className="ui active loader"></div>
+                                            </td>
+                                        </tr>
+                                    );
+                                    break;
                             }
                         })()}
                     </tbody>
@@ -79,7 +125,7 @@ class PrescriptionTable extends BaseComponent {
                                                         {Object.keys(thisMedication.quantities).map(quID => {
                                                             let thisQuantity = thisMedication.quantities[quID];
                                                             return (
-                                                                <div className="item">
+                                                                <div className="item" onClick={this.prescribe(thisMedication.id, thisQuantity.id)}>
                                                                     <span className="description">{thisQuantity.available} avail.</span>
                                                                     <span className="text">{thisQuantity.name || "Untitled quantity"}</span>
                                                                 </div>

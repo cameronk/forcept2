@@ -11,11 +11,11 @@ import Label from './Label';
 import PrescriptionTable from '../Pharmacy/PrescriptionTable';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import { UpdatePatientAction } from '../../flux/Patient/PatientActions';
-import { LoadPrescriptionSetAction } from '../../flux/Pharmacy/MedicationActions';
+import { LoadPrescriptionSetAction } from '../../flux/Prescription/PrescriptionActions';
 import MedicationStore from '../../flux/Pharmacy/MedicationStore';
-import PrescriptionStore from '../../flux/Pharmacy/PrescriptionStore';
+import PrescriptionStore from '../../flux/Prescription/PrescriptionStore';
 
-class PharmacyField extends BaseComponent {
+class PrescriberField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
 
@@ -72,6 +72,7 @@ class PharmacyField extends BaseComponent {
         } else {
             pharmacyDOM = (
                 <PrescriptionTable
+                    status={props.status}
                     set={props.set}
                     medications={props.medications} />
             );
@@ -87,8 +88,8 @@ class PharmacyField extends BaseComponent {
 }
 
 
-PharmacyField = connectToStores(
-    PharmacyField,
+PrescriberField = connectToStores(
+    PrescriberField,
     ["RouteStore", MedicationStore, PrescriptionStore],
     function(context, props) {
 
@@ -104,7 +105,7 @@ PharmacyField = connectToStores(
 
             ///
             medications: medicationStore.getMedications(),
-            status: medicationStore.getStatus(),
+            status: prescriptionStore.getStatus(),
             set: sets.hasOwnProperty(props.patientID) ? sets[props.patientID] : null
         };
 
@@ -112,4 +113,4 @@ PharmacyField = connectToStores(
 );
 
 
-export default PharmacyField;
+export default PrescriberField;

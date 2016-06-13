@@ -13,7 +13,7 @@ import RadioField from '../Fields/Radio';
 import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
 import FileField from '../Fields/File';
-import PharmacyField from '../Fields/Pharmacy';
+import PrescriberField from '../Fields/Prescriber';
 
 const __debug = debug('forcept:components:Visit:Editor');
 
@@ -116,9 +116,9 @@ class Editor extends BaseComponent {
                                 </div>
                             )
                             break;
-                        case "pharmacy":
+                        case "prescriber":
                             fieldDOM = (
-                                <PharmacyField
+                                <PrescriberField
                                     visitID={visit.id}
                                     {...thisFieldProps}
                                     {...baseFieldProps} />

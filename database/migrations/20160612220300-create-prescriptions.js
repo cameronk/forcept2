@@ -11,6 +11,9 @@ module.exports = {
             setID: {
                 type: Sequelize.INTEGER
             },
+            medicationID: {
+                type: Sequelize.INTEGER
+            },
             quantityID: {
                 type: Sequelize.INTEGER
             },

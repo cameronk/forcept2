@@ -24,7 +24,10 @@ export default keyMirror({
     'PHARMACY_MEDS_CACHE_CLEAR': null,
     'PHARMACY_MEDS_UPDATE': null,
     'PHARMACY_MEDS_LOADED': null,
-    'PHARMACY_PSET_UPDATE': null,
+
+    ///
+    'PRESCRIPTION_SET_UPDATE': null,
+    'PRESCRIPTION_UPDATE_STATUS': null,
 
     /// Authentication
     'AUTH_LOGOUT': null,

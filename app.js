@@ -22,7 +22,7 @@ import UserStore from './flux/User/UserStore';
 import DisplayStore from './flux/Display/DisplayStore';
 import ConsoleStore from './flux/Console/ConsoleStore';
 import MedicationStore from './flux/Pharmacy/MedicationStore';
-import PrescriptionStore from './flux/Pharmacy/PrescriptionStore';
+import PrescriptionStore from './flux/Prescription/PrescriptionStore';
 import TestStore from './flux/Test/TestStore';
 
 /// create new fluxible instance
@@ -213,9 +213,9 @@ app.plug({
                 storageMethod: "json",
                 defaultSettings: {}
             },
-            "pharmacy": {
-                name: "Pharmacy",
-                description: "Show available medication",
+            "prescriber": {
+                name: "Prescriber",
+                description: "Prescribe medication",
                 storageMethod: "json",
                 defaultSettings: {}
             }
