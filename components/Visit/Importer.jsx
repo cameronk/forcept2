@@ -27,7 +27,7 @@ class Importer extends BaseComponent {
     render() {
 
         var props = this.props,
-            { isLoading = props };
+            { isLoading } = props;
 
         return (
             <div id="FORCEPT-Visit-Importer">

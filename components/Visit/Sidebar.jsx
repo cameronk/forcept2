@@ -12,6 +12,10 @@ import Overview from './Overview';
 
 const __debug = debug('forcept:components:Visit:Sidebar');
 
+if(process.env.BROWSER) {
+    require('../../styles/Sidebar.less');
+}
+
 class Sidebar extends BaseComponent {
 
     static contextTypes = grabContext()
@@ -27,14 +31,20 @@ class Sidebar extends BaseComponent {
 
         return (
             <div id="FORCEPT-Visit-Sidebar">
-                {(() => {
-                    if(thisPatient.hasOwnProperty(stagesBeneath[0])) {
-                        let patient = thisPatient[stagesBeneath[0]];
-                        return (
-                            <div>{patient.fullName || "Unnamed patient"}</div>
-                        );
-                    }
-                })()}
+                <div className="large dividing ui header">
+                    <i className="browser icon"></i>
+                    <div className="content">
+                        Patient data
+                        {(() => {
+                            if(thisPatient.hasOwnProperty(stagesBeneath[0])) {
+                                let patient = thisPatient[stagesBeneath[0]];
+                                return (
+                                    <div className="sub header">{patient.fullName || "Unnamed patient"}</div>
+                                );
+                            }
+                        })()}
+                    </div>
+                </div>
                 {stagesBeneath.map((stageBeneathID, index) => {
                     return (
                         <Overview key={stageBeneathID}
