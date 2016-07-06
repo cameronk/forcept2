@@ -1,5 +1,54 @@
 #FORCEPT-VisitHandler {
 
+    display: flex !important;
+    align-items: flex-start;
+    height: 100%;
+    overflow: hidden;
+
+    & > .primary {
+        flex-grow: 1;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    & > .sidebar {
+        display: flex;
+        flex-direction: column;
+
+        width: 250px;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background: #f8f8f8;
+        // box-shadow: inset 8px 0 40px 1px rgba(0,0,0,0.1);
+        border-left: 1px solid #ccc;
+
+        & > .patient {
+            flex-grow: 1;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            #FORCEPT-Visit-Sidebar {
+                .ui.list {
+                    .item {
+                        padding: 0.5em 0.75em;
+                        border-color: #e5e5e5;
+                    }
+                }
+            }
+        }
+
+        & > .controls {
+            & > .ui.buttons {
+                .button {
+                    border-radius: 0 !important;
+                }
+            }
+        }
+
+    }
+
     #FORCEPT-Dropdown-MoveStage {
         .item {
             .ui.circular.label {

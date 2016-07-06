@@ -88,75 +88,39 @@ class Overview extends BaseComponent {
 
         if(stage.isRoot) {
             iterableFields = without(iterableFields, 'firstName', 'lastName');
-            headerDOM = (
-                <div className="top attached ui segment" onClick={this._toggleVisibility}>
-                    <span className="tiny teal ui ribbon label">{patient.id}</span>
-                    <strong>{patient.fullName || "Unnamed patient"}</strong>
-                    <i className={"large right fitted chevron icon" + (this.state.visible ? " clockwise rotated" : "")}></i>
-                </div>
-            );
-        } else {
-            headerDOM = (
-                <div className="top attached ui header" onClick={this._toggleVisibility}>
-                    <div className="content">{stage.name || "Untitled stage"}</div>
-                    <i className={"large right fitted chevron icon" + (this.state.visible ? " clockwise rotated" : "")}></i>
-                </div>
-            );
         }
 
         var hasAValue = false;
 
         return (
-            <div className={"VisitOverview" + (!this.state.visible ? " collapsed" : "")}>
-                {headerDOM}
-                <div className="ListContainer middle attached fully expanded ui segment">
-                    <div className="very relaxed divided ui list">
-                        {iterableFields.map(field => {
-                            var thisField = fields[field];
-                            var thisValue = patient[field] || "";
-                            if(props.mode === "checklist" || !this.isEmpty(thisValue)) {
-                                hasAValue = true;
-                                return (
-                                    <OverviewField
-                                        key={field}
-                                        type={thisField.type}
-                                        settings={thisField.settings || null}
-                                        name={thisField.name}
-                                        value={thisValue} />
-                                );
-                            }
-                        })}
-                        {() => {
-                            if(!hasAValue) {
-                                return (
-                                    <div className="item">
-                                        <i className="red remove circle icon"></i>
-                                        <div className="content">
-                                            <span className="header">No data available.</span>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        }()}
-                    </div>
-                </div>
-                <div className={BuildDOMClass({ "bottom": props.isLast === true }, "attached secondary ui segment Forcept-OverviewSettings")}>
-                    <div className="ui dropdown">
-                        <i className="setting icon"></i>
-                        <div className="menu">
-                            <div className="header">Settings</div>
-                            <div className="item" onClick={this._toggleChecklist}>
-                                {props.mode === "checklist" ? [
-                                    (<i key="icon" className="ui hide icon"></i>),
-                                    (<span key="msg">Use compact mode</span>)
-                                ] : [
-                                    (<i key="icon" className="ui unhide icon"></i>),
-                                    (<span key="msg">Use checklist mode</span>)
-                                ]}
+            <div className="relaxed divided ui list">
+                {iterableFields.map(field => {
+                    var thisField = fields[field];
+                    var thisValue = patient[field] || "";
+                    if(props.mode === "checklist" || !this.isEmpty(thisValue)) {
+                        hasAValue = true;
+                        return (
+                            <OverviewField
+                                key={field}
+                                type={thisField.type}
+                                settings={thisField.settings || null}
+                                name={thisField.name}
+                                value={thisValue} />
+                        );
+                    }
+                })}
+                {() => {
+                    if(!hasAValue) {
+                        return (
+                            <div className="item">
+                                <i className="red remove circle icon"></i>
+                                <div className="content">
+                                    <span className="header">No data available.</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        )
+                    }
+                }()}
             </div>
         );
 

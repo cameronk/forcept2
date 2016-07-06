@@ -16,7 +16,9 @@ import NavLink    from '../../../components/Navigation/NavLink';
 import Horizon    from '../../../components/Meta/Horizon';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Editor     from '../../../components/Visit/Editor';
+import Importer   from '../../../components/Visit/Importer';
 import Overview   from '../../../components/Visit/Overview';
+import Sidebar   from '../../../components/Visit/Sidebar';
 import { SetCurrentTabAction,
     CreatePatientAction,
     SaveVisitAction, MoveVisitAction,
@@ -172,350 +174,342 @@ class VisitHandler extends BaseComponent {
         /*
          * If the current navigateAction is complete...
          */
-        if(props.isNavigateComplete) {
-
-            /*
-             * Make sure stageID is set
-             */
-            if(!stageID || !stages.hasOwnProperty(stageID)) {
-                return (
-                    <div className="ui segment">
-                        <MessageScaffold
-                            type="error"
-                            icon="warning"
-                            header={formatMessage(BasicMessages.errorOccurred)}
-                            text={formatMessage(messages.missingStageID)} />
-                    </div>
-                );
-            } else {
-
-                var stageDOM;
-                var thisStage   = stages[stageID];
-                var stagesBeneath = dropRightWhile(stageKeys, key => key != stageID);
-
-                __debug("Stages beneath:", stagesBeneath);
-
-                /*
-                 * Is a visit/patient action executing?
-                 */
-                if(props.isLoading) {
-                    stageDOM = (
-                        <div className="ui bottom attached segment">
-                            <div className="ui basic loading segment"></div>
-                        </div>
-                    );
-                }
-
-                /*
-                 * Stage ID is set, check other variables before rendering.
-                 */
-                else {
-
-                    /*
-                     *
-                     */
-                    if(props.recentData !== null && visit.id === null) {
-
-                        var stageLink;
-                        if(props.recentData.stage !== "checkout") {
-                            var stageRecentlyMovedTo = stages[props.recentData.stage];
-                            stageLink = (
-                                <NavLink className="tiny green ui labeled icon button"
-                                    href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>
-                                    <i className="right chevron icon"></i>
-                                    {formatMessage(messages.followVisit, {
-                                        stage: stageRecentlyMovedTo.name || formatMessage(Stagemessages.untitled)
-                                    })}
-                                </NavLink>
-                            );
-                        } else {
-                            stageLink = (
-                                <div className="sub header">
-                                    {formatMessage(messages.checkoutComplete)}
-                                </div>
-                            );
-                        }
-
-                        stageDOM = (
-                            <div className="ui bottom attached segment">
-                                <div className="large ui header">
-                                    <i className="circular check mark icon"></i>
-                                    <div className="content">
-                                        <div>{formatMessage(messages.moveCompletionHeader)}</div>
-                                        {stageLink}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    }
-
-                    /*
-                     * No patients in this visit.
-                     */
-                    else if(patientKeys.length === 0) {
-                        if(thisStage.isRoot) {
-                            stageDOM = (
-                                <div className="ui bottom attached segment">
-                                    <MessageScaffold
-                                        icon="add user"
-                                        header={formatMessage(messages.noPatients)}
-                                        text={formatMessage(messages.addPatients)} />
-                                </div>
-                            );
-                        } else {
-                            stageDOM = (
-                                <div className="ui bottom attached segment">
-                                    <MessageScaffold
-                                        icon="delete"
-                                        header={formatMessage(BasicMessages.errorOccurred)}
-                                        text={formatMessage(messages.noPatients)} />
-                                </div>
-                            );
-                        }
-                    }
-
-                    /*
-                     * Tab not selected.
-                     */
-                    else if(!tab) {
-                        stageDOM = (
-                            <div className="ui bottom attached segment">
-                                <MessageScaffold
-                                    icon="flag"
-                                    header={formatMessage(messages.choosePatient)} />
-                            </div>
-                        );
-                    }
-
-                    /*
-                     * Missing the patient stored in visit.tab
-                     */
-                    else if(!patients.hasOwnProperty(tab)) {
-                        stageDOM = (
-                            <div className="ui bottom attached segment">
-                                <MessageScaffold
-                                    type="error"
-                                    icon="warning"
-                                    header={formatMessage(BasicMessages.errorOccurred)}
-                                    text={formatMessage(messages.missingPatient, {
-                                        patient: tab
-                                    })} />
-                            </div>
-                        );
-                    }
-
-                    /*
-                     * Looks like we're good to go...
-                     */
-                    else {
-
-                        var thisPatient = patients[tab];
-
-                        stageDOM = (
-                            <div className="ui bottom attached segment">
-                                <div className="ui stackable grid">
-                                    <div className="row">
-                                        <div className="four wide computer five wide tablet expanded column">
-                                            {(() => {
-                                                if(props.flash) {
-                                                    return (
-                                                        <MessageScaffold {...props.flash} />
-                                                    );
-                                                }
-                                            })()}
-                                            {stagesBeneath.map((stageBeneathID, index) => {
-                                                return (
-                                                    <Overview key={stageBeneathID}
-                                                        mode={props.overviewModes[stageBeneathID] || "checklist"}
-                                                        isLast={(index === (stagesBeneath.length - 1))}
-                                                        patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
-                                                        stage={stages[stageBeneathID]} />
-                                                );
-                                            })}
-                                        </div>
-                                        <div className="twelve wide computer eleven wide tablet column">
-                                            <Editor
-                                                patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
-                                                visit={visit}
-                                                stage={thisStage}
-                                                resourcesState={props.resourcesState} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-
-                    }
-
-                } /// end !props.isLoading
-
-                var currentIndex = null;
-
-                /**
-                 * Destination selection menu builder.
-                 */
-                var menuDOM = stageKeys.map((thisMenuStageID, index) => {
-
-                    var thisMenuStage = stages[thisMenuStageID],
-                        isCurrent = stageID === thisMenuStageID,
-                        style = {};
-
-                    if(isCurrent) currentIndex = index;
-
-                    if(thisMenuStage.order < thisStage.order) {
-                        style.opacity = 1;
-                    } else {
-                        if(!isCurrent && currentIndex !== null) {
-                            style.opacity = ((stageKeys.length - index) / (stageKeys.length - currentIndex - 1));
-                        }
-                    }
-
-                    // __debug("index %s: %j (ci: %s)", index, style, currentIndex);
-
-                    return (
-                        <div key={thisMenuStageID}
-                            data-value={thisMenuStageID}
-                            className={BuildDOMClass("item", { disabled: isCurrent })}>
-                            <div className={BuildDOMClass("empty circular ui", {
-                                green:  isCurrent && thisMenuStage.order === thisStage.order,
-                                blue:  !isCurrent && thisMenuStage.order > thisStage.order,
-                                olive: !isCurrent && thisMenuStage.order < thisStage.order,
-                            }, "label")} style={style}></div>
-                            {index + 1} &mdash; {thisMenuStage.name}
-                        </div>
-                    );
-                });
-
-
-                /**
-                 * ---
-                 * #FORCEPT-VisitHandler
-                 * ---
-                 */
-                return (
-                    <div id="FORCEPT-VisitHandler">
-                        <div className="FORCEPT-FlexHeader fully expanded ui basic top attached segment">
-                            <div className="large ui header">
-                                <i className="hospital icon"></i>
-                                <div className="content">
-                                    {props.isNavigateComplete ? thisStage.name : (<i className="notched loading icon"></i>)}
-                                </div>
-                            </div>
-                            <div className="aside">
-                                <div className="basic ui buttons">
-
-                                    {/*
-                                      * Save button
-                                      */}
-                                    <div key="save"
-                                        className={BuildDOMClass("ui labeled icon button", {
-                                            disabled: !props.isModified || props.isLoading
-                                        })}
-                                        disabled={!props.isModified}
-                                        onClick={props.isModified ? this._saveVisit : null}>
-                                        <i className="save icon"></i>
-                                        {formatMessage(messages.saveVisit)}
-                                    </div>
-
-                                    {/*
-                                      * Destination dropdown
-                                      */}
-                                    <div key="destination"
-                                        id="FORCEPT-Dropdown-MoveStage"
-                                        className={BuildDOMClass("ui floating dropdown labeled icon button", {
-                                            disabled: visit.id === null || props.isLoading
-                                        })}
-                                        disabled={visit.id === null}>
-                                        <i className="location arrow icon"></i>
-                                        <span className="text">{formatMessage(messages.chooseDestination)}</span>
-                                        <div className="menu">
-                                            {menuDOM}
-                                            <div data-value="checkout" className="item">
-                                                <i className="fitted checkmark box icon"></i>
-                                                {formatMessage(StageMessages.checkOut)}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/*
-                                      * Move button
-                                      */}
-                                    <div key="move"
-                                        className={BuildDOMClass("ui labeled icon button", {
-                                            disabled: props.destination === null || props.isLoading
-                                        })}
-                                        disabled={props.destination === null}
-                                        onClick={this._moveVisit}>
-                                        <i className="level up icon"></i>
-                                        {formatMessage(messages.moveVisit)}
-                                    </div>
-                                </div>{/** end .buttons **/}
-                            </div>{/** end .aside **/}
-                        </div>{/** end .FORCEPT-FlexHeader **/}
-                        <Horizon>
-                            {patientKeys.map(patientID => {
-                                var thisPatient = patients[patientID][rootStageID];
-                                var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
-                                return (
-                                    <a key={patientID}
-                                        className={BuildDOMClass("item", {
-                                            "teal active": props.tab == patientID
-                                        })}
-                                        onClick={this._setTab(patientID)}>
-                                        <span className="teal ui label">
-                                            {thisPatient.id}
-                                        </span>
-                                        {fullName}
-                                    </a>
-                                );
-                            })}
-                            {(() => {
-                                if(thisStage.isRoot) {
-                                    return [
-                                        <a key="create"
-                                            className="control item"
-                                            onClick={this._createPatient}>
-                                            <i className="fitted plus icon"></i>
-                                            <span className="forcept responsive desktop only">
-                                                {formatMessage(BasicMessages.create)}
-                                            </span>
-                                            <span className="forcept responsive mobile only">
-                                                {formatMessage(messages.createPatient)}
-                                            </span>
-                                        </a>,
-                                        <a key="import"
-                                            className="control item"
-                                            onClick={this._importPatient}>
-                                            <i className="fitted download icon"></i>
-                                            <span className="forcept responsive desktop only">
-                                                {formatMessage(BasicMessages.import)}
-                                            </span>
-                                            <span className="forcept responsive mobile only">
-                                                {formatMessage(messages.importPatient)}
-                                            </span>
-                                        </a>
-                                    ];
-                                }
-                            })()}
-                        </Horizon>
-                        {stageDOM}
-                    </div>
-                );
-
-            } /// end stageID check
-
-        } /// end props.isNavigateComplete
-
-        /*
-         * Page load incomplete - render only loading container
-         */
-        else {
+        if(!props.isNavigateComplete) {
             return (
                 <div className="ui segment">
                     <div className="basic ui loading segment"></div>
                 </div>
             );
         }
+
+        /*
+         * Make sure stageID is set
+         */
+        if(!stageID || !stages.hasOwnProperty(stageID)) {
+            return (
+                <div className="ui segment">
+                    <MessageScaffold
+                        type="error"
+                        icon="warning"
+                        header={formatMessage(BasicMessages.errorOccurred)}
+                        text={formatMessage(messages.missingStageID)} />
+                </div>
+            );
+        }
+
+        var thisStage = stages[stageID],
+            stagesBeneath = dropRightWhile(stageKeys, key => key != stageID),
+            stageDOM, overviewDOM;
+
+        __debug("Stages beneath:", stagesBeneath);
+
+        /*
+         * Is a visit/patient action executing?
+         */
+        if(props.isLoading) {
+            stageDOM = (
+                <div className="ui bottom attached segment">
+                    <div className="ui basic loading segment"></div>
+                </div>
+            );
+        }
+
+        /*
+         * Stage ID is set, check other variables before rendering.
+         */
+        else {
+
+            /*
+             *
+             */
+            if(props.recentData !== null && visit.id === null) {
+
+                var stageLink;
+                if(props.recentData.stage !== "checkout") {
+                    var stageRecentlyMovedTo = stages[props.recentData.stage];
+                    stageLink = (
+                        <NavLink className="tiny green ui labeled icon button"
+                            href={"/visits/" + stageRecentlyMovedTo.slug + "/" + props.recentData.visit}>
+                            <i className="right chevron icon"></i>
+                            {formatMessage(messages.followVisit, {
+                                stage: stageRecentlyMovedTo.name || formatMessage(Stagemessages.untitled)
+                            })}
+                        </NavLink>
+                    );
+                } else {
+                    stageLink = (
+                        <div className="sub header">
+                            {formatMessage(messages.checkoutComplete)}
+                        </div>
+                    );
+                }
+
+                stageDOM = (
+                    <div className="ui bottom attached segment">
+                        <div className="large ui header">
+                            <i className="circular check mark icon"></i>
+                            <div className="content">
+                                <div>{formatMessage(messages.moveCompletionHeader)}</div>
+                                {stageLink}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            /**
+             * If tab is set, and tab === "import"
+             */
+            else if(tab && tab === "import") {
+                stageDOM = (
+                    <Importer />
+                );
+            }
+
+            /*
+             * No patients in this visit.
+             */
+            else if(patientKeys.length === 0) {
+                if(thisStage.isRoot) {
+                    stageDOM = (
+                        <div className="ui bottom attached segment">
+                            <MessageScaffold
+                                icon="add user"
+                                header={formatMessage(messages.noPatients)}
+                                text={formatMessage(messages.addPatients)} />
+                        </div>
+                    );
+                } else {
+                    stageDOM = (
+                        <div className="ui bottom attached segment">
+                            <MessageScaffold
+                                icon="delete"
+                                header={formatMessage(BasicMessages.errorOccurred)}
+                                text={formatMessage(messages.noPatients)} />
+                        </div>
+                    );
+                }
+            }
+
+            /*
+             * Tab not selected.
+             */
+            else if(!tab) {
+                stageDOM = (
+                    <div className="ui bottom attached segment">
+                        <MessageScaffold
+                            icon="flag"
+                            header={formatMessage(messages.choosePatient)} />
+                    </div>
+                );
+            }
+
+            /*
+             * Missing the patient stored in visit.tab
+             */
+            else if(!patients.hasOwnProperty(tab)) {
+                stageDOM = (
+                    <div className="ui bottom attached segment">
+                        <MessageScaffold
+                            type="error"
+                            icon="warning"
+                            header={formatMessage(BasicMessages.errorOccurred)}
+                            text={formatMessage(messages.missingPatient, {
+                                patient: tab
+                            })} />
+                    </div>
+                );
+            }
+
+            /*
+             * Looks like we're good to go...
+             */
+            else {
+
+                var thisPatient = patients[tab];
+
+                overviewDOM = (
+                    <Sidebar
+                        stages={stages}
+                        stagesBeneath={stagesBeneath}
+                        thisPatient={thisPatient} />
+                );
+
+                stageDOM = (
+                    <div className="ui bottom attached segment">
+                        {(() => {
+                            if(props.flash) {
+                                return (
+                                    <MessageScaffold {...props.flash} />
+                                );
+                            }
+                        })()}
+                        <Editor
+                            patient={Object.assign({}, thisPatient[stageID], { id: thisPatient[rootStageID].id })}
+                            visit={visit}
+                            stage={thisStage}
+                            resourcesState={props.resourcesState} />
+                    </div>
+                );
+
+            }
+
+        } /// end !props.isLoading
+
+        var currentIndex = null;
+
+        /**
+         * Destination selection menu builder.
+         */
+        var menuDOM = stageKeys.map((thisMenuStageID, index) => {
+
+            var thisMenuStage = stages[thisMenuStageID],
+                isCurrent = stageID === thisMenuStageID,
+                style = {};
+
+            if(isCurrent) currentIndex = index;
+
+            if(thisMenuStage.order < thisStage.order) {
+                style.opacity = 1;
+            } else {
+                if(!isCurrent && currentIndex !== null) {
+                    style.opacity = ((stageKeys.length - index) / (stageKeys.length - currentIndex - 1));
+                }
+            }
+
+            // __debug("index %s: %j (ci: %s)", index, style, currentIndex);
+
+            return (
+                <div key={thisMenuStageID}
+                    data-value={thisMenuStageID}
+                    className={BuildDOMClass("item", { disabled: isCurrent })}>
+                    <div className={BuildDOMClass("empty circular ui", {
+                        green:  isCurrent && thisMenuStage.order === thisStage.order,
+                        blue:  !isCurrent && thisMenuStage.order > thisStage.order,
+                        olive: !isCurrent && thisMenuStage.order < thisStage.order,
+                    }, "label")} style={style}></div>
+                    {index + 1} &mdash; {thisMenuStage.name}
+                </div>
+            );
+        });
+
+
+        /**
+         * ---
+         * #FORCEPT-VisitHandler
+         * ---
+         */
+        return (
+            <div id="FORCEPT-VisitHandler">
+                <div className="primary">
+                    <div className="basic top attached huge ui header">
+                        <i className="hospital icon"></i>
+                        <div className="content">
+                            {props.isNavigateComplete ? thisStage.name : (<i className="notched loading icon"></i>)}
+                        </div>
+                    </div>
+                    <Horizon>
+                        {patientKeys.map(patientID => {
+                            var thisPatient = patients[patientID][rootStageID];
+                            var fullName = thisPatient.hasOwnProperty('fullName') && thisPatient.fullName.length > 0 ? thisPatient.fullName : "Unnamed patient";
+                            return (
+                                <a key={patientID}
+                                    className={BuildDOMClass("item", {
+                                        "teal active": props.tab == patientID
+                                    })}
+                                    onClick={this._setTab(patientID)}>
+                                    <span className="teal ui label">
+                                        {thisPatient.id}
+                                    </span>
+                                    {fullName}
+                                </a>
+                            );
+                        })}
+                        {(() => {
+                            if(thisStage.isRoot) {
+                                return [
+                                    <a key="create"
+                                        className="control item"
+                                        onClick={this._createPatient}>
+                                        <i className="fitted plus icon"></i>
+                                        <span className="forcept responsive desktop only">
+                                            {formatMessage(BasicMessages.create)}
+                                        </span>
+                                        <span className="forcept responsive mobile only">
+                                            {formatMessage(messages.createPatient)}
+                                        </span>
+                                    </a>,
+                                    <a key="import"
+                                        className="control item"
+                                        onClick={this._setTab("import")}>
+                                        <i className="fitted download icon"></i>
+                                        <span className="forcept responsive desktop only">
+                                            {formatMessage(BasicMessages.import)}
+                                        </span>
+                                        <span className="forcept responsive mobile only">
+                                            {formatMessage(messages.importPatient)}
+                                        </span>
+                                    </a>
+                                ];
+                            }
+                        })()}
+                    </Horizon>
+                    {stageDOM}
+                </div>
+                <div className="sidebar">
+                    <div className="patient">{overviewDOM}</div>
+                    <div className="controls">
+                        <div className="fluid vertical ui buttons">
+                            {/*
+                              * Save button
+                              */}
+                            <div key="save"
+                                className={BuildDOMClass("ui labeled icon button", {
+                                    disabled: !props.isModified || props.isLoading
+                                })}
+                                disabled={!props.isModified}
+                                onClick={props.isModified ? this._saveVisit : null}>
+                                <i className="save icon"></i>
+                                {formatMessage(messages.saveVisit)}
+                            </div>
+
+                            {/*
+                              * Destination dropdown
+                              */}
+                            <div key="destination"
+                                id="FORCEPT-Dropdown-MoveStage"
+                                className={BuildDOMClass("ui floating dropdown labeled icon button", {
+                                    disabled: visit.id === null || props.isLoading
+                                })}
+                                disabled={visit.id === null}>
+                                <i className="location arrow icon"></i>
+                                <span className="text">{formatMessage(messages.chooseDestination)}</span>
+                                <div className="menu">
+                                    {menuDOM}
+                                    <div data-value="checkout" className="item">
+                                        <i className="fitted checkmark box icon"></i>
+                                        {formatMessage(StageMessages.checkOut)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/*
+                              * Move button
+                              */}
+                            <div key="move"
+                                className={BuildDOMClass("ui labeled icon button", {
+                                    disabled: props.destination === null || props.isLoading
+                                })}
+                                disabled={props.destination === null}
+                                onClick={this._moveVisit}>
+                                <i className="level up icon"></i>
+                                {formatMessage(messages.moveVisit)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
 
     }
 
@@ -558,15 +552,10 @@ VisitHandler = connectToStores(
 
             resourcesState: resourceStore.getState(),
 
-            // resource: {
-            //     cache: resourceStore.getCache(),
-            //     processing: resourceStore.getProcessingFields(),
-            //     upload: {
-            //         context: resourceStore.getUploadContext(),
-            //         progress: resourceStore.getUploadProgress(),
-            //     }
-            // }
-
+            /// Patient importer
+            importer: {
+                
+            }
         };
 
     }
