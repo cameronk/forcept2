@@ -80,6 +80,15 @@ export default keyMirror({
     'USERS_UPDATE': null,
     'USERS_UDPATE_NURSERY': null,
 
+    /// Search
+    'SEARCH_SET_CONTEXT': null,
+    'SEARCH_SET_QUERY': null,
+    'SEARCH_SET_STATUS': null,
+    'SEARCH_SET_RESULTS': null,
+    'SEARCH_SET_SELECTED': null,
+    'SEARCH_RESET_RELATIVES': null,
+    'SEARCH_CLEAR_QUERY': null,
+
     /// Test
     'TEST_PUSH_MODEL': null,
     'TEST_UPDATE_MODEL': null,

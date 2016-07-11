@@ -23,6 +23,7 @@ import DisplayStore from './flux/Display/DisplayStore';
 import ConsoleStore from './flux/Console/ConsoleStore';
 import MedicationStore from './flux/Pharmacy/MedicationStore';
 import PrescriptionStore from './flux/Prescription/PrescriptionStore';
+import SearchStore from './flux/Search/SearchStore';
 import TestStore from './flux/Test/TestStore';
 
 /// create new fluxible instance
@@ -309,6 +310,7 @@ app.registerStore(ConsoleStore);
 app.registerStore(UserStore);
 app.registerStore(MedicationStore);
 app.registerStore(PrescriptionStore);
+app.registerStore(SearchStore);
 app.registerStore(TestStore);
 
 module.exports = app;

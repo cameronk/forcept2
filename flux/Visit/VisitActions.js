@@ -70,11 +70,7 @@ export function ReadVisitsAtStageAction(context, payload, done) {
         });
 }
 
-
-
 // ============================== \\
-
-
 
 /**
  *
@@ -245,6 +241,17 @@ export function MoveVisitAction(context, { id, destination }, done) {
         return;
     }
 
+    var complete = () => {
+        context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
+            visit: id,
+            stage: destination
+        });
+        context.dispatch(Actions.VISIT_CLEAR);
+        context.dispatch(Actions.PATIENT_CLEAR_ALL);
+        context.dispatch(Actions.APP_LOADING, false);
+        done();
+    }
+
     context.dispatch(Actions.APP_LOADING, true);
     context.service
         .update('VisitService')
@@ -253,16 +260,35 @@ export function MoveVisitAction(context, { id, destination }, done) {
         })
         .body({
             stage: destination
-        }).end().then(() => {
-            __debug("...update complete.");
-            context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
-                visit: id,
-                stage: destination
-            });
-            context.dispatch(Actions.VISIT_CLEAR);
-            context.dispatch(Actions.PATIENT_CLEAR_ALL);
-            context.dispatch(Actions.APP_LOADING, false);
-            done();
+        }).end().then(({ data }) => {
+
+            __debug("...updated Visit record. Nullifying patient visit locations.");
+
+            if(destination === "checkout") {
+
+                var visit = data,
+                    promises = [];
+
+                (visit.patients).map(patientID => {
+                    promises.push(
+                        context.service
+                            .update('RecordService')
+                            .params({
+                                model: "Patient",
+                                identify: {
+                                    id: patientID
+                                }
+                            })
+                            .body({
+                                currentVisit: null
+                            }).end()
+                    );
+                });
+
+                Promise.all(promises).then(complete);
+
+            } else complete();
+
         });
 }
 
@@ -342,8 +368,6 @@ export function GrabVisitAction(context, payload, done) {
 
 // ============================== \\
 
-
-
 /**
  *
  */
@@ -372,6 +396,27 @@ export function CreatePatientAction(context, payload, done) {
             context.dispatch(Actions.VISIT_SET_CURRENT_TAB, data.id);
             done();
         });
+}
+
+/*
+ *
+ */
+export function ImportPatientsAction(context, { rootStageID, patients }, done) {
+
+    var dataToPush = {};
+
+    for(var patientID in patients) {
+        dataToPush[patientID] = {
+            [rootStageID]: patients[patientID]
+        }
+    }
+
+    context.dispatch(Actions.APP_LOADING, true);
+    context.dispatch(Actions.PATIENT_UPDATE, dataToPush);
+    context.dispatch(Actions.VISIT_SET_CURRENT_TAB, Object.keys(patients)[0]);
+    context.dispatch(Actions.VISIT_SET_MODIFIED, true);
+    context.dispatch(Actions.APP_LOADING, false);
+    done();
 }
 
 /**

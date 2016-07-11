@@ -14,6 +14,8 @@ import BaseComponent, { grabContext } from '../Base';
 import FieldSettings from './FieldSettings';
 
 const stores  = {
+    SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
+    PatientStore:      ["getPatients"],
     MedicationStore:   ["getCache", "getMedications"],
     PrescriptionStore: ["getSets"]
 }

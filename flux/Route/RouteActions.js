@@ -15,6 +15,7 @@ import { LoadStagesAction, GrabStageAction, ClearCacheAction as ClearStageCacheA
 import { ClearVisitAction, GrabVisitAction, SetRecentVisitDataAction } from '../Visit/VisitActions';
 import { LoadDisplayGroupsAction, GrabDisplayGroupAction, ClearDisplayGroupCacheAction } from '../Display/DisplayActions';
 import { SetConsoleStatusAction } from '../Console/ConsoleActions';
+import { ResetRelativesAction, ClearQueryDataAction } from '../Search/SearchActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -88,7 +89,19 @@ var PreNavigateActions = function(context, payload, done) {
          * the patients in a visit. Thus, we should clear
          * patients out between page loads.
          */
-        context.executeAction(ClearAllPatientsAction)
+        context.executeAction(ClearAllPatientsAction),
+
+        /*
+         * We don't want results or selected patients to carry over
+         * from request to request.
+         */
+        context.executeAction(ResetRelativesAction),
+
+        /*
+         * We don't want results or selected patients to carry over
+         * from request to request.
+         */
+        context.executeAction(ClearQueryDataAction)
 
     ]).then(() => {
 

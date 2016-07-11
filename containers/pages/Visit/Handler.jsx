@@ -16,11 +16,11 @@ import NavLink    from '../../../components/Navigation/NavLink';
 import Horizon    from '../../../components/Meta/Horizon';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
 import Editor     from '../../../components/Visit/Editor';
-import Importer   from '../../../components/Visit/Importer';
 import Overview   from '../../../components/Visit/Overview';
+import Searcher   from '../../../components/Patient/Searcher';
 import Sidebar   from '../../../components/Visit/Sidebar';
 import { SetCurrentTabAction,
-    CreatePatientAction,
+    CreatePatientAction, ImportPatientsAction,
     SaveVisitAction, MoveVisitAction,
     SetDestinationAction } from '../../../flux/Visit/VisitActions';
 
@@ -153,6 +153,17 @@ class VisitHandler extends BaseComponent {
         });
     }
 
+    _importPatients = (patients) => {
+        var { stages, stageID } = this.props;
+
+        if(stageID === Object.keys(stages)[0]) {
+            this.context.executeAction(ImportPatientsAction, {
+                rootStageID: stageID,
+                patients: patients
+            });
+        }
+    }
+
     render() {
 
         var props = this.props,
@@ -262,7 +273,9 @@ class VisitHandler extends BaseComponent {
              */
             else if(tab && tab === "import") {
                 stageDOM = (
-                    <Importer />
+                    <Searcher
+                        disablePatientsInVisits={true}
+                        onImport={this._importPatients} />
                 );
             }
 
@@ -550,12 +563,7 @@ VisitHandler = connectToStores(
             recentData: visitStore.getRecentData(),
             tab: visitStore.getCurrentTab(),
 
-            resourcesState: resourceStore.getState(),
-
-            /// Patient importer
-            importer: {
-                
-            }
+            resourcesState: resourceStore.getState()
         };
 
     }
