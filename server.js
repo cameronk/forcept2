@@ -46,7 +46,6 @@ import MedQuantityService from './flux/Pharmacy/MedQuantityService';
 import PrescriptionService from './flux/Prescription/PrescriptionService';
 import PrescriptionSetService from './flux/Prescription/PrescriptionSetService';
 import SearchService from './flux/Search/SearchService';
-import TestService from './flux/Test/TestService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -171,7 +170,6 @@ __debug("---");
               FetchrPlugin.registerService(PrescriptionService.attach(db));
               FetchrPlugin.registerService(PrescriptionSetService.attach(db));
               FetchrPlugin.registerService(SearchService.attach(db));
-              FetchrPlugin.registerService(TestService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
@@ -272,6 +270,7 @@ __debug("---");
                 res.type('html');
                 res.write('<!DOCTYPE html>' + html);
                 res.end();
+
             });
         });
 

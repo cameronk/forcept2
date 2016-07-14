@@ -29,7 +29,7 @@ class AppStore extends BaseStore {
             defaultMessage: "Loading..."
         };
         this.loading = false;
-        this.flash   = false;
+        this.flash   = null;
         this.req   = {};
         this.route = {};
         this.status = null;
@@ -67,7 +67,7 @@ class AppStore extends BaseStore {
      *
      */
     handleFlash(flash) {
-        if(typeof flash === "boolean") {
+        if(flash === null) {
             if(this.flash !== flash) {
                 this.flash = flash;
                 this.emitChange();

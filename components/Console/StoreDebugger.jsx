@@ -14,11 +14,14 @@ import BaseComponent, { grabContext } from '../Base';
 import FieldSettings from './FieldSettings';
 
 const stores  = {
+    AppStore:          ["getFlash"],
+    VisitStore:        ["getStatus", "getVisit", "getList", "getRecentData", "isModified", "getCurrentTab", "getDestination"],
     SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
     PatientStore:      ["getPatients"],
     MedicationStore:   ["getCache", "getMedications"],
     PrescriptionStore: ["getSets"]
 }
+
 const __debug = debug('forcept:components:Console:Field');
 
 class StoreDebugger extends BaseComponent {

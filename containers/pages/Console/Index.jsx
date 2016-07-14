@@ -11,10 +11,8 @@ import AuthStore        from '../../../flux/Auth/AuthStore';
 import PatientStore     from '../../../flux/Patient/PatientStore';
 import StageStore       from '../../../flux/Stage/StageStore';
 import VisitStore       from '../../../flux/Visit/VisitStore';
-import TestStore        from '../../../flux/Test/TestStore';
 import ResourceStore    from '../../../flux/Resource/ResourceStore';
 import { LoginAction, CredentialChangeAction }  from '../../../flux/Auth/AuthActions';
-import { PushModelAction, UpdateModelAction }  from '../../../flux/Test/TestActions';
 import BaseComponent    from '../../../components/Base';
 import Horizon  from '../../../components/Meta/Horizon';
 
@@ -35,16 +33,6 @@ class Index extends BaseComponent {
 
     componentDidMount() {
         $("#Horizon .ui.dropdown").dropdown();
-    }
-
-    _updateTestModel = (evt) => {
-        this.context.executeAction(UpdateModelAction, {
-            'name': 'test'
-        });
-    }
-
-    _importTestModel = (evt) => {
-        this.context.executeAction(PushModelAction);
     }
 
     render() {
@@ -75,7 +63,7 @@ class Index extends BaseComponent {
 
 Index = connectToStores(
     Index,
-    [ResourceStore, PatientStore, TestStore],
+    [ResourceStore, PatientStore],
     (context, props) => {
         let resourceStore = context.getStore(ResourceStore);
         return {

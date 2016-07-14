@@ -9,6 +9,7 @@ import debug from 'debug';
 import upperFirst from 'lodash/upperFirst';
 
 import BaseComponent, { grabContext } from '../Base';
+import DataPoint from '../Patient/DataPoint';
 
 const __debug = debug('forcept:components:Visit:OverviewField');
 
@@ -42,62 +43,21 @@ class OverviewField extends BaseComponent {
 
         } else {
 
-            var { value } = props,
-                valueDefined = (value && value.length > 0),
-                iconClass = (valueDefined ? "green check mark" : "red close"),
-                descriptionDOM, resourcesDOM;
+            switch(props.type) {
 
-            /*
-             * Check if a value is defined.
-             */
-            if(valueDefined) {
+                /*
+                 * Convert resource into embedded thingy.
+                 */
+                case "file":
+                    resourcesDOM = <DataPoint field={props} />
+                    break;
 
-                switch(props.type) {
-
-                    /*
-                     * Convert Select type (array of selected values)
-                     * into a list.
-                     */
-                    case "select":
-                        if(props.settings && props.settings.multiple) {
-                            if(value.length > 0) {
-                                descriptionDOM = (
-                                    <ul>
-                                        {value.map((item) => {
-                                            return (
-                                                <li>{item}</li>
-                                            );
-                                        })}
-                                    </ul>
-                                );
-                            }
-                        } else {
-                            descriptionDOM = value.toString();
-                        }
-                        break;
-
-                    /*
-                     * Convert resource into embedded thingy.
-                     */
-                    case "file":
-                        resourcesDOM = value.map(({ type, id, ext }) => {
-                            return (
-                                <div className="ui fluid card">
-                                    <div className="ui fluid image">
-                                        <img src={["/resources/", id, ext].join("")} />
-                                    </div>
-                                </div>
-                            );
-                        });
-                        break;
-
-                    /*
-                     * Otherwise, it's a string!
-                     */
-                    default:
-                        descriptionDOM = value.toString();
-                        break;
-                }
+                /*
+                 * Otherwise, it's a string!
+                 */
+                default:
+                    descriptionDOM = <DataPoint field={props} />
+                    break;
 
             }
 

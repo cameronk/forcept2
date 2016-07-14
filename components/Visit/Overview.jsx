@@ -66,6 +66,7 @@ class Overview extends BaseComponent {
     }
 
     render() {
+        
         var props = this.props,
             { stage, visit, patient } = props,
             { fields } = stage;

@@ -7,23 +7,38 @@ import keyMirror from 'keymirror';
 
 export default keyMirror({
 
-    'TEST_ACTION': null,
+    /*
+     * Application
+     */
 
-    /// Application
-    'APP_LOADING': null,
-    'APP_SET_STATUS': null,
-    'APP_FLASH': null,
+    /// Top-level application loading state
+        'APP_LOADING': null,
+    /// Top-level application status
+        'APP_SET_STATUS': null,
+    /// Set flash data for application
+        'APP_FLASH': null,
 
-    //
-    'CONSOLE_SET_STATUS': null,
+    /** ============================= **/
 
-    /// Pharmacy
-    'PHARMACY_SET_STATUS': null,
-    'PHARMACY_MEDS_CACHE_UPDATE': null,
-    'PHARMACY_MEDS_CACHE_MODIFIED': null,
-    'PHARMACY_MEDS_CACHE_CLEAR': null,
-    'PHARMACY_MEDS_UPDATE': null,
-    'PHARMACY_MEDS_LOADED': null,
+    /*
+     * Console
+     */
+
+    /// Console-wide status
+        'CONSOLE_SET_STATUS': null,
+
+    /** ============================= **/
+
+    /*
+     * Pharmacy
+     */
+    ///
+        'PHARMACY_SET_STATUS': null,
+        'PHARMACY_MEDS_CACHE_UPDATE': null,
+        'PHARMACY_MEDS_CACHE_MODIFIED': null,
+        'PHARMACY_MEDS_CACHE_CLEAR': null,
+        'PHARMACY_MEDS_UPDATE': null,
+        'PHARMACY_MEDS_LOADED': null,
 
     ///
     'PRESCRIPTION_SET_UPDATE': null,
@@ -60,8 +75,7 @@ export default keyMirror({
     'VISIT_SET_MODIFIED': null,
     'VISIT_UPDATE_VISIT': null,
     'VISIT_CLEAR': null,
-    'VISIT_SET_OVERVIEW_MODE': null,
-
+    'VISIT_SET_STATUS': null,
     'VISIT_LIST_CLEAR': null,
     'VISIT_LIST_UPDATE': null,
 
@@ -89,7 +103,4 @@ export default keyMirror({
     'SEARCH_RESET_RELATIVES': null,
     'SEARCH_CLEAR_QUERY': null,
 
-    /// Test
-    'TEST_PUSH_MODEL': null,
-    'TEST_UPDATE_MODEL': null,
 });
