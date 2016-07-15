@@ -17,6 +17,7 @@ const stores  = {
     AppStore:          ["getFlash"],
     VisitStore:        ["getStatus", "getVisit", "getList", "getRecentData", "isModified", "getCurrentTab", "getDestination"],
     SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
+    StageStore:        ["getStages"],
     PatientStore:      ["getPatients"],
     MedicationStore:   ["getCache", "getMedications"],
     PrescriptionStore: ["getSets"]

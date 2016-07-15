@@ -10,6 +10,8 @@ import debug from 'debug';
 
 import BaseComponent, { grabContext } from '../Base';
 import MessageScaffold from '../Scaffold/Message';
+import DataPoint from './DataPoint';
+import ValueDefined from '../../utils/ValueDefined';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 import { UpdateSearchContextAction, UpdateSearchQueryAction, ClearSearchStoreAction,
     UpdateSearchStatusAction, UpdateSearchSelectedAction, DoSearchAction } from '../../flux/Search/SearchActions';
@@ -134,9 +136,11 @@ class Searcher extends BaseComponent {
                                             </thead>
                                             <tbody>
                                                 {resultKeys.map(patientID => {
+
                                                     var thisPatient = props.results[patientID];
                                                     var patientIsInVisit = !(thisPatient.currentVisit === null || thisPatient.currentVisit === "checkout")
                                                     var disableThisPatient = (props.disablePatientsInVisits && patientIsInVisit);
+
                                                     return (
                                                         <tr className={BuildDOMClass({
                                                             /// Disable the row if the disablePatientsInVisits flag is true
@@ -157,15 +161,19 @@ class Searcher extends BaseComponent {
 
                                                             {fieldKeys.map(fieldID => {
 
-                                                                var dataPoint;
+                                                                var thisField = fields[fieldID];
 
-                                                                if(thisPatient.hasOwnProperty(fieldID) && thisPatient[fieldID] !== null) {
-                                                                    dataPoint = thisPatient[fieldID].toString();
-                                                                }
-
-                                                                if(dataPoint) {
+                                                                if(ValueDefined(thisField.type, thisPatient[fieldID])) {
                                                                     return (
-                                                                        <td key={fieldID}>{dataPoint}</td>
+                                                                        <td key={fieldID}>
+                                                                            <DataPoint
+                                                                                value={thisPatient[fieldID]}
+                                                                                field={{
+                                                                                    name:  thisField.name,
+                                                                                    type:  thisField.type,
+                                                                                    settings: thisField.settings
+                                                                                }} />
+                                                                        </td>
                                                                     );
                                                                 } else {
                                                                     return (
