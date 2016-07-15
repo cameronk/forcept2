@@ -10,7 +10,7 @@ import sortBy from 'lodash/sortBy';
 import omitBy from 'lodash/omitBy';
 
 import Actions from '../actions';
-import { PushPatientDataAction } from '../Patient/PatientActions';
+import { ClearAllPatientsAction, PushPatientDataAction } from '../Patient/PatientActions';
 import { FlashAppDataAction } from '../App/AppActions';
 import { navigateAction } from '../Route/RouteActions';
 import StageStore from '../Stage/StageStore';
@@ -101,7 +101,6 @@ export function SetVisitModifiedStateAction(context, state, done) {
     context.dispatch(Actions.VISIT_SET_MODIFIED, state);
     done();
 }
-
 
 /*
  * Clear visit data.
@@ -301,54 +300,64 @@ export function MoveVisitAction(context, { id, destination }, done) {
     }
 
     var complete = () => {
-        context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
-            visit: id,
-            stage: destination
-        });
-        context.dispatch(Actions.VISIT_CLEAR);
-        context.dispatch(Actions.PATIENT_CLEAR_ALL);
-        context.dispatch(Actions.APP_LOADING, false);
-        done();
-    }
 
-    context.dispatch(Actions.APP_LOADING, true);
-    context.service
-        .update('VisitService')
-        .params({
-            id: id
-        })
-        .body({
-            stage: destination
-        }).end().then(({ data }) => {
+        Promise.all([
+            context.executeAction(SetRecentVisitDataAction, {
+                visit: id,
+                stage: destination
+            }),
+            context.executeAction(ClearVisitAction),
+            context.executeAction(ClearAllPatientsAction),
+            context.executeAction(SetVisitStatusAction, null)
+        ]).then(done);
 
-            __debug("...updated Visit record. Nullifying patient visit locations.");
+    };
 
-            if(destination === "checkout") {
+    /*
+     * Let the Visit handler know we're saving stuff.
+     */
+    context.executeAction(SetVisitStatusAction, "moving", () => {
 
-                var visit = data,
-                    promises = [];
+        context.service
+            .update('VisitService')
+            .params({
+                id: id
+            })
+            .body({
+                stage: destination
+            }).end().then(({ data }) => {
 
-                (visit.patients).map(patientID => {
-                    promises.push(
-                        context.service
-                            .update('RecordService')
-                            .params({
-                                model: "Patient",
-                                identify: {
-                                    id: patientID
-                                }
-                            })
-                            .body({
-                                currentVisit: null
-                            }).end()
-                    );
-                });
+                __debug("...updated Visit record. Nullifying patient visit locations.");
 
-                Promise.all(promises).then(complete);
+                if(destination === "checkout") {
 
-            } else complete();
+                    var visit = data,
+                        promises = [];
 
-        });
+                    (visit.patients).map(patientID => {
+                        promises.push(
+                            context.service
+                                .update('RecordService')
+                                .params({
+                                    model: "Patient",
+                                    identify: {
+                                        id: patientID
+                                    }
+                                })
+                                .body({
+                                    currentVisit: null
+                                }).end()
+                        );
+                    });
+
+                    Promise.all(promises).then(complete);
+
+                } else complete();
+
+            });
+
+    });
+
 }
 
 /*

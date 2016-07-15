@@ -215,6 +215,8 @@ class VisitHandler extends BaseComponent {
          *************************************/
 
         var isLoading = false;
+        var isSaving  = props.status === "saving";
+        var isMoving  = props.status === "moving";
 
         /*
          * Certain visit page statuses should hinder further rendering. Add those here.
@@ -251,7 +253,6 @@ class VisitHandler extends BaseComponent {
                 var stageLinkDOM;
 
                 if(props.recentData.stage !== "checkout") {
-
                     var stageRecentlyMovedTo = stages[props.recentData.stage];
                     stageLinkDOM = (
                         <NavLink className="tiny green ui labeled icon button"
@@ -262,15 +263,12 @@ class VisitHandler extends BaseComponent {
                             })}
                         </NavLink>
                     );
-
                 } else {
-
                     stageLinkDOM = (
                         <div className="sub header">
                             {formatMessage(messages.checkoutComplete)}
                         </div>
                     );
-
                 }
 
                 stageDOM = (
@@ -368,7 +366,7 @@ class VisitHandler extends BaseComponent {
 
                 stageDOM = (
                     <div className={BuildDOMClass("ui bottom attached", {
-                        loading: props.status === "saving"
+                        loading: isSaving || isMoving
                     }, "segment")}>
                         {(() => {
                             if(props.flash) {
@@ -434,7 +432,7 @@ class VisitHandler extends BaseComponent {
          ******************************************/
 
         var disabledButtons = {
-            save:           (!props.isModified || isLoading),
+            save:           (!props.isModified || isLoading || isSaving),
             destination:    (visit.id === null || isLoading || props.isModified),
             move:           (props.destination === null || isLoading || props.isModified)
         };
@@ -450,6 +448,7 @@ class VisitHandler extends BaseComponent {
                           */}
                         <div key="save"
                             className={BuildDOMClass("ui labeled icon button", {
+                                loading: isSaving,
                                 disabled: disabledButtons.save
                             })}
                             disabled={disabledButtons.save}
@@ -552,7 +551,6 @@ class VisitHandler extends BaseComponent {
                 {horizonControlsDOM}
             </Horizon>
         );
-
 
         /*******************************
          * Render FORCEPT-VisitHandler *

@@ -30,8 +30,6 @@ class OverviewField extends BaseComponent {
             iconClass = (valueDefined ? "green check mark" : "red close"),
             descriptionDOM, resourcesDOM;
 
-        __debug("Value %s %s for %s", value, (valueDefined ? "is defined" : "is not defined"), field.name);
-
         /*
          * We ignore value if this is a non-value-bearing field (i.e. header)
          */

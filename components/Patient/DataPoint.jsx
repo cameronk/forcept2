@@ -42,9 +42,6 @@ class DataPoint extends BaseComponent {
         var { props } = this,
             { field, value } = props;
 
-
-        __debug("%s (%s) - %s", field.name, field.type, value.toString());
-
         switch(field.type) {
 
             /*
