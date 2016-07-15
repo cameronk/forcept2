@@ -66,7 +66,7 @@ class Overview extends BaseComponent {
     }
 
     render() {
-        
+
         var props = this.props,
             { stage, visit, patient } = props,
             { fields } = stage;
@@ -96,19 +96,24 @@ class Overview extends BaseComponent {
         return (
             <div className="relaxed divided ui list">
                 {iterableFields.map(field => {
+
                     var thisField = fields[field];
                     var thisValue = patient[field] || "";
+
                     if(props.mode === "checklist" || !this.isEmpty(thisValue)) {
                         hasAValue = true;
                         return (
                             <OverviewField
                                 key={field}
-                                type={thisField.type}
-                                settings={thisField.settings || null}
-                                name={thisField.name}
+                                field={{
+                                    name: thisField.name,
+                                    type: thisField.type,
+                                    settings: thisField.settings
+                                }}
                                 value={thisValue} />
                         );
                     }
+                    
                 })}
                 {() => {
                     if(!hasAValue) {
