@@ -19,7 +19,7 @@ import Editor     from '../../../components/Visit/Editor';
 import Overview   from '../../../components/Visit/Overview';
 import Searcher   from '../../../components/Patient/Searcher';
 import Sidebar   from '../../../components/Visit/Sidebar';
-import { SetCurrentTabAction,
+import { SetCurrentTabAction, SetSidebarVisibilityAction,
     CreatePatientAction, ImportPatientsAction,
     SaveVisitAction, MoveVisitAction,
     SetDestinationAction } from '../../../flux/Visit/VisitActions';
@@ -165,6 +165,15 @@ class VisitHandler extends BaseComponent {
                 rootStageID: stageID,
                 patients: patients
             });
+        }
+    }
+
+    /*
+     *
+     */
+    _toggleSidebarVisibility = (state) => {
+        return (evt) => {
+            this.context.executeAction(SetSidebarVisibilityAction, state);
         }
     }
 
@@ -437,62 +446,75 @@ class VisitHandler extends BaseComponent {
             move:           (props.destination === null || isLoading || props.isModified)
         };
 
-        var sidebarDOM = (
-            <div className="sidebar">
-                <div className="patient">{overviewDOM}</div>
-                <div className="controls">
-                    <div className="fluid vertical ui buttons">
+        var sidebarDOM;
 
-                        {/*
-                          * Save button
-                          */}
-                        <div key="save"
-                            className={BuildDOMClass("ui labeled icon button", {
-                                loading: isSaving,
-                                disabled: disabledButtons.save
-                            })}
-                            disabled={disabledButtons.save}
-                            onClick={props.isModified ? this._saveVisit : null}>
-                            <i className="save icon"></i>
-                            {formatMessage(messages.saveVisit)}
-                        </div>
+        if(props.sidebarVisibility === true) {
+            sidebarDOM = (
+                <div className="sidebar">
+                    <div className="sidebar-toggle" onClick={this._toggleSidebarVisibility(false)}>
+                        <i className="right chevron icon"></i>
+                    </div>
+                    <div className="patient">{overviewDOM}</div>
+                    <div className="controls">
+                        <div className="fluid vertical ui buttons">
 
-                        {/*
-                          * Destination dropdown
-                          */}
-                        <div key="destination"
-                            id="FORCEPT-Dropdown-MoveStage"
-                            className={BuildDOMClass("ui floating dropdown labeled icon button", {
-                                disabled: disabledButtons.destination
-                            })}
-                            disabled={disabledButtons.destination}>
-                            <i className="location arrow icon"></i>
-                            <span className="text">{formatMessage(messages.chooseDestination)}</span>
-                            <div className="menu">
-                                {menuDOM}
-                                <div data-value="checkout" className="item">
-                                    <i className="fitted checkmark box icon"></i>
-                                    {formatMessage(StageMessages.checkOut)}
+                            {/*
+                              * Save button
+                              */}
+                            <div key="save"
+                                className={BuildDOMClass("ui labeled icon button", {
+                                    loading: isSaving,
+                                    disabled: disabledButtons.save
+                                })}
+                                disabled={disabledButtons.save}
+                                onClick={props.isModified ? this._saveVisit : null}>
+                                <i className="save icon"></i>
+                                {formatMessage(messages.saveVisit)}
+                            </div>
+
+                            {/*
+                              * Destination dropdown
+                              */}
+                            <div key="destination"
+                                id="FORCEPT-Dropdown-MoveStage"
+                                className={BuildDOMClass("ui floating dropdown labeled icon button", {
+                                    disabled: disabledButtons.destination
+                                })}
+                                disabled={disabledButtons.destination}>
+                                <i className="location arrow icon"></i>
+                                <span className="text">{formatMessage(messages.chooseDestination)}</span>
+                                <div className="menu">
+                                    {menuDOM}
+                                    <div data-value="checkout" className="item">
+                                        <i className="fitted checkmark box icon"></i>
+                                        {formatMessage(StageMessages.checkOut)}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/*
-                          * Move button
-                          */}
-                        <div key="move"
-                            className={BuildDOMClass("ui labeled icon button", {
-                                disabled: disabledButtons.move
-                            })}
-                            disabled={disabledButtons.move}
-                            onClick={this._moveVisit}>
-                            <i className="level up icon"></i>
-                            {formatMessage(messages.moveVisit)}
+                            {/*
+                              * Move button
+                              */}
+                            <div key="move"
+                                className={BuildDOMClass("ui labeled icon button", {
+                                    disabled: disabledButtons.move
+                                })}
+                                disabled={disabledButtons.move}
+                                onClick={this._moveVisit}>
+                                <i className="level up icon"></i>
+                                {formatMessage(messages.moveVisit)}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        } else {
+            sidebarDOM = (
+                <div className="sidebar-toggle floating" onClick={this._toggleSidebarVisibility(true)}>
+                    <i className="left chevron icon"></i>
+                </div>
+            );
+        }
 
         /******************************************
          * Build Horizon (patient tabs + buttons) *
@@ -557,7 +579,7 @@ class VisitHandler extends BaseComponent {
          *******************************/
         return (
             <div id="FORCEPT-VisitHandler">
-                <div className="primary">
+                <div className={BuildDOMClass("primary", { sidebarVisible: (props.sidebarVisibility === true) })}>
                     <div className="basic top attached huge ui header">
                         <i className="hospital icon"></i>
                         <div className="content">
@@ -590,9 +612,11 @@ VisitHandler = connectToStores(
         let params = routeStore.getCurrentRoute().params;
 
         return {
+
             /// Meta
             isNavigateComplete: routeStore.isNavigateComplete(),
             status: visitStore.getStatus(),
+            sidebarVisibility: visitStore.getSidebarVisibility(),
             flash: appStore.getFlash(),
 
             /// All stages

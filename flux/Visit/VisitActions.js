@@ -447,6 +447,16 @@ export function SetCurrentTabAction(context, payload, done) {
 }
 
 /*
+ * Set the current visibility state of the sidebar.
+ *
+ * Payload: state (boolean)
+ */
+export function SetSidebarVisibilityAction(context, payload, done) {
+    context.dispatch(Actions.VISIT_SET_SIDEBAR_VISIBILITY, payload);
+    done();
+}
+
+/*
  * Create a new patient.
  *
  * Payload:

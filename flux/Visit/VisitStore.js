@@ -25,6 +25,7 @@ class VisitStore extends BaseStore {
         [Actions.VISIT_SET_DESTINATION]: 'setDestination',
         [Actions.VISIT_SET_RECENT_DATA]: 'setRecentData',
         [Actions.VISIT_SET_STATUS]: 'setStatus',
+        [Actions.VISIT_SET_SIDEBAR_VISIBILITY]: 'setSidebarVisibility',
 
         /*
          * Visit actions
@@ -48,13 +49,26 @@ class VisitStore extends BaseStore {
     }
 
     setInitialState() {
+
         this.status = null;
         this.recentData = null;
         this.overviewModes = {};
+        this.sidebarVisibility = false;
 
         this.clearVisit();
         this.clearList();
     }
+
+    // =============================== \\
+
+    setSidebarVisibility = (status) => {
+        if(this.sidebarVisibility !== status) {
+            this.sidebarVisibility = status;
+            this.emitChange();
+        }
+    }
+
+    getSidebarVisibility = () => this.sidebarVisibility;
 
     // =============================== \\
 

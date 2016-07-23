@@ -73,6 +73,7 @@ export default keyMirror({
     'VISIT_SET_DESTINATION': null,
     'VISIT_SET_RECENT_DATA': null,
     'VISIT_SET_MODIFIED': null,
+    'VISIT_SET_SIDEBAR_VISIBILITY': null,
     'VISIT_UPDATE_VISIT': null,
     'VISIT_CLEAR': null,
     'VISIT_SET_STATUS': null,
