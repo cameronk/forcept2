@@ -6,12 +6,11 @@
 import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
-import isEqual from 'lodash/isEqual';
 
-import { UpdateCacheAction } from '../../flux/Stage/StageActions';
-import BaseComponent, { grabContext } from '../Base';
+import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
+import { SetFieldShiftContext } from '../../../flux/Console/StageBuilderActions';
+import BaseComponent, { grabContext } from '../../Base';
 import FieldSettings from './FieldSettings';
-
 
 const __debug = debug('forcept:components:Console:Field');
 
@@ -59,6 +58,13 @@ class Field extends BaseComponent {
         });
     }
 
+    _moveField = (evt) => {
+        __debug(this.props._key);
+        this.context.executeAction(SetFieldShiftContext, {
+            field: this.props._key
+        });
+    }
+
     render() {
 
         var props     = this.props,
@@ -93,6 +99,12 @@ class Field extends BaseComponent {
                                 onChange={this._change('description')}>
                             </textarea>
                         </div>
+                        <button
+                            onClick={this._moveField}
+                            className="ui tiny basic green labeled icon button">
+                            <i className="right chevron icon"></i>
+                            Move this field
+                        </button>
                         {removeButtonDOM}
                     </div>
                     <div className="ten wide field">

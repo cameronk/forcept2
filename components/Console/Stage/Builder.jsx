@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/StageBuilder.jsx
+ * forcept - components/Console/Stage/Builder.jsx
  * @author Azuru Technology
  */
 
@@ -8,15 +8,15 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import pick from 'lodash/pick';
 
-import { UpdateCacheAction, SaveStageAction, UploadFieldsAction } from '../../flux/Stage/StageActions';
-import StageStore from '../../flux/Stage/StageStore';
-import BaseComponent, { grabContext } from '../Base';
-import FieldsAccordion from './FieldsAccordion';
-import HeadingScaffold from '../Scaffold/Heading';
-import MessageScaffold from '../Scaffold/Message';
-import { BuildDOMClass } from '../../utils/CSSClassHelper';
+import { UpdateCacheAction, SaveStageAction, UploadFieldsAction } from '../../../flux/Stage/StageActions';
+import StageStore from '../../../flux/Stage/StageStore';
+import BaseComponent, { grabContext } from '../../Base';
+import FieldsAccordion from './Accordion';
+import HeadingScaffold from '../../Scaffold/Heading';
+import MessageScaffold from '../../Scaffold/Message';
+import { BuildDOMClass } from '../../../utils/CSSClassHelper';
 
-const __debug = debug("forcept:components:Console:StageBuilder");
+const __debug = debug("forcept:components:Console:Stage:Builder");
 const root = "components.console.stagebuilder";
 const messages = defineMessages({
     [root + ".name"]: {
@@ -26,10 +26,10 @@ const messages = defineMessages({
 });
 
 if(process.env.BROWSER) {
-    require('../../styles/Builder.less');
+    require('../../../styles/Builder.less');
 }
 
-class StageBuilder extends BaseComponent {
+class Builder extends BaseComponent {
 
     static contextTypes = grabContext()
 
@@ -42,9 +42,9 @@ class StageBuilder extends BaseComponent {
     }
 
     componentDidUpdate() {
-        $("#Forcept-Builder .ui.dropdown")
+        $("#FORCEPT-Builder .ui.dropdown")
             .dropdown();
-        $("#Forcept-Builder .ui.accordion")
+        $("#FORCEPT-Builder .ui.accordion")
             .accordion();
     }
 
@@ -136,13 +136,13 @@ class StageBuilder extends BaseComponent {
             PresetControlsDOM = (
                 <div className="ui tiny right floated buttons">
                     <label
-                        htmlFor="StageBuilder-UploadConfig"
+                        htmlFor="Builder-UploadConfig"
                         onClick={this._upload}
                         className={"ui labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
                         <i className="upload icon"></i>
                         Upload
                     </label>
-                    <input type="file" id="StageBuilder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
+                    <input type="file" id="Builder-UploadConfig" style={{ display: 'none' }} onChange={this._uploadConfig} />
                     <button
                         onClick={this._download}
                         className={"ui right labeled icon button" + (status === 'saving' ? ' disabled' : '')}>
@@ -177,7 +177,7 @@ class StageBuilder extends BaseComponent {
         }
 
         return (
-            <div className="ui basic expanded segment" id="Forcept-Builder">
+            <div className="ui basic expanded segment" id="FORCEPT-Builder">
                 <HeadingScaffold
                     label={{
                         className: 'teal',
@@ -226,4 +226,4 @@ class StageBuilder extends BaseComponent {
     }
 }
 
-export default injectIntl(StageBuilder);
+export default injectIntl(Builder);

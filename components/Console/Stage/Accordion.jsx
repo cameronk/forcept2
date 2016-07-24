@@ -1,20 +1,21 @@
 /**
- * forcept - components/Console/FieldsAccordion.jsx
+ * forcept - components/Console/Accordion.jsx
  * @author Azuru Technology
  */
 
 import React from 'react';
+import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';
-import isEqual from 'lodash/isEqual';
 
-import StageStore from '../../flux/Stage/StageStore';
-import BaseComponent, { grabContext } from '../Base';
+import StageStore from '../../../flux/Stage/StageStore';
+import { ShiftFieldPositionAction } from '../../../flux/Console/StageBuilderActions';
+import BaseComponent, { grabContext } from '../../Base';
 import Field from './Field';
 
-const __debug = debug("forcept:components:Console:FieldsAccordion");
-const root = "components.console.FieldsAccordion";
+const __debug = debug("forcept:components:Console:Accordion");
+const root = "components.console.Accordion";
 const messages = defineMessages({
     [root + ".errors.noFields.heading"]: {
         id: root + ".errors.noFields.heading",
@@ -30,14 +31,18 @@ const messages = defineMessages({
     }
 });
 
-class FieldsAccordion extends BaseComponent {
+class Accordion extends BaseComponent {
 
     /*
      *
      */
-    // shouldComponentUpdate(newProps) {
-    //     return !isEqual(newProps, this.props);
-    // }
+    _moveFieldTo = (key) => {
+        return (evt) => {
+            context.executeAction(ShiftFieldPositionAction, {
+                after: key
+            });
+        };
+    }
 
     render() {
         var props = this.props,
@@ -60,7 +65,7 @@ class FieldsAccordion extends BaseComponent {
                                                 <i className="dropdown icon"></i>
                                                 <div className="small ui right pointing label">
                                                     {(thisField.mutable === false) ? (
-                                                            <i className="lock icon"></i>
+                                                        <i className="lock icon"></i>
                                                     ) : null}
                                                     {key}
                                                     <div className="detail">
@@ -78,7 +83,14 @@ class FieldsAccordion extends BaseComponent {
                                                 _key={key}
                                                 field={thisField} />
                                         </div>
-                                    )
+                                    ),
+                                    (() => {
+                                        if(props.fieldShiftContext && props.fieldShiftContext.hasOwnProperty("field")) {
+                                            return (
+                                                <div className="ui divider" onClick={this._moveFieldTo(key)} key={key + "-divider"}></div>
+                                            );
+                                        } else return null;
+                                    })()
                                 ];
                             })
                         )
@@ -102,4 +114,14 @@ class FieldsAccordion extends BaseComponent {
     }
 }
 
-export default injectIntl(FieldsAccordion);
+Accordion = connectToStores(
+    Accordion,
+    [StageStore],
+    function(context, props) {
+        return {
+            fieldShiftContext: context.getStore(StageStore).getFieldShiftContext()
+        };
+    }
+)
+
+export default injectIntl(Accordion);

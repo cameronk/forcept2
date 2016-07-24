@@ -6,14 +6,13 @@
 import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
-import isEqual from 'lodash/isEqual';
 
-import { UpdateCacheAction } from '../../flux/Stage/StageActions';
-import OptionList from './Setting/OptionList';
-import SettingText      from './Setting/Text';
-import SettingCheckbox  from './Setting/Checkbox';
-import SettingSelect    from './Setting/Select';
-import BaseComponent, { grabContext } from '../Base';
+import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
+import OptionList from '../Setting/OptionList';
+import SettingText      from '../Setting/Text';
+import SettingCheckbox  from '../Setting/Checkbox';
+import SettingSelect    from '../Setting/Select';
+import BaseComponent, { grabContext } from '../../Base';
 
 const __debug = debug('forcept:components:Console:FieldSettings');
 

@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/Field.jsx
+ * forcept - components/Console/StoreDebugger.jsx
  * @author Azuru Technology
  */
 
@@ -11,19 +11,18 @@ import isEqual from 'lodash/isEqual';
 
 import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../Base';
-import FieldSettings from './FieldSettings';
 
 const stores  = {
     AppStore:          ["getFlash"],
     VisitStore:        ["getStatus", "getVisit", "getList", "getRecentData", "isModified", "getCurrentTab", "getDestination"],
     SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
-    StageStore:        ["getStages"],
+    StageStore:        ["getStages", "getFieldShiftContext"],
     PatientStore:      ["getPatients"],
     MedicationStore:   ["getCache", "getMedications"],
     PrescriptionStore: ["getSets"]
 }
 
-const __debug = debug('forcept:components:Console:Field');
+const __debug = debug('forcept:components:Console:StoreDebugger');
 
 class StoreDebugger extends BaseComponent {
 

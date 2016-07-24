@@ -12,11 +12,13 @@ export default keyMirror({
      */
 
     /// Top-level application loading state
-        'APP_LOADING': null,
+    'APP_LOADING': null,
+
     /// Top-level application status
-        'APP_SET_STATUS': null,
+    'APP_SET_STATUS': null,
+
     /// Set flash data for application
-        'APP_FLASH': null,
+    'APP_FLASH': null,
 
     /** ============================= **/
 
@@ -25,24 +27,29 @@ export default keyMirror({
      */
 
     /// Console-wide status
-        'CONSOLE_SET_STATUS': null,
+    'CONSOLE_SET_STATUS': null,
 
     /** ============================= **/
 
     /*
      * Pharmacy
      */
+
     ///
-        'PHARMACY_SET_STATUS': null,
-        'PHARMACY_MEDS_CACHE_UPDATE': null,
-        'PHARMACY_MEDS_CACHE_MODIFIED': null,
-        'PHARMACY_MEDS_CACHE_CLEAR': null,
-        'PHARMACY_MEDS_UPDATE': null,
-        'PHARMACY_MEDS_LOADED': null,
+    'PHARMACY_SET_STATUS': null,
+    'PHARMACY_MEDS_CACHE_UPDATE': null,
+    'PHARMACY_MEDS_CACHE_MODIFIED': null,
+    'PHARMACY_MEDS_CACHE_CLEAR': null,
+    'PHARMACY_MEDS_UPDATE': null,
+    'PHARMACY_MEDS_LOADED': null,
+
+    /** ============================= **/
 
     ///
     'PRESCRIPTION_SET_UPDATE': null,
     'PRESCRIPTION_UPDATE_STATUS': null,
+
+    /** ============================= **/
 
     /// Authentication
     'AUTH_LOGOUT': null,
@@ -50,15 +57,21 @@ export default keyMirror({
     'AUTH_SUCCESS': null,
     'AUTH_CREDENTIAL_CHANGE': null,
 
+    /** ============================= **/
+
     /// Stages
     'STAGES_LOAD': null,
     'STAGES_LOADED': null,
     'STAGES_LOAD_ERROR': null,
     'STAGES_SET_OPTION_SHIFT_CONTEXT': null,
+    'STAGES_SET_FIELD_SHIFT_CONTEXT': null,
+    'STAGES_HARDSET_CACHE_FIELDS': null,
     'STAGES_UPDATE_CACHE': null,
     'STAGES_CLEAR_CACHE': null,
     'STAGES_CACHE_MODIFIED': null,
     'STAGES_SET_STATUS': null,
+
+    /** ============================= **/
 
     /// Displays
     'DISPLAY_GROUP_UPDATE': null,
@@ -67,6 +80,8 @@ export default keyMirror({
     'DISPLAY_GROUP_CACHE_MODIFIED': null,
     'DISPLAY_ADD_LOADING_CONTEXT': null,
     'DISPLAY_REMOVE_LOADING_CONTEXT': null,
+
+    /** ============================= **/
 
     /// Visit
     'VISIT_SET_CURRENT_TAB': null,
@@ -80,9 +95,13 @@ export default keyMirror({
     'VISIT_LIST_CLEAR': null,
     'VISIT_LIST_UPDATE': null,
 
+    /** ============================= **/
+
     /// Patient
     'PATIENT_UPDATE': null,
     'PATIENT_CLEAR_ALL': null,
+
+    /** ============================= **/
 
     ///
     'RESOURCES_UPDATE_STATE': null,
@@ -91,9 +110,13 @@ export default keyMirror({
     'RESOURCES_SET_UPLOAD_PROGRESS': null,
     'RESOURCES_PROCESS_FIELD': null,
 
+    /** ============================= **/
+
     ///
     'USERS_UPDATE': null,
     'USERS_UDPATE_NURSERY': null,
+
+    /** ============================= **/
 
     /// Search
     'SEARCH_SET_CONTEXT': null,

@@ -11,7 +11,7 @@ import debug from "debug";
 import StageStore from '../../../flux/Stage/StageStore';
 import ConsoleStore from '../../../flux/Console/ConsoleStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
-import StageBuilder    from '../../../components/Console/StageBuilder';
+import StageBuilder    from '../../../components/Console/Stage/Builder';
 import SideMenu      from '../../../components/Console/SideMenu';
 import MessageScaffold from '../../../components/Scaffold/Message';
 import BaseComponent, { grabContext } from '../../../components/Base';

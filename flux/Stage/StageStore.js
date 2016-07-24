@@ -18,12 +18,15 @@ class StageStore extends BaseStore {
     static storeName = 'StageStore'
     static handlers = {
         [Actions.STAGES_LOADED]: 'handleStagesLoaded',
-        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
         [Actions.STAGES_LOAD_ERROR]: 'handleStageLoadError',
         [Actions.STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
+        [Actions.STAGES_SET_FIELD_SHIFT_CONTEXT]: 'setFieldShiftContext',
+        [Actions.STAGES_SET_STATUS]: 'handleSetStatus',
+
+        [Actions.STAGES_HARDSET_CACHE_FIELDS]: 'hardsetCacheFields',
+        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
         [Actions.STAGES_CLEAR_CACHE]: 'handleClearCache',
         [Actions.STAGES_CACHE_MODIFIED]: 'handleCacheWasModified',
-        [Actions.STAGES_SET_STATUS]: 'handleSetStatus'
     }
 
     /**
@@ -37,6 +40,7 @@ class StageStore extends BaseStore {
     setInitialState() {
         this.error  = false;
         this.optionShiftContext = false;
+        this.fieldShiftContext  = false;
         this.stages = {};
         this.handleClearCache();
     }
@@ -49,6 +53,29 @@ class StageStore extends BaseStore {
     getOptionShiftContext() {
         return this.optionShiftContext;
     }
+
+    /** =========================== **/
+
+    /*
+     * Shift contexts are small objects with data about
+     * what we're shifting. No need to compare to current data.
+     * Just set and emit change.
+     */
+    setFieldShiftContext = (context) => {
+        this.fieldShiftContext = context;
+        this.emitChange();
+    }
+
+    getFieldShiftContext = () => this.fieldShiftContext;
+
+    /** =========================== **/
+
+    hardsetCacheFields = (fields) => {
+        this.cache.fields = fields;
+        this.emitChange();
+    }
+
+    /** =========================== **/
 
     /**
      * Event handlers
@@ -68,6 +95,8 @@ class StageStore extends BaseStore {
     getError() {
         return this.error;
     }
+
+    /** =========================== **/
 
     /*
      * The cache was modified.
