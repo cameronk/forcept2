@@ -9,6 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import flatten from 'lodash/flatten';
 
+import { BuildDOMClass } from '../../../utils/CSSClassHelper';
 import StageStore from '../../../flux/Stage/StageStore';
 import { ShiftFieldPositionAction } from '../../../flux/Console/StageBuilderActions';
 import BaseComponent, { grabContext } from '../../Base';
@@ -36,10 +37,10 @@ class Accordion extends BaseComponent {
     /*
      *
      */
-    _moveFieldTo = (key) => {
+    _moveFieldTo = (index) => {
         return (evt) => {
             context.executeAction(ShiftFieldPositionAction, {
-                after: key
+                index: index
             });
         };
     }
@@ -49,7 +50,8 @@ class Accordion extends BaseComponent {
             { fields } = props,
             accordionDOM;
 
-        var fieldKeys = fields ? Object.keys(fields) : [];
+        var fieldKeys = fields ? Object.keys(fields) : [],
+            isShifting = props.fieldShiftContext && props.fieldShiftContext.hasOwnProperty("field");
 
         if(fieldKeys.length > 0) {
             accordionDOM = (
@@ -59,10 +61,21 @@ class Accordion extends BaseComponent {
                             fieldKeys.map((key, i) => {
                                 let thisField = fields[key];
                                 return [
+                                    (() => {
+                                        if(isShifting && i === 0) {
+                                            return (
+                                                <div className="ui horizontal divider" onClick={this._moveFieldTo(i)} key={key + "-divider-top"}>
+                                                    <a href="javascript:void(0);">Move "{fields[props.fieldShiftContext.field].name}" to front</a>
+                                                </div>
+                                            );
+                                        } else return null;
+                                    })(),
                                     (
-                                        <div className="title" key={key + "-title"}>
+                                        <div className={BuildDOMClass({ title: !isShifting })} key={key + "-title"}>
                                             <div className="ui medium header">
-                                                <i className="dropdown icon"></i>
+                                                {!isShifting ? (
+                                                    <i className="dropdown icon"></i>
+                                                ) : null}
                                                 <div className="small ui right pointing label">
                                                     {(thisField.mutable === false) ? (
                                                         <i className="lock icon"></i>
@@ -77,17 +90,23 @@ class Accordion extends BaseComponent {
                                             </div>
                                         </div>
                                     ),
-                                    (
-                                        <div className="content" key={key + "-content"}>
-                                            <Field
-                                                _key={key}
-                                                field={thisField} />
-                                        </div>
-                                    ),
                                     (() => {
-                                        if(props.fieldShiftContext && props.fieldShiftContext.hasOwnProperty("field")) {
+                                        if(!isShifting) {
                                             return (
-                                                <div className="ui divider" onClick={this._moveFieldTo(key)} key={key + "-divider"}></div>
+                                                <div className="content" key={key + "-content"}>
+                                                    <Field
+                                                        _key={key}
+                                                        field={thisField} />
+                                                </div>
+                                            );
+                                        } else return null;
+                                    })(),
+                                    (() => {
+                                        if(isShifting) {
+                                            return (
+                                                <div className="ui horizontal divider" onClick={this._moveFieldTo(i + 1)} key={key + "-divider"}>
+                                                    <a href="javascript:void(0);">Move "{fields[props.fieldShiftContext.field].name}" here</a>
+                                                </div>
                                             );
                                         } else return null;
                                     })()

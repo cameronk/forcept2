@@ -72,6 +72,7 @@ class StageStore extends BaseStore {
 
     hardsetCacheFields = (fields) => {
         this.cache.fields = fields;
+        this.cacheModified = true;
         this.emitChange();
     }
 

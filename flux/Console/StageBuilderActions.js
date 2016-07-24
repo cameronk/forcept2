@@ -29,7 +29,7 @@ export function SetFieldShiftContext(context, payload, done) {
 /*
  *
  */
-export function ShiftFieldPositionAction(context, { after }, done) {
+export function ShiftFieldPositionAction(context, { index }, done) {
 
     var stageStore = context.getStore(StageStore),
         fieldBeingMoved = stageStore.getFieldShiftContext().field,
@@ -37,13 +37,19 @@ export function ShiftFieldPositionAction(context, { after }, done) {
         { fields } = cache,
         fieldKeys = Object.keys(fields);
 
+    __debug("Field keys (before)");
+    __debug(fieldKeys);
+
     /// Remove fieldBeingMoved from fieldKeys temporarily
     let removalIndex = fieldKeys.indexOf(fieldBeingMoved);
     fieldKeys.splice(removalIndex, 1);
 
     /// Now find the insertion index and splice in the shifting field key.
-    let insertionIndex = fieldKeys.indexOf(after);
+    let insertionIndex = index;
     fieldKeys.splice(insertionIndex, 0, fieldBeingMoved);
+
+    __debug("Field keys (after)");
+    __debug(fieldKeys);
 
     /// Gather items into object based on array order we just created.
     var newFields = {};
@@ -56,6 +62,6 @@ export function ShiftFieldPositionAction(context, { after }, done) {
     /// Hard overwrite the fields in our cache.
     context.dispatch(Actions.STAGES_HARDSET_CACHE_FIELDS, newFields);
 
-    done();
+    context.executeAction(SetFieldShiftContext, false, done);
 
 }
