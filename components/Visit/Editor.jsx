@@ -14,6 +14,7 @@ import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
 import FileField from '../Fields/File';
 import PrescriberField from '../Fields/Prescriber';
+import TeethScreenerField from '../Fields/TeethScreener';
 
 const __debug = debug('forcept:components:Visit:Editor');
 
@@ -120,6 +121,13 @@ class Editor extends BaseComponent {
                             fieldDOM = (
                                 <PrescriberField
                                     visitID={visit.id}
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
+                            break;
+                        case "teeth-screener":
+                            fieldDOM = (
+                                <TeethScreenerField
                                     {...thisFieldProps}
                                     {...baseFieldProps} />
                             );

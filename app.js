@@ -218,6 +218,12 @@ app.plug({
                 description: "Prescribe medication",
                 storageMethod: "json",
                 defaultSettings: {}
+            },
+            "teeth-screener": {
+                name: "Teeth Screener",
+                description: "Screen patient teeth",
+                storageMethod: "json",
+                defaultSettings: {}
             }
         };
         var displayTypes = {

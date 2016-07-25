@@ -1,0 +1,183 @@
+/**
+ *
+ */
+
+@import "../Mixins.less";
+
+#FORCEPT-Field-TeethScreener {
+
+    .quadrants {
+
+        & > .row {
+            display: flex;
+            flex-wrap: wrap;
+
+            &:first-child {
+                & > .quadrant > .teeth > div {
+
+                    &.tooth-8 {
+                    }
+
+                }
+            }
+
+            &:last-child {
+
+            }
+
+            /*
+             * Downsize for mobile
+             */
+            & > .quadrant {
+                .on-mobile({
+                    height: 200px !important;
+                    width: 100% !important;
+                })
+            }
+
+            /*
+             *
+             */
+            & > .quadrant {
+
+                width: 50%;
+                min-width: 240px;
+                position: relative;
+                border: 1px solid #ccc;
+                padding: 10px 0;
+
+                /*
+                 * Teeth within each quadrant
+                 */
+                & > .teeth {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 0 5px;
+
+                    /*
+                     * Tooth
+                     */
+                    & > div {
+                        position: relative;
+                        text-align: center;
+                        border-radius: 50%;
+                        border: 2px dashed #aaa;
+                    }
+
+                    /*
+                     * Change teeth size based on viewing mode
+                     */
+                    & > div {
+                        .on-desktop({
+                            line-height: 33px;
+                            width: 37px;
+                            height: 37px;
+                        });
+                        .on-tablet({
+                            line-height: 28px;
+                            width: 32px;
+                            height: 32px;
+                        });
+                        .on-mobile({
+                            line-height: 23px;
+                            width: 27px;
+                            height: 27px;
+                        });
+                    }
+
+                    & > .ui.dropdown > .menu {
+                        margin-top: 0.85rem;
+                    }
+
+                    & > .ui.dropdown > .menu {
+                        .on-desktop({
+                            left: -14px;
+                        });
+                        .on-tablet({
+                            left: -17px
+                        });
+                        .on-mobile({
+                            left: -18px
+                        });
+                    }
+                }
+
+                /** ========================= **/
+
+                /*
+                 * Number within each quadrant
+                 */
+                & > .number {
+                    padding: 5px;
+                    font-size: 24px;
+                    font-weight: bolder;
+                }
+
+                /** ========================= **/
+
+                /*
+                 * Quadrant 1 - Top left
+                 */
+                &.quad-1 {
+
+                    border-left: none;
+                    border-top: none;
+
+                    & > .number {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                    }
+                }
+
+                /*
+                 * Quadrant 2 - Top right
+                 */
+                &.quad-2 {
+
+                    border-right: none;
+                    border-top: none;
+
+                    & > .number {
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                    }
+                }
+
+                /*
+                 * Quadrant 3 - bottom right
+                 */
+                &.quad-3 {
+
+                    border-right: none;
+                    border-bottom: none;
+
+                    & > .number {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                    }
+                }
+
+                /*
+                 * Quadrant 4 - bottom left
+                 */
+                &.quad-4 {
+
+                    border-left: none;
+                    border-bottom: none;
+
+                    & > .number {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                    }
+                }
+
+            }
+
+        }
+    }
+
+}
