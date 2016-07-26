@@ -8,6 +8,7 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
+import { BuildDOMClass } from '../../../utils/CSSClassHelper';
 import StageStore from '../../../flux/Stage/StageStore';
 import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
 import { SetOptionShiftContext } from '../../../flux/Console/StageBuilderActions';
@@ -23,6 +24,9 @@ class OptionList extends BaseComponent {
         super();
     }
 
+    componentDidMount = () => {
+        $("#FORCEPT-OptionsContainer .ui.dropdown").dropdown();
+    }
 
     _setShiftContext = (option) => {
         return (evt) => {
@@ -106,6 +110,24 @@ class OptionList extends BaseComponent {
         };
     }
 
+    _updateOptionColor = (key) => {
+        return (evt) => {
+            this.context.executeAction(UpdateCacheAction, {
+                fields: {
+                    [this.props.field]: {
+                        settings: {
+                            options: {
+                                [key]: {
+                                    color: evt.target.value
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+    }
+
     _deleteOption = (key) => {
         return (evt) => {
             this.context.executeAction(UpdateCacheAction, {
@@ -122,11 +144,15 @@ class OptionList extends BaseComponent {
         };
     };
 
+    /*
+     *
+     */
     render() {
-        let props = this.props;
-        let optionKeys = Object.keys(props.options);
-        let optionsDOM;
-        let shifting = (props.optionShiftContext && props.optionShiftContext.field === props.field);
+
+        var { props } = this,
+            optionKeys = Object.keys(props.options),
+            shifting = (props.optionShiftContext && props.optionShiftContext.field === props.field),
+            optionsDOM, colorDOM;
 
         if(optionKeys.length > 0) {
             if(shifting) {
@@ -134,7 +160,7 @@ class OptionList extends BaseComponent {
                     let thisOption = props.options[option];
                     let disabled = option !== props.optionShiftContext.option;
                     return (
-                        <div className="ui small labeled right left action input" key={option}>
+                        <div className="ui small right left action input" key={option}>
                             <button className="ui icon button"
                                 onClick={this._shift(option)}>
                                 <i className={(disabled ? "right chevron" : "sidebar") + " button icon"}></i>
@@ -153,7 +179,7 @@ class OptionList extends BaseComponent {
                 optionsDOM = optionKeys.map((option, index) => {
                     let thisOption = props.options[option];
                     return (
-                        <div className="ui small labeled right left action input" key={option}>
+                        <div className="ui small right left action input" key={option}>
                             <button className="ui icon button"
                                 onClick={this._setShiftContext(option)}>
                                 <i className="sidebar icon"></i>
@@ -162,6 +188,30 @@ class OptionList extends BaseComponent {
                                 placeholder="Type an option value here"
                                 value={thisOption.value}
                                 onChange={this._updateOption(option)} />
+                            {(() => {
+                                if(props.colors) {
+                                    // return (
+                                    //     <div className="ui compact selection dropdown">
+                                    //         <div className="text"><em>Pick a color</em></div>
+                                    //         <i className="dropdown icon"></i>
+                                    //         <div className="menu">
+                                    //             <div className={BuildDOMClass("item", { "active selected": thisOption.color && thisOption.color === "DB2828" || false })} onClick={this._updateOptionColor(option, "DB2828")}>
+                                    //                 <span className="ui mini red circular label"></span> Red
+                                    //             </div>
+                                    //         </div>
+                                    //     </div>
+                                    // )
+
+                                    var color = thisOption.color || "";
+
+                                    return (
+                                        <select className="ui compact selection dropdown" value={color} onChange={this._updateOptionColor(option)}>
+                                            <option value="">Pick a color</option>
+                                            <option value="DB2828">Red</option>
+                                        </select>
+                                    )
+                                }
+                            })()}
                             <button className="ui red icon button" onClick={this._deleteOption(option)}>
                                 <i className="close icon"></i>
                             </button>
@@ -180,7 +230,7 @@ class OptionList extends BaseComponent {
         }
 
         return (
-            <div>
+            <div id="FORCEPT-OptionsContainer">
                 <div className="ui small dividing header">
                     Options ({optionKeys.length || 0})
                 </div>

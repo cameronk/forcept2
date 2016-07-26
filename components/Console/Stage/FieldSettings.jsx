@@ -172,6 +172,28 @@ class FieldSettings extends BaseComponent {
                     </div>
                 );
                 break;
+            case "teeth-screener":
+                var settingsDOM = (
+                    <div className="Controls">
+                        {settingsHeader}
+                        <SettingCheckbox
+                            field={props._key}
+                            id="FieldSettings-multiple"
+                            label="Allow multiple selections"
+                            checked={settings.multiple || false}
+                            setting="multiple" />
+                    </div>
+                );
+                return (
+                    <div className="FieldSettings">
+                        {settingsDOM}
+                        <OptionList
+                            field={props._key}
+                            colors={true}
+                            options={settings.options || {}} />
+                    </div>
+                );
+                break;
             default:
                 return (
                     <div className="ui fluid error message">

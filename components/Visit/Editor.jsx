@@ -32,6 +32,7 @@ class Editor extends BaseComponent {
             { stage, visit, patient } = props,
             { fields } = stage,
             fieldKeys = Object.keys(fields),
+            availableFields = this.context.getFieldTypes(),
             baseFieldProps = {
                 stageID:    stage.id,
                 patientID:  patient.id
@@ -48,7 +49,11 @@ class Editor extends BaseComponent {
                         key:    fieldID,
                         fieldID: fieldID,
                         field:  thisField,
-                        value:  patient.hasOwnProperty(fieldID) && patient[fieldID] !== null ? patient[fieldID] : ""
+                        value:  patient.hasOwnProperty(fieldID) && patient[fieldID] !== null
+                                ? patient[fieldID]
+                                : availableFields.hasOwnProperty(thisField.type)
+                                    ? availableFields[thisField.type].defaultValue
+                                    : ""
                     };
 
                     switch(thisField.type) {

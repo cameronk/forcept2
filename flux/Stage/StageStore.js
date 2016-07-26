@@ -195,15 +195,24 @@ class StageStore extends BaseStore {
                                                         this.cache.fields[f]['settings']['options'] = theseOptions;
                                                         __debug(" |--|--|--|==> options overwritten");
                                                     } else {
+
                                                         var singleOptionKey = theseKeys[0];
                                                         var thisOption = theseOptions[singleOptionKey];
+
+                                                        if(!this.cache.fields[f]['settings']['options'].hasOwnProperty(singleOptionKey)) {
+                                                            this.cache.fields[f]['settings']['options'][singleOptionKey] = {};
+                                                        }
 
                                                         if(thisOption === null) {
                                                             __debug(" |--|--|--|==> #%s removed", singleOptionKey);
                                                             delete this.cache.fields[f]['settings']['options'][singleOptionKey];
                                                         } else {
                                                             __debug(" |--|--|--|==> #%s = '%s'", singleOptionKey, thisOption.value || '');
-                                                            this.cache.fields[f]['settings']['options'][singleOptionKey] = thisOption;
+
+                                                            for(var thisOptionProperty in thisOption) {
+                                                                this.cache.fields[f]['settings']['options'][singleOptionKey][thisOptionProperty] = thisOption[thisOptionProperty];
+                                                            }
+
                                                         }
                                                     }
                                                 }

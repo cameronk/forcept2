@@ -156,19 +156,22 @@ app.plug({
                 name: "Text",
                 description: "",
                 storageMethod: "text",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: ""
             },
             "textarea": {
                 name: "Textarea",
                 description: "",
                 storageMethod: "text",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: ""
             },
             "number": {
                 name: "Number",
                 description: "",
                 storageMethod: "text",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: ""
             },
             "date": {
                 name: "Date",
@@ -176,13 +179,15 @@ app.plug({
                 storageMethod: "text",
                 defaultSettings: {
                     useBroadSelector: false
-                }
+                },
+                defaultValue: ""
             },
             "radio": {
                 name: "Radio",
                 description: "Select a single option with a radio field or buttons",
                 storageMethod: "text",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: ""
             },
             "select": {
                 name: "Select",
@@ -191,7 +196,8 @@ app.plug({
                 defaultSettings: {
                     options: {},
                     allowCustomData: false
-                }
+                },
+                defaultValue: []
             },
             "file": {
                 name: "File",
@@ -199,31 +205,29 @@ app.plug({
                 storageMethod: "json",
                 defaultSettings: {
                     accept: []
-                }
+                },
+                defaultValue: []
             },
             "header": {
                 name: "Header",
                 description: "Group fields with a header",
                 storageMethod: "none",
-                defaultSettings: {}
-            },
-            "file": {
-                name: "File",
-                description: "",
-                storageMethod: "json",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: false
             },
             "prescriber": {
                 name: "Prescriber",
                 description: "Prescribe medication",
                 storageMethod: "json",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: ""
             },
             "teeth-screener": {
                 name: "Teeth Screener",
                 description: "Screen patient teeth",
                 storageMethod: "json",
-                defaultSettings: {}
+                defaultSettings: {},
+                defaultValue: {}
             }
         };
         var displayTypes = {

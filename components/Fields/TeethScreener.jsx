@@ -19,6 +19,11 @@ if(process.env.BROWSER) {
     require('../../styles/fields/TeethScreener.less');
 }
 
+/*
+ *
+ *
+ * { [quadrant]: { tooth: ["option"], tooth2: ["option1", "option2"] }}
+ */
 class TeethScreenerField extends BaseComponent {
 
     static contextTypes = grabContext(['executeAction'])
@@ -26,55 +31,249 @@ class TeethScreenerField extends BaseComponent {
     /**
      *
      */
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        var { settings } = props.field;
+        this.colorMap = {};
+
+        if(settings.hasOwnProperty("options")) {
+            for(var optionKey in settings.options) {
+
+                let thisOption = settings.options[optionKey];
+                if(thisOption.hasOwnProperty("color") && thisOption.color && thisOption.color.length > 0) {
+                    this.colorMap[thisOption.value] = thisOption.color;
+                }
+
+            }
+        }
     }
 
     componentDidMount = () => {
-        $("#FORCEPT-Field-TeethScreener .teeth > .ui.dropdown").dropdown();
+        $("#FORCEPT-Field-TeethScreener .teeth > .ui.dropdown").dropdown({
+            action: "nothing"
+        });
     }
 
     /**
      *
      */
-    _change = (evt) => {
-        var { patientID, stageID, fieldID } = this.props;
-        this.context.executeAction(UpdatePatientAction, {
-            [patientID]: {
-                [stageID]: {
-                    [fieldID]: evt.target.value
-                }
+    _change = (quadrant, number, option, state) => {
+        return (evt) => {
+
+            var { patientID, stageID, fieldID, field, value } = this.props;
+            var allowMultiple = (field.settings.multiple || false);
+
+            __debug("#%s-%s -> %s = %s", quadrant, number, option, state);
+            __debug(typeof value);
+
+            /*
+             * Create the quadrant if necessary.
+             */
+            if(!value.hasOwnProperty(quadrant)) {
+                value[quadrant] = {};
             }
-        });
+
+            /*
+             * Create the number if necessary.
+             */
+            if(!value[quadrant].hasOwnProperty(number)) {
+                value[quadrant][number] = [];
+            }
+
+
+            /*
+             * State === 1 ---> check the option
+             */
+            if(state === 1) {
+
+                /*
+                 * If we don't allow  multiple selections, clear the array
+                 * before pushing.
+                 */
+                if(!allowMultiple && value[quadrant][number].length !== 0) {
+                    value[quadrant][number] = [ option ];
+                }
+
+                /*
+                 * Only push the value if it doesn't yet exist
+                 */
+                else if(value[quadrant][number].indexOf(option) === -1) {
+                    value[quadrant][number].push(option);
+                }
+
+            }
+
+            /*
+             * State === 0 ---> uncheck the option
+             */
+            else if(state === 0) {
+
+                var optIndex = value[quadrant][number].indexOf(option);
+
+                /*
+                 * Only remove the value if it already exists
+                 */
+                if(optIndex !== -1) {
+                    value[quadrant][number].splice(optIndex, 1);
+                }
+
+            }
+
+            __debug("Value before push: %j", value);
+
+            this.context.executeAction(UpdatePatientAction, {
+                [patientID]: {
+                    [stageID]: {
+                        [fieldID]: value
+                    }
+                }
+            });
+
+        }
     }
 
-    buildTeeth = ({ descending, pushLeft, upsideDown=false }) => {
+    /*
+     *
+     */
+    isToothAvailable = (quadrant, number) => {
 
-        var arr, toothSpacing = 20;
+        var { value } = this.props;
 
-        if(descending === true) {
-            arr = rangeRight(1, 9);
+        if(!value.hasOwnProperty(quadrant)) return false;
+        if(!value[quadrant].hasOwnProperty(number)) return false;
+
+        return true;
+    }
+
+    /*
+     *
+     */
+    doesToothHaveSelections = (quadrant, number) => {
+
+        var { value } = this.props;
+
+        if(this.isToothAvailable(quadrant, number)) {
+            return value[quadrant][number].length > 0;
+        } else return false;
+
+    }
+
+    /*
+     *
+     */
+    isOptionSelected = (quadrant, number, option) => {
+
+        var { value } = this.props;
+
+        if(this.isToothAvailable(quadrant, number)) {
+            return value[quadrant][number].indexOf(option) !== -1;
+        } else return false;
+
+    }
+
+    /*
+     *
+     */
+    buildOptions = (quadrant, number) => {
+
+        var { settings } = this.props.field,
+            allowMultiple = settings.hasOwnProperty("multiple") ? settings.multiple : false;
+
+        if(settings.hasOwnProperty("options")) {
+            return Object.keys(settings.options).map((optionKey, index) => {
+
+                var thisOption = settings.options[optionKey];
+                var isSelected = this.isOptionSelected(quadrant, number, thisOption.value);
+
+                if(thisOption.value && thisOption.value.length > 0) {
+                    return (
+                        <div className="item" key={index} onClick={this._change(quadrant, number, thisOption.value, isSelected ? 0 : 1)}>
+                            {(() => {
+                                if(allowMultiple) {
+                                    if(isSelected) {
+                                        return (
+                                            <i className="checkmark box icon"></i>
+                                        );
+                                    } else {
+                                        return (
+                                            <i className="square outline icon"></i>
+                                        )
+                                    }
+                                } else {
+                                    if(isSelected) {
+                                        return (
+                                            <i className="selected radio icon"></i>
+                                        );
+                                    } else {
+                                        return (
+                                            <i className="radio icon"></i>
+                                        )
+                                    }
+                                }
+                            })()}
+                            {thisOption.value}
+                        </div>
+                    );
+                };
+            });
         } else {
-            arr = range(1, 9);
+            return (
+                <div className="item">
+                    <em>No options defined.</em>
+                </div>
+            );
         }
+    }
+
+    /*
+     *
+     */
+    buildTeeth = ({ quadrant }) => {
+
+        var { value } = this.props,
+            arr = range(1, 9),
+            toothSpacing = 20,
+            isLeft     = quadrant == 1 || quadrant == 4,
+            isRight    = quadrant == 2 || quadrant == 3,
+            upsideDown = quadrant == 3 || quadrant == 4;
 
         return (
-            <div className="teeth">
+            <div className={BuildDOMClass("teeth", { left: isLeft, right: isRight })}>
                 {arr.map((number, index) => {
+
                     let angle = (Math.PI * index) / (2 * 7);
-                    let margin = pushLeft
-                                    ? (toothSpacing * (8 - index) * Math.pow(Math.cos(angle), 2))
-                                    : (toothSpacing * (1 + index) * Math.pow(Math.sin(angle), 2));
+                    let isSelected = this.doesToothHaveSelections(quadrant, number);
 
-                    margin = upsideDown ? ((20 * 8) - margin) : margin;
+                    let margin = toothSpacing * (1 + index) * Math.pow(Math.sin(angle), 2);
+                        margin = upsideDown ? ((20 * 8) - margin) : margin;
 
-                    __debug("#%s at %s (%s) has margin %s", number, index, angle, margin);
+                    var backgroundColor = false;
+
+                    if(isSelected) {
+                        var i = 0, theseSelections = value[quadrant][number];
+                        while(backgroundColor === false && i < theseSelections.length) {
+                            let thisSelection = theseSelections[i];
+                            backgroundColor = this.colorMap.hasOwnProperty(thisSelection) ? "#" + this.colorMap[thisSelection] : false;
+                            i++;
+                        }
+                    }
 
                     return (
-                        <div className={"ui pointing dropdown tooth-" + number} style={{ marginTop: margin }} key={number}>
-                            <div className="text">{number}</div>
+                        <div className={BuildDOMClass("ui floating dropdown tooth-" + number)}
+                            data-selected={isSelected}
+                            style={{
+                                marginTop: margin,
+                                backgroundColor: backgroundColor
+                            }} key={number}>
+                            {number}
                             <div className="menu">
-                                <div className="item">Test</div>
+                                <div className="header">
+                                    <i className="tag icon"></i>
+                                    {quadrant}-{number}
+                                </div>
+                                <div className="divider"></div>
+                                {this.buildOptions(quadrant, number)}
                             </div>
                         </div>
                     );
@@ -88,6 +287,7 @@ class TeethScreenerField extends BaseComponent {
      *
      */
     render() {
+
         var props = this.props,
             { field, value } = props;
 
@@ -98,6 +298,7 @@ class TeethScreenerField extends BaseComponent {
                     <div className="row">
                         <div className="quadrant quad-1">
                             {this.buildTeeth({
+                                quadrant: 1,
                                 descending: true,
                                 pushLeft: true
                             })}
@@ -105,6 +306,7 @@ class TeethScreenerField extends BaseComponent {
                         </div>
                         <div className="quadrant quad-2">
                             {this.buildTeeth({
+                                quadrant: 2,
                                 descending: false,
                                 pushLeft: false
                             })}
@@ -114,6 +316,7 @@ class TeethScreenerField extends BaseComponent {
                     <div className="row">
                         <div className="quadrant quad-4">
                             {this.buildTeeth({
+                                quadrant: 3,
                                 descending: true,
                                 pushLeft: true,
                                 upsideDown: true
@@ -122,6 +325,7 @@ class TeethScreenerField extends BaseComponent {
                         </div>
                         <div className="quadrant quad-3">
                             {this.buildTeeth({
+                                quadrant: 4,
                                 descending: false,
                                 pushLeft: false,
                                 upsideDown: true
