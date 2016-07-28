@@ -5,6 +5,7 @@
 
 import debug from 'debug';
 import ModelHelper from './helper';
+import Manifest from '../flux/manifest';
 
 const __debug = debug('forcept:database:StageDefinition');
 
@@ -137,13 +138,11 @@ export default function UpdateStageDefinition(stage, db) {
          * Add a definition for this field.
          */
         fields[field] = ((id, type) => {
-            switch(type) {
 
-                /*
-                 *
-                 */
-                case "select":
-                case "file":
+            switch(Manifest.Fields[type].storageMethod) {
+
+                /// Handle field as JSON
+                case "json":
                     __debug("|==> JSON");
                     return {
                         type: db.Sequelize.TEXT,
@@ -159,17 +158,22 @@ export default function UpdateStageDefinition(stage, db) {
                     };
                     break;
 
-                /*
-                 * Fields stored as raw text
-                 */
-                default:
+                /// Handle field as text
+                case "text":
                     __debug("|==> text")
                     return {
                         type: db.Sequelize.TEXT,
                         allowNull: true
                     };
                     break;
+
+                /// Don't handle field at all
+                case "none":
+                default:
+
+                    break;
             }
+
         })(field, thisField.type);
 
     }

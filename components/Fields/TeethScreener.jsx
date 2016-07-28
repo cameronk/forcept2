@@ -49,6 +49,9 @@ class TeethScreenerField extends BaseComponent {
         }
     }
 
+    /**
+     *
+     */
     componentDidMount = () => {
         $("#FORCEPT-Field-TeethScreener .teeth > .ui.dropdown").dropdown({
             action: "nothing"
@@ -133,7 +136,7 @@ class TeethScreenerField extends BaseComponent {
         }
     }
 
-    /*
+    /**
      *
      */
     isToothAvailable = (quadrant, number) => {
@@ -146,7 +149,7 @@ class TeethScreenerField extends BaseComponent {
         return true;
     }
 
-    /*
+    /**
      *
      */
     doesToothHaveSelections = (quadrant, number) => {
@@ -159,7 +162,7 @@ class TeethScreenerField extends BaseComponent {
 
     }
 
-    /*
+    /**
      *
      */
     isOptionSelected = (quadrant, number, option) => {
@@ -172,7 +175,7 @@ class TeethScreenerField extends BaseComponent {
 
     }
 
-    /*
+    /**
      *
      */
     buildOptions = (quadrant, number) => {
@@ -298,17 +301,13 @@ class TeethScreenerField extends BaseComponent {
                     <div className="row">
                         <div className="quadrant quad-1">
                             {this.buildTeeth({
-                                quadrant: 1,
-                                descending: true,
-                                pushLeft: true
+                                quadrant: 1
                             })}
                             <span className="number">1</span>
                         </div>
                         <div className="quadrant quad-2">
                             {this.buildTeeth({
-                                quadrant: 2,
-                                descending: false,
-                                pushLeft: false
+                                quadrant: 2
                             })}
                             <span className="number">2</span>
                         </div>
@@ -316,19 +315,13 @@ class TeethScreenerField extends BaseComponent {
                     <div className="row">
                         <div className="quadrant quad-4">
                             {this.buildTeeth({
-                                quadrant: 3,
-                                descending: true,
-                                pushLeft: true,
-                                upsideDown: true
+                                quadrant: 3
                             })}
                             <span className="number">4</span>
                         </div>
                         <div className="quadrant quad-3">
                             {this.buildTeeth({
-                                quadrant: 4,
-                                descending: false,
-                                pushLeft: false,
-                                upsideDown: true
+                                quadrant: 4
                             })}
                             <span className="number">3</span>
                         </div>
