@@ -51,7 +51,7 @@ var webpackConfig = {
         ]
     },
     node: {
-        setImmediate: ,
+        setImmediate: false,
         fs: "empty"
     },
     plugins: [

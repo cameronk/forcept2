@@ -1,16 +1,17 @@
 /**
- *
- *
+ * forcept - flux/Visit/VisitActions.js
+ * @author Azuru Technology
  */
 
 import debug from 'debug';
 import pick from 'lodash/pick';
 import isNil from 'lodash/isNil';
-import keyBy from 'lodash/keyBy';
 import sortBy from 'lodash/sortBy';
 import omitBy from 'lodash/omitBy';
 
 import Actions from '../actions';
+import { ClearAllPatientsAction, PushPatientDataAction } from '../Patient/PatientActions';
+import { FlashAppDataAction } from '../App/AppActions';
 import { navigateAction } from '../Route/RouteActions';
 import StageStore from '../Stage/StageStore';
 import VisitStore from '../Visit/VisitStore';
@@ -18,8 +19,10 @@ import { JsonModel } from '../../database/helper';
 
 const __debug = debug('forcept:flux:Visit:VisitActions');
 
-/**
+/*
+ * Clear the list of visits within a stage.
  *
+ * Payload: none
  */
 export function ClearVisitListAction(context, payload, done) {
     __debug(" ==> Action: ClearVisitList");
@@ -27,8 +30,11 @@ export function ClearVisitListAction(context, payload, done) {
     done();
 }
 
-/**
+/*
+ * Read all visits (with patient data) at the specified stageID
  *
+ * Payload:
+ *  - stageID: stage ID to read from
  */
 export function ReadVisitsAtStageAction(context, payload, done) {
 
@@ -41,12 +47,11 @@ export function ReadVisitsAtStageAction(context, payload, done) {
                 stage: payload.stageID
             }
         }).end().then(({data}) => {
+
             __debug("Found %s visits at stage %s", data.length, payload.stageID);
 
-            var promises = [];
-
-            data.map((visit, index) => {
-                promises.push(
+            var promises = data.map(
+                (visit, index) => (
                     context.service
                         .read('RecordService')
                         .params({
@@ -54,14 +59,17 @@ export function ReadVisitsAtStageAction(context, payload, done) {
                             visit: visit.id,
                             stages: [1]
                         }).end().then(({data}) => {
+
                             ///                 0 = .read() returns array of objects, grab the first
-                            var patients = data[0][1];
                             ///                    1 = root stage
+                            var patients = data[0][1];
+
                             visit.patients = sortBy(patients, ['priority', 'birthday', 'createdAt']);
+
                             return visit;
                         })
-                );
-            });
+                )
+            );
 
             Promise.all(promises).then(visits => {
                 context.dispatch(Actions.VISIT_LIST_UPDATE, visits);
@@ -71,14 +79,33 @@ export function ReadVisitsAtStageAction(context, payload, done) {
         });
 }
 
-
-
 // ============================== \\
 
-
-
-/**
+/*
+ * Set the status of the current visit ("creating", "saving")
  *
+ * Payload: string status
+ */
+export function SetVisitStatusAction(context, status, done) {
+    __debug("Setting visit status => %s", status)
+    context.dispatch(Actions.VISIT_SET_STATUS, status);
+    done();
+}
+
+/*
+ * Set the status of the current visit ("saving", "saved")
+ *
+ * Payload: string status
+ */
+export function SetVisitModifiedStateAction(context, state, done) {
+    context.dispatch(Actions.VISIT_SET_MODIFIED, state);
+    done();
+}
+
+/*
+ * Clear visit data.
+ *
+ * Payload: none
  */
 export function ClearVisitAction(context, payload, done) {
     __debug(" ==> Action: ClearVisit");
@@ -89,6 +116,11 @@ export function ClearVisitAction(context, payload, done) {
 /*
  * Create and/or update a visit record with patient data.
  * Update records with patient data as necessary.
+ *
+ * Payload:
+ *  - id: the visit ID to save (null if the visit hasn't been created yet!)
+ *  - patients: patients object containing patient data (keyed by patient ID)
+ *  - stage: stage object of the current visit
  */
 export function SaveVisitAction(context, { id, patients, stage }, done) {
 
@@ -96,8 +128,6 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
 
     var patientKeys         = Object.keys(patients);
     var writableFieldKeys   = Object.keys(stage.fields);
-
-    context.dispatch(Actions.APP_LOADING, true);
 
     var complete = function(visit) {
 
@@ -172,69 +202,93 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
         }
 
         Promise.all(promises).then(() => {
-            __debug("Promises completed.");
-            context.dispatch(Actions.VISIT_SET_MODIFIED, false);
-            context.dispatch(Actions.APP_FLASH, {
-                className: "small",
-                type: "success",
-                icon: "check mark",
-                header: "Visit saved."
-            });
-            context.dispatch(Actions.APP_LOADING, false);
-            done();
+
+            Promise.all([
+
+                /// We just saved the visit, so it's no longer in "modified" state
+                context.executeAction(SetVisitModifiedStateAction, false),
+
+                /// Flash a success message to the visit page
+                context.executeAction(FlashAppDataAction, {
+                    className: "small",
+                    type: "success",
+                    icon: "check mark",
+                    header: "Visit saved."
+                }),
+
+                /// Update the visit status to un-disable fields
+                context.executeAction(SetVisitStatusAction, "saved")
+
+            ]).then(done);
+
         });
 
     };
 
+
     /*
-     * If this visit has already been created...
+     * Let the Visit handler know we're saving stuff.
      */
-    if(id) {
-        __debug("Saving visit ID: %s", id);
+    context.executeAction(SetVisitStatusAction, "saving", () => {
 
         /*
-         * Update the patient array in Visit record.
+         * If this visit has already been created...
          */
-        context.service
-            .update('VisitService')
-            .params({
-                id: id
-            })
-            .body({
-                patients: patientKeys
-            }).end().then(() => {
-                complete(context.getStore(VisitStore).getVisit());
-            });
+        if(id) {
+            __debug("Saving visit ID: %s", id);
 
-    }
+            /*
+             * Update the patient array in Visit record.
+             */
+            context.service
+                .update('VisitService')
+                .params({
+                    id: id
+                })
+                .body({
+                    patients: patientKeys
+                }).end().then(() => {
+                    complete(
+                        context.getStore(VisitStore).getVisit()
+                    );
+                });
 
-    /*
-     * Create a new visit.
-     */
-    else {
-        __debug("Creating a new visit.");
+        }
 
-        context.service
-            .create('VisitService')
-            .body({
-                stage: stage.id,
-                patients: patientKeys,
-            }).end().then(({ data }) => {
+        /*
+         * Create a new visit.
+         */
+        else {
+            __debug("Creating a new visit.");
 
-                var visit = JsonModel(data);
+            context.service
+                .create('VisitService')
+                .body({
+                    stage: stage.id,
+                    patients: patientKeys,
+                }).end().then(({ data }) => {
 
-                /*
-                 * Update visit store with new visit data.
-                 */
-                context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
-                complete(visit);
+                    var visit = JsonModel(data);
 
-            });
-    }
+                    /*
+                     * Update visit store with new visit data.
+                     */
+                    context.dispatch(Actions.VISIT_UPDATE_VISIT, visit);
+
+                    complete(visit);
+
+                });
+        }
+
+    });
 }
 
-/**
+/*
+ * Move a visit from the current stage to the destination stage.
  *
+ * Payload:
+ *  - id: visit ID to move
+ *  - destination: destination stage ID to move to
  */
 export function MoveVisitAction(context, { id, destination }, done) {
 
@@ -243,32 +297,74 @@ export function MoveVisitAction(context, { id, destination }, done) {
     if(!id || !destination) {
         __debug("...missing visit ID / destination stage ID. Aborting.");
         done();
-        return;
     }
 
-    context.dispatch(Actions.APP_LOADING, true);
-    context.service
-        .update('VisitService')
-        .params({
-            id: id
-        })
-        .body({
-            stage: destination
-        }).end().then(() => {
-            __debug("...update complete.");
-            context.dispatch(Actions.VISIT_SET_RECENT_DATA, {
+    var complete = () => {
+
+        Promise.all([
+            context.executeAction(SetRecentVisitDataAction, {
                 visit: id,
                 stage: destination
+            }),
+            context.executeAction(ClearVisitAction),
+            context.executeAction(ClearAllPatientsAction),
+            context.executeAction(SetVisitStatusAction, null)
+        ]).then(done);
+
+    };
+
+    /*
+     * Let the Visit handler know we're saving stuff.
+     */
+    context.executeAction(SetVisitStatusAction, "moving", () => {
+
+        context.service
+            .update('VisitService')
+            .params({
+                id: id
+            })
+            .body({
+                stage: destination
+            }).end().then(({ data }) => {
+
+                __debug("...updated Visit record. Nullifying patient visit locations.");
+
+                if(destination === "checkout") {
+
+                    var visit = data,
+                        promises = [];
+
+                    (visit.patients).map(patientID => {
+                        promises.push(
+                            context.service
+                                .update('RecordService')
+                                .params({
+                                    model: "Patient",
+                                    identify: {
+                                        id: patientID
+                                    }
+                                })
+                                .body({
+                                    currentVisit: null
+                                }).end()
+                        );
+                    });
+
+                    Promise.all(promises).then(complete);
+
+                } else complete();
+
             });
-            context.dispatch(Actions.VISIT_CLEAR);
-            context.dispatch(Actions.PATIENT_CLEAR_ALL);
-            context.dispatch(Actions.APP_LOADING, false);
-            done();
-        });
+
+    });
+
 }
 
 /*
+ * Grab data for a visit by ID.
  *
+ * Payload:
+ *  - id: visit ID
  */
 export function GrabVisitAction(context, payload, done) {
 
@@ -332,59 +428,126 @@ export function GrabVisitAction(context, payload, done) {
                         });
                     }
 
-                    context.dispatch(Actions.PATIENT_UPDATE, patients);
-                    done();
-                    return;
+                    return context.executeAction(PushPatientDataAction, patients, () => done());
+
                 });
         });
 }
 
-
-
 // ============================== \\
 
-
-
-/**
+/*
+ * Set the current tab within the visit page.
  *
+ * Payload: name of tab (either the ID of a patient, null, or "import")
  */
 export function SetCurrentTabAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_CURRENT_TAB, payload);
     done();
 }
 
-/**
+/*
+ * Set the current visibility state of the sidebar.
  *
+ * Payload: state (boolean)
  */
-export function CreatePatientAction(context, payload, done) {
-    context.dispatch(Actions.APP_LOADING, true);
-    context.dispatch(Actions.VISIT_SET_RECENT_DATA, null);
-    context.service
-        .create('PatientService')
-        .end().then(({data}) => {
-            __debug("Patient created:");
-            __debug(data);
-            context.dispatch(Actions.APP_LOADING, false);
-            context.dispatch(Actions.PATIENT_UPDATE, {
-                [data.id]: {
-                    [payload.stageID]: data
-                }
-            });
-            context.dispatch(Actions.VISIT_SET_CURRENT_TAB, data.id);
-            done();
-        });
+export function SetSidebarVisibilityAction(context, payload, done) {
+    context.dispatch(Actions.VISIT_SET_SIDEBAR_VISIBILITY, payload);
+    done();
 }
 
-/**
+/*
+ * Create a new patient.
  *
+ * Payload:
+ *  -
+ */
+export function CreatePatientAction(context, payload, done) {
+
+    Promise.all([
+        context.executeAction(SetRecentVisitDataAction, null),
+        context.executeAction(SetVisitStatusAction, "creating")
+    ]).then(() => {
+
+        /*
+         * Dispatch a service call to create a new patient.
+         */
+        context.service
+            .create('PatientService')
+            .end().then(({ data }) => {
+
+                __debug("Patient created:");
+                __debug(data);
+
+                try {
+                    Promise.all([
+                        context.executeAction(PushPatientDataAction, {
+                            [data.id]: {
+                                [payload.stageID]: data
+                            }
+                        }),
+                        context.executeAction(SetCurrentTabAction, data.id),
+                        context.executeAction(SetVisitStatusAction, null)
+                    ]).then(done);
+                } catch(e) {
+                    __debug("caught the error");
+                    __debug(e);
+                }
+            });
+
+    })
+
+}
+
+/*
+ * Import provided patients into the current visit.
+ *
+ * Payload:
+ *  - rootStageID: the ID of the FORCEPT root stage (patients can only be imported at the root stage)
+ *  - patients: object of patients to add (keyed by ID)
+ */
+export function ImportPatientsAction(context, { rootStageID, patients }, done) {
+
+    var dataToPush = {},
+        patientKeys = Object.keys(patients);
+
+    for(var patientID in patients) {
+        dataToPush[patientID] = {
+            [rootStageID]: patients[patientID]
+        }
+    }
+
+    Promise.all([
+        context.executeAction(SetVisitStatusAction, "importing"),
+        context.executeAction(PushPatientDataAction, dataToPush)
+    ]).then(() => {
+        Promise.all([
+            context.executeAction(SetCurrentTabAction, patientKeys[0]),
+            context.executeAction(SetVisitStatusAction, null),
+            context.executeAction(FlashAppDataAction, {
+                id: "visit.messages.importSuccess",
+                params: {
+                    count: patientKeys.length
+                }
+            })
+        ]).then(done);
+    });
+
+}
+
+/*
+ * Change the destination for the current visit.
+ *
+ * Payload:
+ *  - stageID: destination stage id
  */
 export function SetDestinationAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_DESTINATION, payload.stageID);
     done();
 }
 
-/**
- *
+/*
+ * unused
  */
 export function SetOverviewModeAction(context, payload, done) {
     context.dispatch(Actions.VISIT_SET_OVERVIEW_MODE, payload);
@@ -392,8 +555,10 @@ export function SetOverviewModeAction(context, payload, done) {
 }
 
 
-/**
+/*
+ * Set the recent visit data (the id/destination of the last visit) for linking in the success message.
  *
+ * Payload: (object of recent visit data)
  */
 export function SetRecentVisitDataAction(context, payload, done) {
     __debug(" ==> Action: SetRecentVisitData");

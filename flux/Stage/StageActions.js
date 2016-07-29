@@ -28,18 +28,20 @@ export function LoadStagesAction(context, payload, done) {
         .params({
             order: ['order']
         }).end()
-        .then(({data}) => {
+        .then(({ data }) => {
             __debug(" | LoadStages: stages fetched.");
             context.dispatch(
                 Actions.STAGES_LOADED,
-                keyBy(data, "id")
+                keyBy(data, 'id')
             );
+            done();
             return;
         })
         .catch(err => {
             __debug("Error occurred when fetching all stages");
             __debug(err);
             context.dispatch(Actions.STAGES_LOAD_ERROR, err);
+            done();
             return;
         });
 }
@@ -51,15 +53,13 @@ export function LoadStagesAction(context, payload, done) {
  *  STAGES_LOAD_ERROR   -> Stage/StageStore
  */
 export function GrabStageAction(context, { id }) {
-
     __debug(" ==> Action: GrabStage (id=%s)", id);
-
     return context.service
         .read("StageService")
         .params({
             where: { id: id }
         }).end()
-        .then(({data}) => {
+        .then(({ data }) => {
             __debug(" | GrabStage: grabbed stage #%s", id);
             if(data.length > 0) {
                 context.dispatch(Actions.STAGES_UPDATE_CACHE, JsonModel(data[0]));
@@ -112,7 +112,7 @@ export function UploadFieldsAction(context, { fields }) {
  */
 export function SaveStageAction(context, payload, done) {
 
-    context.dispatch(Actions.STAGES_SET_STATUS, "saving");
+    context.dispatch(Actions.CONSOLE_SET_STATUS, "saving");
 
     let cache = context.getStore(StageStore).getCache();
     let id    = payload.id;
@@ -146,7 +146,7 @@ export function SaveStageAction(context, payload, done) {
             });
         }
 
-        context.dispatch(Actions.STAGES_SET_STATUS, "saved");
+        context.dispatch(Actions.CONSOLE_SET_STATUS, "saved");
         context.executeAction(LoadStagesAction, {}, (err) => {
             done();
         });

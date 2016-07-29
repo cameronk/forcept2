@@ -13,6 +13,8 @@ import RadioField from '../Fields/Radio';
 import DateField from '../Fields/Date';
 import SelectField from '../Fields/Select';
 import FileField from '../Fields/File';
+import PrescriberField from '../Fields/Prescriber';
+import TeethScreenerField from '../Fields/TeethScreener';
 
 const __debug = debug('forcept:components:Visit:Editor');
 
@@ -30,6 +32,7 @@ class Editor extends BaseComponent {
             { stage, visit, patient } = props,
             { fields } = stage,
             fieldKeys = Object.keys(fields),
+            availableFields = this.context.getFieldTypes(),
             baseFieldProps = {
                 stageID:    stage.id,
                 patientID:  patient.id
@@ -46,7 +49,11 @@ class Editor extends BaseComponent {
                         key:    fieldID,
                         fieldID: fieldID,
                         field:  thisField,
-                        value:  patient.hasOwnProperty(fieldID) && patient[fieldID] !== null ? patient[fieldID] : ""
+                        value:  patient.hasOwnProperty(fieldID) && patient[fieldID] !== null
+                                ? patient[fieldID]
+                                : availableFields.hasOwnProperty(thisField.type)
+                                    ? availableFields[thisField.type].defaultValue
+                                    : ""
                     };
 
                     switch(thisField.type) {
@@ -114,6 +121,21 @@ class Editor extends BaseComponent {
                                     {thisField.name || "Untitled header"}
                                 </div>
                             )
+                            break;
+                        case "prescriber":
+                            fieldDOM = (
+                                <PrescriberField
+                                    visitID={visit.id}
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
+                            break;
+                        case "teeth-screener":
+                            fieldDOM = (
+                                <TeethScreenerField
+                                    {...thisFieldProps}
+                                    {...baseFieldProps} />
+                            );
                             break;
                     }
 

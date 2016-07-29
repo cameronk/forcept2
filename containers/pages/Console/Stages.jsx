@@ -9,9 +9,10 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from "debug";
 
 import StageStore from '../../../flux/Stage/StageStore';
+import ConsoleStore from '../../../flux/Console/ConsoleStore';
 import HeaderBar  from '../../../components/Meta/HeaderBar';
-import StageBuilder    from '../../../components/Console/StageBuilder';
-import StagesMenu      from '../../../components/Console/StagesMenu';
+import StageBuilder    from '../../../components/Console/Stage/Builder';
+import SideMenu      from '../../../components/Console/SideMenu';
 import MessageScaffold from '../../../components/Scaffold/Message';
 import BaseComponent, { grabContext } from '../../../components/Base';
 
@@ -104,10 +105,12 @@ class Stages extends BaseComponent {
                 </div>
                 <div className="row clear top">
                     <div className="four wide computer five wide tablet column">
-                        <StagesMenu
-                            stages={props.stages}
+                        <SideMenu
+                            iterable={props.stages}
                             isNavigateComplete={props.isNavigateComplete}
                             location={props.currentStage.id || 0}
+                            basePath="/console/stages"
+                            context="stage"
                             isCacheModified={props.currentStage.isCacheModified} />
                     </div>
                     <div className="twelve wide computer eleven wide tablet right spaced column">
@@ -121,11 +124,12 @@ class Stages extends BaseComponent {
 
 Stages = connectToStores(
     Stages,
-    [StageStore],
+    [ConsoleStore, StageStore],
     function(context, props) {
 
         var routeStore = context.getStore('RouteStore');
         var stageStore = context.getStore(StageStore);
+        var consoleStore = context.getStore(ConsoleStore);
 
         return {
             /// Meta
@@ -139,7 +143,7 @@ Stages = connectToStores(
                 id: routeStore.getCurrentRoute().params.stageID || null,
                 cache: stageStore.getCache(),
                 isCacheModified: stageStore.isCacheModified(),
-                status: stageStore.getStatus(),
+                status: consoleStore.getStatus(),
                 error:  stageStore.getError(),
             }
         };

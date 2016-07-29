@@ -24,14 +24,14 @@ module.exports = {
                         "name": "First name",
                         "type": "text",
                         "mutable": false,
-                        "settings": "",
+                        "settings": {},
                         "description": ""
                     },
                     "lastName": {
                         "name": "Last name",
                         "type": "text",
                         "mutable": false,
-                        "settings": "",
+                        "settings": {},
                         "description": ""
                     },
                     "birthday": {

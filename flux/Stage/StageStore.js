@@ -18,12 +18,15 @@ class StageStore extends BaseStore {
     static storeName = 'StageStore'
     static handlers = {
         [Actions.STAGES_LOADED]: 'handleStagesLoaded',
-        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
         [Actions.STAGES_LOAD_ERROR]: 'handleStageLoadError',
         [Actions.STAGES_SET_OPTION_SHIFT_CONTEXT]: 'handleSetOptionShiftContext',
+        [Actions.STAGES_SET_FIELD_SHIFT_CONTEXT]: 'setFieldShiftContext',
+        [Actions.STAGES_SET_STATUS]: 'handleSetStatus',
+
+        [Actions.STAGES_HARDSET_CACHE_FIELDS]: 'hardsetCacheFields',
+        [Actions.STAGES_UPDATE_CACHE]: 'handleUpdateCache',
         [Actions.STAGES_CLEAR_CACHE]: 'handleClearCache',
         [Actions.STAGES_CACHE_MODIFIED]: 'handleCacheWasModified',
-        [Actions.STAGES_SET_STATUS]: 'handleSetStatus'
     }
 
     /**
@@ -37,6 +40,7 @@ class StageStore extends BaseStore {
     setInitialState() {
         this.error  = false;
         this.optionShiftContext = false;
+        this.fieldShiftContext  = false;
         this.stages = {};
         this.handleClearCache();
     }
@@ -49,6 +53,30 @@ class StageStore extends BaseStore {
     getOptionShiftContext() {
         return this.optionShiftContext;
     }
+
+    /** =========================== **/
+
+    /*
+     * Shift contexts are small objects with data about
+     * what we're shifting. No need to compare to current data.
+     * Just set and emit change.
+     */
+    setFieldShiftContext = (context) => {
+        this.fieldShiftContext = context;
+        this.emitChange();
+    }
+
+    getFieldShiftContext = () => this.fieldShiftContext;
+
+    /** =========================== **/
+
+    hardsetCacheFields = (fields) => {
+        this.cache.fields = fields;
+        this.cacheModified = true;
+        this.emitChange();
+    }
+
+    /** =========================== **/
 
     /**
      * Event handlers
@@ -69,38 +97,7 @@ class StageStore extends BaseStore {
         return this.error;
     }
 
-    /**
-     * Get default settings for a field type.
-     * @return Object
-     */
-    getDefaultSettings(type) {
-        switch(type) {
-            case "date":
-                return {
-                    useBroadSelector: false
-                };
-                break;
-            case "select":
-                return {
-                    options: {},
-                    allowCustomData: false
-                };
-                break;
-            case "multiselect":
-                return {
-                    options: {}
-                };
-                break;
-            case "file":
-                return {
-                    accept: []
-                };
-                break;
-            default:
-                return {};
-                break;
-        }
-    }
+    /** =========================== **/
 
     /*
      * The cache was modified.
@@ -198,15 +195,24 @@ class StageStore extends BaseStore {
                                                         this.cache.fields[f]['settings']['options'] = theseOptions;
                                                         __debug(" |--|--|--|==> options overwritten");
                                                     } else {
+
                                                         var singleOptionKey = theseKeys[0];
                                                         var thisOption = theseOptions[singleOptionKey];
+
+                                                        if(!this.cache.fields[f]['settings']['options'].hasOwnProperty(singleOptionKey)) {
+                                                            this.cache.fields[f]['settings']['options'][singleOptionKey] = {};
+                                                        }
 
                                                         if(thisOption === null) {
                                                             __debug(" |--|--|--|==> #%s removed", singleOptionKey);
                                                             delete this.cache.fields[f]['settings']['options'][singleOptionKey];
                                                         } else {
                                                             __debug(" |--|--|--|==> #%s = '%s'", singleOptionKey, thisOption.value || '');
-                                                            this.cache.fields[f]['settings']['options'][singleOptionKey] = thisOption;
+
+                                                            for(var thisOptionProperty in thisOption) {
+                                                                this.cache.fields[f]['settings']['options'][singleOptionKey][thisOptionProperty] = thisOption[thisOptionProperty];
+                                                            }
+
                                                         }
                                                     }
                                                 }

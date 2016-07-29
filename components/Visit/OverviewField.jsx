@@ -9,6 +9,8 @@ import debug from 'debug';
 import upperFirst from 'lodash/upperFirst';
 
 import BaseComponent, { grabContext } from '../Base';
+import ValueDefined from '../../utils/ValueDefined';
+import DataPoint from '../Patient/DataPoint';
 
 const __debug = debug('forcept:components:Visit:OverviewField');
 
@@ -20,83 +22,49 @@ class OverviewField extends BaseComponent {
         super();
     }
 
-    shouldComponentUpdate(nextProps) {
-        return true;
-        // return this.props.value !== nextProps.value;
-    }
-
     render() {
 
-        var { props } = this;
+        var { props } = this,
+            { field, value } = props,
+            valueDefined = ValueDefined(field.type, value),
+            iconClass = (valueDefined ? "green check mark" : "red close"),
+            descriptionDOM, resourcesDOM;
 
         /*
          * We ignore value if this is a non-value-bearing field (i.e. header)
          */
-        if(props.type === "header") {
+        if(field.type === "header") {
 
             return (
                 <div className="item grey">
-                    <h5 className="right">{props.name || "Untitled header"}</h5>
+                    <h5 className="right">{field.name || "Untitled header"}</h5>
                 </div>
             );
 
         } else {
 
-            var { value } = props,
-                valueDefined = (value && value.length > 0),
-                iconClass = (valueDefined ? "green check mark" : "red close"),
-                descriptionDOM, resourcesDOM;
-
-            /*
-             * Check if a value is defined.
-             */
             if(valueDefined) {
 
-                switch(props.type) {
-
-                    /*
-                     * Convert Select type (array of selected values)
-                     * into a list.
-                     */
-                    case "select":
-                        if(props.settings && props.settings.multiple) {
-                            if(value.length > 0) {
-                                descriptionDOM = (
-                                    <ul>
-                                        {value.map((item) => {
-                                            return (
-                                                <li>{item}</li>
-                                            );
-                                        })}
-                                    </ul>
-                                );
-                            }
-                        } else {
-                            descriptionDOM = value.toString();
-                        }
-                        break;
+                switch(field.type) {
 
                     /*
                      * Convert resource into embedded thingy.
                      */
                     case "file":
-                        resourcesDOM = value.map(({ type, id, ext }) => {
-                            return (
-                                <div className="ui fluid card">
-                                    <div className="ui fluid image">
-                                        <img src={["/resources/", id, ext].join("")} />
-                                    </div>
-                                </div>
-                            );
-                        });
+                        resourcesDOM = (
+                            <DataPoint field={field} value={value} />
+                        );
                         break;
 
                     /*
                      * Otherwise, it's a string!
                      */
                     default:
-                        descriptionDOM = value.toString();
+                        descriptionDOM = (
+                            <DataPoint field={field} value={value} />
+                        );
                         break;
+
                 }
 
             }
@@ -105,7 +73,7 @@ class OverviewField extends BaseComponent {
                 <div className="item">
                     <i className={iconClass + " icon"}></i>
                     <div className="content">
-                        <span className="header">{upperFirst(props.name || "Untitled field")}</span>
+                        <span className="header">{upperFirst(field.name || "Untitled field")}</span>
                         <div className="description">{descriptionDOM}</div>
                     </div>
                     {resourcesDOM}

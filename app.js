@@ -19,7 +19,14 @@ import VisitStore from './flux/Visit/VisitStore';
 import PatientStore from './flux/Patient/PatientStore';
 import ResourceStore from './flux/Resource/ResourceStore';
 import UserStore from './flux/User/UserStore';
-import TestStore from './flux/Test/TestStore';
+import DisplayStore from './flux/Display/DisplayStore';
+import ConsoleStore from './flux/Console/ConsoleStore';
+import MedicationStore from './flux/Pharmacy/MedicationStore';
+import PrescriptionStore from './flux/Prescription/PrescriptionStore';
+import SearchStore from './flux/Search/SearchStore';
+
+///
+import Manifest from './flux/manifest.js';
 
 /// create new fluxible instance
 const app = new Fluxible({
@@ -40,6 +47,7 @@ app.plug(FetchrPlugin({
  */
 app.plug({
     name: 'RequestPlugin',
+
      /**
      * Called after context creation to dynamically create a context plugin
      * @method plugContext
@@ -128,6 +136,88 @@ app.plug({
 
 });
 
+/**
+ * NOTICE: any additional methods MUST be
+ * propogated through components EXPLICITLY
+ * defined in propTypes AND in the provideContext
+ * method defined in containers/Root.
+ */
+app.plug({
+    name: 'ModulePlugin',
+
+     /**
+     * Called after context creation to dynamically create a context plugin
+     * @method plugContext
+     * @param {Object} options Options passed into createContext
+     * @param {Object} context FluxibleContext instance
+     * @param {Object} app Fluxible instance
+     */
+    plugContext: function (options, context, app) {
+
+        var fieldTypes   = Manifest.Fields;
+        var displayTypes = Manifest.Displays;
+
+        var defineFor = function(ctx) {
+            ctx.getFieldTypes = () => fieldTypes;
+            ctx.getDisplayTypes = () => displayTypes;
+        };
+
+        // Returns a context plugin
+        return {
+            /**
+             * Method called to allow modification of the component context
+             * @method plugComponentContext
+             * @param {Object} componentContext Options passed into createContext
+             * @param {Object} context FluxibleContext instance
+             * @param {Object} app Fluxible instance
+             */
+            plugComponentContext: function (componentContext, context, app) {
+                defineFor(componentContext);
+            },
+            plugActionContext: function (actionContext, context, app) {
+                defineFor(actionContext);
+            },
+            plugStoreContext: function (storeContext, context, app) {
+                defineFor(storeContext);
+            },
+
+            /**
+             * Allows context plugin settings to be persisted between server and client. Called on server
+             * to send data down to the client
+             * @method dehydrate
+             */
+            dehydrate: function () {
+                return {
+                    // fieldTypes: fieldTypes
+                };
+            },
+
+            /**
+             * Called on client to rehydrate the context plugin settings
+             * @method rehydrate
+             * @param {Object} state Object to rehydrate state
+             */
+            rehydrate: function (state) {
+                // fieldTypes = state.fieldTypes;
+            }
+        };
+    },
+
+    /**
+     * Allows dehydration of application plugin settings
+     * @method dehydrate
+     */
+    dehydrate: function () { return {}; },
+
+    /**
+     * Allows rehydration of application plugin settings
+     * @method rehydrate
+     * @param {Object} state Object to rehydrate state
+     */
+    rehydrate: function (state) {}
+
+});
+
 /// register stores
 app.registerStore(RouteStore);
 app.registerStore(AppStore);
@@ -136,7 +226,11 @@ app.registerStore(StageStore);
 app.registerStore(VisitStore);
 app.registerStore(PatientStore);
 app.registerStore(ResourceStore);
+app.registerStore(DisplayStore);
+app.registerStore(ConsoleStore);
 app.registerStore(UserStore);
-app.registerStore(TestStore);
+app.registerStore(MedicationStore);
+app.registerStore(PrescriptionStore);
+app.registerStore(SearchStore);
 
 module.exports = app;

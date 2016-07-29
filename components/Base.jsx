@@ -14,11 +14,20 @@ export function grabContext(types) {
 
     var using = {};
     var available = {
+
+        /// Fluxible
         getStore        : PropTypes.func.isRequired,
         executeAction   : PropTypes.func.isRequired,
+
+        /// Request / user
         getRequest      : PropTypes.func.isRequired,
         isAuthenticated : PropTypes.func.isRequired,
         getUser         : PropTypes.func.isRequired,
+
+        /// FORCEPT
+        getFieldTypes   : PropTypes.func.isRequired,
+        getDisplayTypes   : PropTypes.func.isRequired
+
     };
 
     if(!types || types.length === 0 || (types.length === 1 && types[0] === "*")) {

@@ -39,7 +39,13 @@ import VisitService from './flux/Visit/VisitService';
 import RecordService from './flux/Record/RecordService';
 import ResourceService from './flux/Resource/ResourceService';
 import UserService from './flux/User/UserService';
-import TestService from './flux/Test/TestService';
+import DisplayService from './flux/Display/DisplayService';
+import DisplayGroupService from './flux/Display/DisplayGroupService';
+import MedicationService from './flux/Pharmacy/MedicationService';
+import MedQuantityService from './flux/Pharmacy/MedQuantityService';
+import PrescriptionService from './flux/Prescription/PrescriptionService';
+import PrescriptionSetService from './flux/Prescription/PrescriptionSetService';
+import SearchService from './flux/Search/SearchService';
 
 /// Containers
 import HtmlContainer from './containers/Html';
@@ -157,7 +163,13 @@ __debug("---");
               FetchrPlugin.registerService(RecordService.attach(db));
               FetchrPlugin.registerService(ResourceService.attach(db));
               FetchrPlugin.registerService(UserService.attach(db));
-              FetchrPlugin.registerService(TestService.attach(db));
+              FetchrPlugin.registerService(DisplayService.attach(db));
+              FetchrPlugin.registerService(DisplayGroupService.attach(db));
+              FetchrPlugin.registerService(MedicationService.attach(db));
+              FetchrPlugin.registerService(MedQuantityService.attach(db));
+              FetchrPlugin.registerService(PrescriptionService.attach(db));
+              FetchrPlugin.registerService(PrescriptionSetService.attach(db));
+              FetchrPlugin.registerService(SearchService.attach(db));
 
         server.use(FetchrPlugin.getXhrPath(), FetchrPlugin.getMiddleware());
 
@@ -258,6 +270,7 @@ __debug("---");
                 res.type('html');
                 res.write('<!DOCTYPE html>' + html);
                 res.end();
+
             });
         });
 

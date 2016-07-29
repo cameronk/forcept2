@@ -73,7 +73,7 @@ export default {
 
                         visit.save()
                             .then((visit) => {
-                                callback(null, true, null);
+                                callback(null, visit, null);
                             });
 
                     }

@@ -20,7 +20,14 @@ class Root extends React.Component {
 }
 
 export default provideContext(Root, {
+
+    /// Request / user
     getRequest: PropTypes.func.isRequired,
     getUser   : PropTypes.func.isRequired,
     isAuthenticated: PropTypes.func.isRequired,
+
+    /// FORCEPT
+    getFieldTypes: PropTypes.func.isRequired,
+    getDisplayTypes: PropTypes.func.isRequired
+
 });

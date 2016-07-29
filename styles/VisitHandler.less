@@ -1,67 +1,141 @@
+/**
+ *
+ */
+
+@import "Mixins.less";
+
 #FORCEPT-VisitHandler {
 
-    #FORCEPT-Dropdown-MoveStage {
-        .item {
-            .ui.circular.label {
-                margin-right: 15px;
+    display: flex !important;
+    align-items: flex-start;
+    height: 100%;
+    overflow: hidden;
+
+    /*
+     * Sidebar toggler
+     */
+    .sidebar-toggle {
+        display: inline;
+        background: #e8e8e8;
+        font-size: 20px;
+        padding: 10px;
+        padding-right: 15px;
+
+        -webkit-transition: all 150ms ease;
+        -moz-transition: all 150ms ease;
+        -ms-transition: all 150ms ease;
+        -o-transition: all 150ms ease;
+        transition: all 150ms ease;
+
+        &:not(.floating):hover {
+            cursor: pointer;
+            padding-left: 15px;
+        }
+
+        &.floating {
+            position: fixed;
+            right: -5px;
+            top: 3px;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+
+            &:hover {
+                right: 0;
+                cursor: pointer;
             }
         }
-        .item.disabled {
 
-            opacity: 1 !important;
-
-            & > span {
-                opacity: 0.45 !important;
-            }
-
-            .ui.circular.label {
-                margin-right: 25px !important;
-            }
+        &.floating {
+            .on-mobile({
+                top: 44px;
+            })
         }
     }
 
-    .FORCEPT-FlexHeader {
-        display: flex !important;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
+    /*
+     * Primary content container ("Left side")
+     */
+    & > .primary {
+        flex-grow: 1;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
 
-        & > div {
+        &.sidebarVisible {
+            .on-mobile({
+                display: none;
+            })
+        }
+    }
+
+    /*
+     * Move .on-mobile declaration to a separate container
+     */
+    & > .sidebar {
+        .on-mobile({
+            width: 100% !important;
+        })
+    }
+
+    /*
+     * Sidebar container ("Right side")
+     */
+    & > .sidebar {
+        display: flex;
+        flex-direction: column;
+
+        width: 250px;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background: #f8f8f8;
+        border-left: 1px solid #ccc;
+
+        & > .patient {
             flex-grow: 1;
-        }
+            overflow-x: hidden;
+            overflow-y: auto;
 
-        & > .ui.header {
-
-            margin: 0;
-            padding: 0.375em;
-
-            & > .icon {
-                padding: 0;
-            }
-
-        }
-
-        & > .aside {
-            padding: 0 10px;
-
-            & > .ui.buttons {
-                margin: 10px auto;
-                display: flex;
-                flex-wrap: wrap;
-
-                & > .ui.button {
-                    // min-width: 25%;
-                    flex-grow: 1;
-                    text-align: center;
-                    align-items: center;
-
-                    @media only screen and (max-width: 767px) {
-                        width: 100%;
+            #FORCEPT-Visit-Sidebar {
+                .ui.list {
+                    .item {
+                        padding: 0.5em 0.75em;
+                        border-color: #e5e5e5;
                     }
                 }
             }
+        }
 
+        & > .controls {
+            & > .ui.buttons {
+                .button {
+                    border-radius: 0 !important;
+                }
+            }
+
+            /*
+             *
+             */
+            #FORCEPT-Dropdown-MoveStage {
+                .item {
+                    .ui.circular.label {
+                        margin-right: 15px;
+                    }
+                }
+                .item.disabled {
+                    opacity: 1 !important;
+
+                    & > span {
+                        opacity: 0.45 !important;
+                    }
+
+                    .ui.circular.label {
+                        margin-right: 25px !important;
+                    }
+                }
+            }
         }
 
     }
+
 }

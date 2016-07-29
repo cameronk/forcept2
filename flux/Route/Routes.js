@@ -4,10 +4,12 @@
  */
 
 import debug from 'debug';
+import { defineMessages } from 'react-intl';
+
 import { LogoutAction } from '../Auth/AuthActions';
 import { LoadStagesAction } from '../Stage/StageActions';
 import { ClearVisitListAction } from '../Visit/VisitActions';
-import { defineMessages } from 'react-intl';
+import { LoadMedicationPageActions } from '../Pharmacy/MedicationActions';
 
 const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
@@ -59,7 +61,6 @@ export default {
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-
         title: "pages.login.title"
     },
 
@@ -102,6 +103,24 @@ export default {
         handler: getPage('Console/Stages'),
         title: messages["pages.console.stages.stage.title"]
     },
+    consoleDisplays: {
+        path: '/console/displays',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Displays'),
+        title: null
+    },
+    consoleDisplaysGroup: {
+        path: '/console/displays/:groupID',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Displays'),
+        title: null
+    },
 
 
     /*
@@ -116,7 +135,6 @@ export default {
         action: ClearVisitListAction,
         title: messages["pages.console.stages.stage.title"]
     },
-
     visitStageHandle: {
        path: '/visits/:stageID/:visitID',
        namespace: 'visit',
@@ -124,6 +142,39 @@ export default {
        auth: true,
        handler: getPage('Visit/Handler'),
        title: messages["pages.console.stages.stage.title"]
-    }
+   },
 
+   /*
+    * Displays
+    */
+    displayGroup: {
+        path: '/displays/:groupID',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Display/Group'),
+        title: null
+    },
+
+    /*
+     * Pharmacy
+     */
+    pharmacyManage: {
+        path: '/pharmacy/manage',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Pharmacy/Manager'),
+        title: null,
+        action: LoadMedicationPageActions
+    },
+    pharmacyManageMedication: {
+        path: '/pharmacy/manage/:medicationID',
+        namespace: 'display',
+        method: 'get',
+        auth: true,
+        handler: getPage('Pharmacy/Manager'),
+        title: null,
+        action: LoadMedicationPageActions
+    }
 };

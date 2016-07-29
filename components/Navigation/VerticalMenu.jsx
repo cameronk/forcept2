@@ -8,9 +8,14 @@ import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import StageStore from '../../flux/Stage/StageStore';
+import DisplayStore from '../../flux/Display/DisplayStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
 import NavLink from './NavLink';
+
+import StageMessages from '../../lang/Stage';
+import DisplayMessages from '../../lang/Display';
+import PharmacyMessages from '../../lang/Pharmacy';
 
 if(process.env.BROWSER) {
     require('../../styles/VerticalMenu.less');
@@ -18,7 +23,7 @@ if(process.env.BROWSER) {
 
 const messages = defineMessages({
 
-    /* User item */
+    /// User
     userPronoun: {
         id: "verticalmenu.user.pronoun",
         defaultMessage: "You"
@@ -32,7 +37,7 @@ const messages = defineMessages({
         defaultMessage: "Sign out"
     },
 
-    /* Console item extension */
+    /// Console items
     consoleItem: {
         id: "verticalmenu.user.consoleItem",
         defaultMessage: "Console"
@@ -41,6 +46,10 @@ const messages = defineMessages({
         id: "verticalmenu.user.consoleStageItem",
         defaultMessage: "Stages"
     },
+    consoleDisplaysItem: {
+        id: "verticalmenu.user.consoleDisplaysItem",
+        defaultMessage: "Displays"
+    },
     consoleFieldDataItem: {
         id: "verticalmenu.user.consoleFieldDataItem",
         defaultMessage: "Field data"
@@ -48,8 +57,19 @@ const messages = defineMessages({
     consoleUsersItem: {
         id: "verticalmenu.user.consoleUsersItem",
         defaultMessage: "Users"
-    }
+    },
 
+    /// Displays
+    noDisplayGroupsAvailable: {
+        id: "verticalmenu.displays.noneavailable",
+        defaultMessage: "No display groups available"
+    },
+
+    /// Pharmacy
+    pharmacyManageMedications: {
+        id: "verticalmenu.pharmacy.manageMedications",
+        defaultMessage: "Manage medications"
+    }
 });
 
 class VerticalMenu extends BaseComponent {
@@ -60,10 +80,11 @@ class VerticalMenu extends BaseComponent {
 
         var props = this.props,
             ctx = this.context,
-            { formatMessage } = this.props.intl,
+            { formatMessage } = props.intl,
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
-            stagesItem, userItem;
+            groupKeys = Object.keys(props.groups),
+            stagesItem, groupsItem, pharmacyItem, userItem;
 
         /*
          * Show the user area if user is authenticated
@@ -72,7 +93,7 @@ class VerticalMenu extends BaseComponent {
 
             stagesItem = (
                 <div className="item">
-                    <div className="header">Stages</div>
+                    <div className="header">{formatMessage(StageMessages.pluralNoun)}</div>
                     <div className="menu">
                         {stageKeys.map((stageID) => {
                             let thisStage = props.stages[stageID];
@@ -81,10 +102,51 @@ class VerticalMenu extends BaseComponent {
                                     href={"/visits/" + thisStage.slug}
                                     key={thisStage.id}
                                     className="item">
-                                    {thisStage.name || "Untitled stage"}
+                                    {thisStage.name || formatMessage(StageMessages.untitled)}
                                 </NavLink>
                             );
                         })}
+                    </div>
+                </div>
+            );
+
+            groupsItem = (
+                <div className="item">
+                    <div className="header">{formatMessage(DisplayMessages.pluralNoun)}</div>
+                    <div className="menu">
+                        {(() => {
+                            if(groupKeys.length > 0) {
+                                return groupKeys.map((groupID) => {
+                                    let thisGroup = props.groups[groupID];
+                                    return (
+                                        <NavLink
+                                            href={"/displays/" + thisGroup.slug}
+                                            key={thisGroup.id}
+                                            className="item">
+                                            {thisGroup.name || formatMessage(DisplayMessages.untitledGroup)}
+                                        </NavLink>
+                                    );
+                                });
+                            } else {
+                                return (
+                                    <div className="item">
+                                        <em>{formatMessage(messages.noDisplayGroupsAvailable)}.</em>
+                                    </div>
+                                );
+                            }
+                        })()}
+                    </div>
+                </div>
+            );
+
+            pharmacyItem = (
+                <div className="item">
+                    <div className="header">{formatMessage(PharmacyMessages.noun)}</div>
+                    <div className="menu">
+                        <NavLink className="item" href="/pharmacy/manage">
+                            <i className="treatment icon"></i>
+                            {formatMessage(messages.pharmacyManageMedications)}
+                        </NavLink>
                     </div>
                 </div>
             );
@@ -93,7 +155,7 @@ class VerticalMenu extends BaseComponent {
 
             userItem = (
                 <div className="item">
-                    <div className="header">Administration</div>
+                    <div className="header">{formatMessage(messages.userPronoun)} &mdash; {ctx.getUser('username')}</div>
                     <div className="menu">
                         {(() => {
                             if(ctx.getUser("isAdmin") === true) {
@@ -104,13 +166,17 @@ class VerticalMenu extends BaseComponent {
                                             {formatMessage(messages.consoleItem)}
                                         </NavLink>
                                         <div className="sub menu">
-                                            <NavLink href="/console/users" className="item">
-                                                <i className="users icon"></i>
-                                                {formatMessage(messages.consoleUsersItem)}
-                                            </NavLink>
                                             <NavLink href="/console/stages" className="item">
                                                 <i className="database icon"></i>
                                                 {formatMessage(messages.consoleStageItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/displays" className="item">
+                                                <i className="list icon"></i>
+                                                {formatMessage(messages.consoleDisplaysItem)}
+                                            </NavLink>
+                                            <NavLink href="/console/users" className="item">
+                                                <i className="users icon"></i>
+                                                {formatMessage(messages.consoleUsersItem)}
                                             </NavLink>
                                             <NavLink href="/console/field-data" className="item">
                                                 <i className="list icon"></i>
@@ -140,14 +206,18 @@ class VerticalMenu extends BaseComponent {
                 <div className="item logo">
                     <div className="ui large center aligned inverted statistic">
                         <div className="value">
-                            <i className="heartbeat icon"></i>
+                            <i className="heartbeat icon" onClick={() => {
+                                $("#FORCEPT-StoreDebugger").toggleClass("visible");
+                            }}></i>
                         </div>
                         <div className="label">
-                            <h2>Forcept</h2>
+                            <h2>FORCEPT</h2>
                         </div>
                     </div>
                 </div>
                 {stagesItem}
+                {groupsItem}
+                {pharmacyItem}
                 {userItem}
                 <ul id="debug"></ul>
             </div>
@@ -160,7 +230,8 @@ VerticalMenu = connectToStores(
     [StageStore],
     function(context, props) {
         return {
-            stages: context.getStore(StageStore).getStages()
+            stages: context.getStore(StageStore).getStages(),
+            groups: context.getStore(DisplayStore).getGroups()
         }
     }
 )

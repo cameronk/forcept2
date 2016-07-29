@@ -21,23 +21,24 @@ class VisitStore extends BaseStore {
         /*
          * Misc. actions
          */
-        [Actions.VISIT_SET_CURRENT_TAB]: 'handleSetCurrentTab',
-        [Actions.VISIT_SET_DESTINATION]: 'handleSetDestination',
-        [Actions.VISIT_SET_RECENT_DATA]: 'handleSetRecentData',
-        [Actions.VISIT_SET_OVERVIEW_MODE]: 'handleSetOverviewMode',
+        [Actions.VISIT_SET_CURRENT_TAB]: 'setCurrentTab',
+        [Actions.VISIT_SET_DESTINATION]: 'setDestination',
+        [Actions.VISIT_SET_RECENT_DATA]: 'setRecentData',
+        [Actions.VISIT_SET_STATUS]: 'setStatus',
+        [Actions.VISIT_SET_SIDEBAR_VISIBILITY]: 'setSidebarVisibility',
 
         /*
          * Visit actions
          */
-        [Actions.VISIT_UPDATE_VISIT]: 'handleUpdateVisit',
-        [Actions.VISIT_CLEAR]: 'handleClearVisit',
-        [Actions.VISIT_SET_MODIFIED]: 'handleSetModified',
+        [Actions.VISIT_UPDATE_VISIT]: 'updateVisit',
+        [Actions.VISIT_CLEAR]: 'clearVisit',
+        [Actions.VISIT_SET_MODIFIED]: 'setModified',
 
         /*
          * List actions
          */
-        [Actions.VISIT_LIST_UPDATE]: 'handleUpdateList',
-        [Actions.VISIT_LIST_CLEAR]: 'handleClearList'
+        [Actions.VISIT_LIST_UPDATE]: 'updateList',
+        [Actions.VISIT_LIST_CLEAR]: 'clearList'
     }
 
     // =============================== \\
@@ -48,26 +49,49 @@ class VisitStore extends BaseStore {
     }
 
     setInitialState() {
+
+        this.status = null;
         this.recentData = null;
         this.overviewModes = {};
+        this.sidebarVisibility = false;
 
-        this.handleClearVisit();
-        this.handleClearList();
+        this.clearVisit();
+        this.clearList();
     }
 
     // =============================== \\
 
-    /**
-     * Get the current Visit visit.
-     */
-    getVisit() {
-        return this.visit;
+    setSidebarVisibility = (status) => {
+        if(this.sidebarVisibility !== status) {
+            this.sidebarVisibility = status;
+            this.emitChange();
+        }
     }
 
-    /**
+    getSidebarVisibility = () => this.sidebarVisibility;
+
+    // =============================== \\
+
+    setStatus = (status) => {
+        if(this.status !== status) {
+            this.status = status;
+            this.emitChange();
+        }
+    }
+
+    getStatus = () => this.status;
+
+    // =============================== \\
+
+    /*
+     * Get the current Visit visit.
+     */
+    getVisit = () => this.visit;
+
+    /*
      * Clear the visit.
      */
-    handleClearVisit() {
+    clearVisit = () => {
         __debug("Clearing visit.");
         this.tab = null;
         this.modified = false;
@@ -83,7 +107,7 @@ class VisitStore extends BaseStore {
      *      [field]: [value]
      *  }
      */
-    handleUpdateVisit(data) {
+    updateVisit = (data) => {
         __debug("Updating VisitStore visit.");
         for(var field in data) {
             __debug(" | %s = %s", field, data[field]);
@@ -103,27 +127,29 @@ class VisitStore extends BaseStore {
      * -> null:   no visits loaded into visit list
      * -> array:  array of visits w/ pre-loaded information
      */
+    getList = () => this.list;
 
-    getList() {
-        return this.list;
-    }
-
-    handleClearList() {
+    clearList = () => {
         __debug("Clearing visit list.");
         this.list = null;
     }
 
-    handleUpdateList(visits) {
+    updateList = (visits) => {
         this.list = visits;
         this.emitChange();
     }
 
     // =============================== \\
 
-    /**
+    /*
      *
      */
-    handleSetRecentData(data) {
+    getRecentData = () => this.recentData;
+
+    /*
+     *
+     */
+    setRecentData = (data) => {
         if(data === null) {
             if(this.recentData !== null) {
                 this.recentData = null;
@@ -135,39 +161,29 @@ class VisitStore extends BaseStore {
         }
     }
 
-    /**
-     *
-     */
-    getRecentData() {
-        return this.recentData;
-    }
 
     // =============================== \\
 
-    handleSetModified(state) {
+    setModified = (state) => {
         if(this.modified !== state) {
             this.modified = state;
             this.emitChange();
         }
     }
 
-    isModified() {
-        return this.modified;
-    }
+    isModified = () => this.modified;
 
     // =============================== \\
 
-    /**
+    /*
      * Get the current tab.
      */
-    getCurrentTab() {
-        return this.tab;
-    }
+    getCurrentTab = () => this.tab;
 
-    /**
+    /*
      * Set the current tab.
      */
-    handleSetCurrentTab(location) {
+    setCurrentTab = (location) => {
         if(this.tab !== location) {
             this.tab = location;
             this.emitChange();
@@ -176,39 +192,19 @@ class VisitStore extends BaseStore {
 
     // =============================== \\
 
-    /**
+    /*
      *
      */
-    getDestination() {
-        return this.destination;
-    }
+    getDestination = () => this.destination;
 
-    /**
+    /*
      *
      */
-    handleSetDestination(destination) {
+    setDestination = (destination) => {
         if(this.destination !== destination) {
             this.destination = destination;
             this.emitChange();
         }
-    }
-
-    // =============================== \\
-
-    handleSetOverviewMode(payload) {
-        var changed = false;
-        for(var stage in payload) {
-            if(this.overviewModes[stage] !== payload[stage]) {
-                changed = true;
-                this.overviewModes[stage] = payload[stage];
-            }
-        }
-
-        if(changed) this.emitChange();
-    }
-
-    getOverviewModes() {
-        return this.overviewModes;
     }
 
     // =============================== \\
@@ -218,21 +214,21 @@ class VisitStore extends BaseStore {
      */
     dehydrate() {
         return {
+            status: this.status,
             visit: this.visit,
             modified: this.modified,
             destination: this.destination,
             recentData: this.recentData,
-            overviewModes: this.overviewModes,
             tab: this.tab
         };
     }
 
     rehydrate(state) {
+        this.status = state.status;
         this.visit = state.visit;
         this.modified = state.modified;
         this.destination = state.destination;
         this.recentData = state.recentData;
-        this.overviewModes = state.overviewModes;
         this.tab = state.tab
     }
 

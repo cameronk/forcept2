@@ -7,13 +7,15 @@ import debug from 'debug';
 
 import Actions from '../actions';
 import StageStore from '../Stage/StageStore';
+import DisplayStore from '../Display/DisplayStore';
 
 import { FlashAppDataAction } from '../App/AppActions';
 import { ClearAllPatientsAction } from '../Patient/PatientActions';
-import { LoadStagesAction, GrabStageAction,
-        ClearCacheAction } from '../Stage/StageActions';
-import { ClearVisitAction, GrabVisitAction,
-        SetRecentVisitDataAction } from '../Visit/VisitActions';
+import { LoadStagesAction, GrabStageAction, ClearCacheAction as ClearStageCacheAction } from '../Stage/StageActions';
+import { ClearVisitAction, GrabVisitAction, SetRecentVisitDataAction } from '../Visit/VisitActions';
+import { LoadDisplayGroupsAction, GrabDisplayGroupAction, ClearDisplayGroupCacheAction } from '../Display/DisplayActions';
+import { SetConsoleStatusAction } from '../Console/ConsoleActions';
+import { ResetRelativesAction, ClearQueryDataAction } from '../Search/SearchActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -27,6 +29,8 @@ var __debug = debug('forcept:flux:Route:RouteActions');
 var PreNavigateActions = function(context, payload, done) {
 
     __debug("==[ PreNavigateActions ]==");
+    __debug("| Running clears.");
+    __debug("|=========================|");
 
     /*
      * This must be done first in order to ensure that the action
@@ -35,27 +39,35 @@ var PreNavigateActions = function(context, payload, done) {
     Promise.all([
 
         /*
-         * The stage cache holds data regarding a stage's fields
-         * before the stage's record model is updated.
-         *
-         * It should be cleared on every page change so that
-         * data entered for one stage doesn't carry over
-         * to another.
-         */
-        context.executeAction(ClearCacheAction),
-
-        /*
          * "Flash data" is intended to be per-request (per-page-view),
          * so we should clear it every time the page changes.
          */
         context.executeAction(FlashAppDataAction, false),
 
         /*
-         * "Recent visit data" contains stage information stored after
-         * a visit is moved to a different stage, in order to provide the
-         * user a quick + easy link to follow the visit they just handled.
+         * The stage cache holds data regarding a stage's fields
+         * before the stage's record model is updated.
+         *
+         * It should be cleared on every page change so that
+         * data entered for one stage doesn't carry over to another.
          */
-        context.executeAction(SetRecentVisitDataAction, null),
+        context.executeAction(ClearStageCacheAction),
+
+        /*
+         * The display group cache holds data about a
+         * display group before it is saved to the database
+         *
+         * It should be cleared on every page change so that
+         * data entered for one group doesn't carry over to another.
+         */
+        context.executeAction(ClearDisplayGroupCacheAction),
+
+        /*
+         * The console status maintains the "status" of the current
+         * builder page ("saving", "saved", etc), which needs to be reset
+         * when the page changes.
+         */
+        context.executeAction(SetConsoleStatusAction, null),
 
         /*
          * VisitStore maintains data about the visit
@@ -66,21 +78,40 @@ var PreNavigateActions = function(context, payload, done) {
         context.executeAction(ClearVisitAction),
 
         /*
-         * Similarly, PatientStore maintains data about
+         * "Recent visit data" contains stage information stored after
+         * a visit is moved to a different stage, in order to provide the
+         * user a quick + easy link to follow the visit they just handled.
+         */
+        context.executeAction(SetRecentVisitDataAction, null),
+
+        /*
+         * PatientStore maintains data about
          * the patients in a visit. Thus, we should clear
          * patients out between page loads.
          */
-        context.executeAction(ClearAllPatientsAction)
+        context.executeAction(ClearAllPatientsAction),
+
+        /*
+         * We don't want results or selected patients to carry over
+         * from request to request.
+         */
+        context.executeAction(ResetRelativesAction),
+
+        /*
+         * We don't want results or selected patients to carry over
+         * from request to request.
+         */
+        context.executeAction(ClearQueryDataAction)
 
     ]).then(() => {
 
-        __debug(" | Clearing actions completed.");
+        __debug("|=========================|");
+        __debug("| Clearing actions completed.");
 
         let promises = [];
 
         /*
-         * If stages name/ID list has not been loaded
-         * grab it from the database now.
+         * If stages name/ID list has not been loaded, grab it from the database now.
          *
          * Very important!
          */
@@ -88,6 +119,19 @@ var PreNavigateActions = function(context, payload, done) {
 
             promises.push(
                 context.executeAction(LoadStagesAction)
+            );
+
+        }
+
+        /*
+         * If display groups name/ID list has not been loaded, grab it from the database now.
+         *
+         * Very important!
+         */
+        if(context.getStore(DisplayStore).hasLoadedGroups() === false) {
+
+            promises.push(
+                context.executeAction(LoadDisplayGroupsAction)
             );
 
         }
@@ -118,6 +162,19 @@ var PreNavigateActions = function(context, payload, done) {
             /**
              *
              */
+            if(payload.params.hasOwnProperty('groupID')) {
+
+                promises.push(
+                    context.executeAction(GrabDisplayGroupAction, {
+                        id: payload.params.groupID.split("-")[0]
+                    })
+                );
+
+            }
+
+            /**
+             *
+             */
             if(payload.params.hasOwnProperty('visitID') && !isNaN(payload.params.visitID)) {
 
                 promises.push(
@@ -130,7 +187,7 @@ var PreNavigateActions = function(context, payload, done) {
 
         }
 
-        __debug(" | Executing %s promises prior to load.", promises.length);
+        __debug("| Executing %s promises prior to load.", promises.length);
 
         /*
          * Run all promises before returning done()

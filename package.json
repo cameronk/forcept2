@@ -41,6 +41,7 @@
     "fluxible-addons-react": "^0.2.0",
     "fluxible-plugin-fetchr": "^0.3.9",
     "fluxible-router": "^0.4.0",
+    "highcharts": "^4.2.5",
     "http-status-codes": "^1.0.6",
     "intl": "^1.1.0",
     "intl-locales-supported": "^1.0.0",
