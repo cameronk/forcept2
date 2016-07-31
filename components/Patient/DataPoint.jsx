@@ -85,6 +85,46 @@ class DataPoint extends BaseComponent {
                 );
                 break;
 
+            case "teeth-screener":
+
+                var treatments = {};
+
+                for(var quadrant in value) {
+                    for(var number in value[quadrant]) {
+                        value[quadrant][number].map(treatment => {
+
+                            var tag = `${quadrant}-${number}`;
+
+                            if(treatments.hasOwnProperty(treatment)) {
+                                treatments[treatment].push(tag);
+                            } else {
+                                treatments[treatment] = [ tag ];
+                            }
+
+                        })
+                    }
+                }
+
+                return (
+                    <div>
+                        {Object.keys(treatments).map(treatment => {
+                            return (
+                                <div>
+                                    <h5>{treatment}</h5>
+                                    <ul>
+                                        {treatments[treatment].map(location => {
+                                            return (
+                                                <li>{location}</li>
+                                            )
+                                        })}
+                                    </ul>
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+                break;
+
             /*
              * Otherwise, it's a string!
              */
