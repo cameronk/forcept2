@@ -27,6 +27,7 @@ export default {
                 var constrainedRecordModels = {};
 
                 if(!params.stages) {
+                    
                     callback(
                         BuildError('Missing stages constraint for RecordService call.', {
                             output: {
