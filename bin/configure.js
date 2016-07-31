@@ -15,6 +15,7 @@ var data = {};
 program
     .version('1.0.0')
     .option('-d, --dev', 'Add development config flags')
+    .option('-p, --port [port]', 'Port [80]')
     .parse(process.argv);
 
 const storagePath = './storage';
@@ -37,55 +38,72 @@ if(fs.existsSync(storageFile)) {
     }
 }
 
-var schema = {
-    properties: {
-        appName: {
-            description: "Application name",
-            type: 'string',
-            default: data.appName || 'Forcept'
-        },
-        port: {
-            description: "Broadcast port",
+if(!program.port || program.dev) {
+
+    var schema = {
+        properties: {
+            appName: {
+                description: "Application name",
+                type: 'string',
+                default: data.appName || 'FORCEPT'
+            },
+            port: {
+                description: "Broadcast port",
+                type: 'integer',
+                message: 'The port must be a number.',
+                default: data.port ? parseInt(data.port) : 8080
+            }
+        }
+    };
+
+    if(program.dev) {
+        schema.properties['devPort'] = {
+            description: "Development broadcast port",
             type: 'integer',
             message: 'The port must be a number.',
-            default: data.port ? parseInt(data.port) : 8080
+            default: data.devPort ? parseInt(data.devPort) : 3000
         }
     }
-};
 
-if(program.dev) {
-    schema.properties['devPort'] = {
-        description: "Development broadcast port",
-        type: 'integer',
-        message: 'The port must be a number.',
-        default: data.devPort ? parseInt(data.devPort) : 3000
-    }
-}
+    //
+    // Start the prompt
+    //
+    prompt.start();
 
-//
-// Start the prompt
-//
-prompt.start();
+    prompt.get(schema, function (err, result) {
 
-prompt.get(schema, function (err, result) {
+        /// If devPort flag was already in file, add it to result
+        if(!program.dev && !result.devPort && data.devPort) {
+            result['devPort'] = parseInt(data.devPort);
+        }
 
-    /// If devPort flag was already in file, add it to result
-    if(!program.dev && !result.devPort && data.devPort) {
-        result['devPort'] = parseInt(data.devPort);
-    }
+        result['locales'] = ["en"];
 
-    result['locales'] = ["en"];
-
-    var result = JSON.stringify(result);
-    if(result) {
-        fs.writeFile(storageFile, result, function(err) {
-            console.log(result);
-            if(err) console.error(err);
-            console.log("Wrote configuration to file.");
+        var result = JSON.stringify(result);
+        if(result) {
+            fs.writeFile(storageFile, result, function(err) {
+                console.log(result);
+                if(err) console.error(err);
+                console.log("Wrote configuration to file.");
+                process.exit();
+            });
+        } else {
+            console.log("ERROR: Result is invalid. Not writing to config.");
             process.exit();
-        });
-    } else {
-        console.log("ERROR: Result is invalid. Not writing to config.");
+        }
+
+    });
+
+} else {
+
+    data.port = program.port;
+    data.locales = ["en"];
+
+    fs.writeFile(storageFile, data, function(err) {
+        console.log(data);
+        if(err) console.error(err);
+        console.log("Wrote configuration to file.");
         process.exit();
-    }
-});
+    });
+    
+}
