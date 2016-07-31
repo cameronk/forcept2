@@ -141,9 +141,26 @@ export default function UpdateStageDefinition(stage, db) {
 
             switch(Manifest.Fields[type].storageMethod) {
 
-                /// Handle field as JSON
-                case "json":
-                    __debug("|==> JSON");
+                /// Handle field as JSON object
+                case "object":
+                    __debug("|==> JSON object");
+                    return {
+                        type: db.Sequelize.TEXT,
+                        get: function() {
+                            return ModelHelper.jsonGetter(
+                                this.getDataValue(id),
+                                {}
+                            );
+                        },
+                        set: function(val) {
+                            this.setDataValue(id, ModelHelper.jsonSetter(val, "{}"));
+                        }
+                    };
+                    break;
+
+                /// Handle field as JSON array
+                case "array":
+                    __debug("|==> JSON array");
                     return {
                         type: db.Sequelize.TEXT,
                         get: function() {

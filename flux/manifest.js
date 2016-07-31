@@ -48,7 +48,7 @@ export default {
         "select": {
             name: "Select",
             description: "Select one or many options from a dropdown",
-            storageMethod: "json",
+            storageMethod: "array",
             defaultSettings: {
                 options: {},
                 allowCustomData: false
@@ -58,7 +58,7 @@ export default {
         "file": {
             name: "File",
             description: "",
-            storageMethod: "json",
+            storageMethod: "array",
             defaultSettings: {
                 accept: []
             },
@@ -74,14 +74,14 @@ export default {
         "prescriber": {
             name: "Prescriber",
             description: "Prescribe medication",
-            storageMethod: "json",
+            storageMethod: "array",
             defaultSettings: {},
-            defaultValue: ""
+            defaultValue: []
         },
         "teeth-screener": {
             name: "Teeth Screener",
             description: "Screen patient teeth",
-            storageMethod: "json",
+            storageMethod: "object",
             defaultSettings: {},
             defaultValue: {}
         }

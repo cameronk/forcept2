@@ -121,6 +121,20 @@ class TeethScreenerField extends BaseComponent {
                     value[quadrant][number].splice(optIndex, 1);
                 }
 
+                /*
+                 * Check if our array is empty now and remove the quadrant if so.
+                 */
+                if(value[quadrant][number].length === 0) {
+                    delete value[quadrant][number];
+                }
+
+                /*
+                 * Check if our quadrant is empty now that we've removed a number.
+                 */
+                if(Object.keys(value[quadrant]).length === 0) {
+                    delete value[quadrant];
+                }
+
             }
 
             __debug("Value before push: %j", value);
