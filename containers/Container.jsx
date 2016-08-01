@@ -18,7 +18,7 @@ import StoreDebugger from '../components/Console/StoreDebugger';
 const __debug = debug('forcept:containers:Container')
 
 if(process.env.BROWSER) {
-    require('../semantic/dist/semantic.css');
+    require('semantic-ui/dist/semantic.css');
     require('../styles/Global.less');
     require('../styles/Container.less');
 }
@@ -78,7 +78,7 @@ class Container extends React.Component {
                     {content}
                 </div>
                 <StoreDebugger />
-                
+
             </div>
         );
     }

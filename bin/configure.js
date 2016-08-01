@@ -99,11 +99,11 @@ if(!program.port || program.dev) {
     data.port = program.port;
     data.locales = ["en"];
 
-    fs.writeFile(storageFile, data, function(err) {
+    fs.writeFile(storageFile, JSON.stringify(data), function(err) {
         console.log(data);
         if(err) console.error(err);
         console.log("Wrote configuration to file.");
         process.exit();
     });
-    
+
 }

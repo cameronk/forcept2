@@ -34,7 +34,7 @@ getConfig(function(config) {
         shell.env.DEBUG = "forcept:*";
 
         shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});
-        __debug('run-dev: Webpack Dev Server listening on port ' + config.devPort);
+        __debug('run-dev: Webpack Dev Server listening on port ' + webpackPort);
 
     });
 });
