@@ -12,6 +12,10 @@ import BaseComponent, { grabContext } from '../Base';
 
 const __debug = debug('forcept:components:Visit:DataPoint');
 
+if(process.env.BROWSER) {
+    require('../../styles/DataPoint.less');
+}
+
 class DataPoint extends BaseComponent {
 
     static contextTypes = grabContext()
@@ -40,7 +44,8 @@ class DataPoint extends BaseComponent {
     render() {
 
         var { props } = this,
-            { field, value } = props;
+            { field, value } = props,
+            dataDOM;
 
         switch(field.type) {
 
@@ -50,7 +55,7 @@ class DataPoint extends BaseComponent {
              */
             case "select":
                 if(field.settings && field.settings.multiple) {
-                    return (
+                    dataDOM = (
                         <ul>
                             {value.map((item) => {
                                 return (
@@ -60,9 +65,7 @@ class DataPoint extends BaseComponent {
                         </ul>
                     );
                 } else {
-                    return (
-                        <div>{value.toString()}</div>
-                    );
+                    dataDOM = value.toString();
                 }
                 break;
 
@@ -70,19 +73,15 @@ class DataPoint extends BaseComponent {
              * Convert resource into embedded thingy.
              */
             case "file":
-                return (
-                    <div>
-                        {value.map(({ type, id, ext }) => {
-                            return (
-                                <div className="ui fluid card">
-                                    <div className="ui fluid image">
-                                        <img src={["/resources/", id, ext].join("")} />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                );
+                dataDOM = value.map(({ type, id, ext }) => {
+                    return (
+                        <div className="ui fluid card">
+                            <div className="ui fluid image">
+                                <img src={["/resources/", id, ext].join("")} />
+                            </div>
+                        </div>
+                    );
+                });
                 break;
 
             case "teeth-screener":
@@ -105,35 +104,35 @@ class DataPoint extends BaseComponent {
                     }
                 }
 
-                return (
-                    <div>
-                        {Object.keys(treatments).map(treatment => {
-                            return (
-                                <div>
-                                    <h5>{treatment}</h5>
-                                    <ul>
-                                        {treatments[treatment].map(location => {
-                                            return (
-                                                <li>{location}</li>
-                                            )
-                                        })}
-                                    </ul>
-                                </div>
-                            );
-                        })}
-                    </div>
-                );
+                dataDOM = Object.keys(treatments).map(treatment => {
+                    return [
+                        (
+                            <h5 key="header">{treatment}</h5>
+                        ),
+                        (
+                            <ul key="list">
+                                {treatments[treatment].map((location, index) => {
+                                    return (
+                                        <li key={index}>{location}</li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    ];
+                });
                 break;
 
             /*
              * Otherwise, it's a string!
              */
             default:
-                return (
-                    <div>{value.toString()}</div>
-                );
+                dataDOM = value.toString();
                 break;
         }
+
+        return (
+            <div className="FORCEPT-DataPoint" data-field={field.type}>{dataDOM}</div>
+        );
 
     }
 
