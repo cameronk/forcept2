@@ -8,6 +8,10 @@ import Actions from '../actions';
 
 const __debug = debug('forcept:flux:App:AppActions');
 
+/**
+ * Flash application data to the page.
+ * Parameters: [mirrors MessageScaffold props]
+ */
 export function FlashAppDataAction(context, payload, done) {
     __debug(" ==> Action: FlashAppData");
     context.dispatch(Actions.APP_FLASH, payload);

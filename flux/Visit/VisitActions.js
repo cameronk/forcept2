@@ -17,6 +17,9 @@ import StageStore from '../Stage/StageStore';
 import VisitStore from '../Visit/VisitStore';
 import { JsonModel } from '../../database/helper';
 
+/// Language imports
+import VisitMessages from '../../lang/Visit';
+
 const __debug = debug('forcept:flux:Visit:VisitActions');
 
 /*
@@ -213,7 +216,9 @@ export function SaveVisitAction(context, { id, patients, stage }, done) {
                     className: "small",
                     type: "success",
                     icon: "check mark",
-                    header: "Visit saved."
+                    header: {
+                        message: VisitMessages.visitSaved
+                    }
                 }),
 
                 /// Update the visit status to un-disable fields
