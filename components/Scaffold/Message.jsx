@@ -31,11 +31,17 @@ class MessageScaffold extends BaseComponent {
         /// Text
         header: React.PropTypes.oneOfType([
             React.PropTypes.string,
-            React.PropTypes.object
+            React.PropTypes.shape({
+                message: React.PropTypes.object,
+                data: React.PropTypes.object
+            })
         ]),
         value: React.PropTypes.oneOfType([
             React.PropTypes.string,
-            React.PropTypes.object
+            React.PropTypes.shape({
+                message: React.PropTypes.object,
+                data: React.PropTypes.object
+            })
         ])
 
     }
@@ -59,7 +65,7 @@ class MessageScaffold extends BaseComponent {
                 case "object":
                     headerDOM = (
                         <div className="header">
-                            {formatMessage(props.header.message, props.header.settings || {})}
+                            {formatMessage(props.header.message, props.header.data || {})}
                         </div>
                     );
                     break;
@@ -72,7 +78,7 @@ class MessageScaffold extends BaseComponent {
                     textDOM = props.text;
                     break;
                 case "object":
-                    textDOM = formatMessage(props.text.message, props.text.settings || {});
+                    textDOM = formatMessage(props.text.message, props.text.data || {});
                     break;
             }
         }

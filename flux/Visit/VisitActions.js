@@ -447,6 +447,8 @@ export function GrabVisitAction(context, payload, done) {
  * Payload: name of tab (either the ID of a patient, null, or "import")
  */
 export function SetCurrentTabAction(context, payload, done) {
+    /// Clear the app flash cache to remove the "saved" message
+    context.executeAction(FlashAppDataAction, null);
     context.dispatch(Actions.VISIT_SET_CURRENT_TAB, payload);
     done();
 }
@@ -463,9 +465,6 @@ export function SetSidebarVisibilityAction(context, payload, done) {
 
 /*
  * Create a new patient.
- *
- * Payload:
- *  -
  */
 export function CreatePatientAction(context, payload, done) {
 
