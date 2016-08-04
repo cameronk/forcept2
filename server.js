@@ -135,7 +135,7 @@ __debug("---");
         const server = express();
 
         server.use('/public', express['static'](path.join(__dirname, '/dist')));
-        server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
+        // server.use('/public', express['static'](path.join(__dirname, '/node_modules')));
         server.use('/resources', express['static'](path.join(__dirname, '/storage/resources')));
         server.use(compression());
         server.use(cookieParser());
