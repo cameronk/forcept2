@@ -270,7 +270,7 @@ var navAction = function navigateAction(context, payload, done) {
      */
     context.executeAction(PreNavigateActions, route, (err) => {
 
-        __debug("Page-load actions done.");
+        __debug("[NavigateAction] Page-load actions done.");
 
         /*
          * Run action specified by route.
@@ -281,13 +281,13 @@ var navAction = function navigateAction(context, payload, done) {
         }
 
         if (!action || 'function' !== typeof action) {
-            __debug('route has no action, dispatching without calling action');
-            context.dispatch('NAVIGATE_SUCCESS', route);
+            __debug('[NavigateAction] route has no action, dispatching without calling action');
+            context.dispatch(Actions.NAVIGATE_SUCCESS, route);
             done();
             return;
         }
 
-        __debug('executing route action');
+        __debug('[NavigateAction] executing route action');
         context.executeAction(action, route, function (err) {
             if (err) {
                 var error500 = {
@@ -299,7 +299,7 @@ var navAction = function navigateAction(context, payload, done) {
                 context.dispatch('NAVIGATE_FAILURE', error500);
                 done(Object.assign(err, error500));
             } else {
-                context.dispatch('NAVIGATE_SUCCESS', route);
+                context.dispatch(Actions.NAVIGATE_SUCCESS, route);
                 done();
             }
         });

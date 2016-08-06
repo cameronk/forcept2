@@ -13,18 +13,58 @@ import { LoadMedicationPageActions } from '../Pharmacy/MedicationActions';
 
 const __debug = debug('forcept:flux:Route:Routes');
 const messages = defineMessages({
-    "pages.console.title": {
+
+    /// Authentication
+    loginTitle: {
+        id: "pages.login.title",
+        defaultMessage: "Login"
+    },
+    logoutTitle: {
+        id: "pages.logout.title",
+        defaultMessage: "Logout"
+    },
+
+    /// Console
+    consoleTitle: {
         id: "pages.console.title",
-        defaultMessage: "Console / Forcept"
+        defaultMessage: "Console"
     },
-    "pages.console.stages.title": {
+
+    /// Stages
+    consoleStagesTitle: {
         id: "pages.console.stages.title",
-        defaultMessage: "Stages / Console / Forcept"
+        defaultMessage: "Stages / Console"
     },
-    "pages.console.stages.stage.title": {
+    consoleStagesStateTitle: {
         id: "pages.console.stages.stage.title",
-        defaultMessage: "{name} / Stages / Console / Forcept"
-    }
+        defaultMessage: "{name} / Stages / Console"
+    },
+
+    /// Users
+    consoleUsersTitle: {
+        id: "pages.console.users.title",
+        defaultMessage: "Users / Console"
+    },
+
+    /// Displays
+    consoleDisplaysTitle: {
+        id: "pages.console.displays.title",
+        defaultMessage: "Displays / Console"
+    },
+    consoleDisplaysGroupTitle: {
+        id: "pages.console.displays.group.title",
+        defaultMessage: "{group} / Displays / Console"
+    },
+
+    /// Visits
+    visitsAtStageTitle: {
+        id: "pages.visits.stage.title",
+        defaultMessage: "Visits"
+    },
+    handleVisitsAtStageTitle: {
+        id: "pages.visits.stage.handle.title",
+        defaultMessage: "Handle visit / Visits"
+    },
 });
 
 /*
@@ -47,21 +87,22 @@ export default {
     /*
      * Authentication
      */
-    logout: {
-        path: '/auth/logout',
-        method: 'get',
-        page: 'logout',
-        auth: true,
-        handler: getPage('Auth/Logout'),
-        action: LogoutAction
-    },
     login: {
         path: '/auth/login',
         method: 'get',
         page: 'login',
         antiAuth: true,
         handler: getPage('Auth/Login'),
-        title: "pages.login.title"
+        title: messages.loginTitle
+    },
+    logout: {
+        path: '/auth/logout',
+        method: 'get',
+        page: 'logout',
+        auth: true,
+        handler: getPage('Auth/Logout'),
+        action: LogoutAction,
+        title: messages.logoutTitle
     },
 
     /*
@@ -74,7 +115,7 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Index'),
-        title: messages["pages.console.title"]
+        title: messages.consoleTitle
     },
     consoleStages: {
         path: '/console/stages',
@@ -83,16 +124,7 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages['pages.console.stages.title']
-    },
-    consoleUsers: {
-        path: '/console/users',
-        namespace: 'console',
-        method: 'get',
-        auth: true,
-        admin: true,
-        handler: getPage('Console/Users'),
-        title: messages['pages.console.stages.title']
+        title: messages.consoleStagesTitle
     },
     consoleStagesStage: {
         path: '/console/stages/:stageID',
@@ -101,7 +133,16 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Stages'),
-        title: messages["pages.console.stages.stage.title"]
+        title: messages.consoleStagesStageTitle
+    },
+    consoleUsers: {
+        path: '/console/users',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/Users'),
+        title: messages.consoleUsersTitle
     },
     consoleDisplays: {
         path: '/console/displays',
@@ -110,7 +151,7 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Displays'),
-        title: null
+        title: messages.consoleDisplaysTitle
     },
     consoleDisplaysGroup: {
         path: '/console/displays/:groupID',
@@ -119,7 +160,7 @@ export default {
         auth: true,
         admin: true,
         handler: getPage('Console/Displays'),
-        title: null
+        title: messages.consoleDisplaysGroupTitle
     },
 
 
@@ -133,7 +174,7 @@ export default {
         auth: true,
         handler: getPage('Visit/List'),
         action: ClearVisitListAction,
-        title: messages["pages.console.stages.stage.title"]
+        title: messages.visitsAtStageTitle
     },
     visitStageHandle: {
        path: '/visits/:stageID/:visitID',
@@ -141,7 +182,7 @@ export default {
        method: 'get',
        auth: true,
        handler: getPage('Visit/Handler'),
-       title: messages["pages.console.stages.stage.title"]
+       title: messages.handleVisitsAtStageTitle
    },
 
    /*

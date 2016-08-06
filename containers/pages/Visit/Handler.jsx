@@ -224,8 +224,6 @@ class VisitHandler extends BaseComponent {
          *************************************/
 
         var isLoading = false;
-        var isSaving  = props.status === "saving";
-        var isMoving  = props.status === "moving";
 
         /*
          * Certain visit page statuses should hinder further rendering. Add those here.
@@ -248,6 +246,11 @@ class VisitHandler extends BaseComponent {
                 break;
 
         }
+
+        var isSaving     = props.status === "saving",
+            isMoving     = props.status === "moving",
+            isImporting  = props.status === "importing",
+            isWorking    = (isLoading || isSaving || isMoving || isImporting);
 
         /*
          * Is a visit/patient action executing?
@@ -299,6 +302,7 @@ class VisitHandler extends BaseComponent {
             else if(tab && tab === "import") {
                 stageDOM = (
                     <Searcher
+                        loading={isWorking}
                         disablePatientsInVisits={true}
                         onImport={this._importPatients} />
                 );
@@ -375,7 +379,7 @@ class VisitHandler extends BaseComponent {
 
                 stageDOM = (
                     <div className={BuildDOMClass("ui bottom attached", {
-                        loading: isSaving || isMoving
+                        loading: isWorking
                     }, "segment")}>
                         {(() => {
                             if(props.flash) {
@@ -441,9 +445,9 @@ class VisitHandler extends BaseComponent {
          ******************************************/
 
         var disabledButtons = {
-            save:           (!props.isModified || isLoading || isSaving),
-            destination:    (visit.id === null || isLoading || props.isModified),
-            move:           (props.destination === null || isLoading || props.isModified)
+            save:           (!props.isModified || isWorking),
+            destination:    (visit.id === null || isWorking || props.isModified),
+            move:           (props.destination === null || isWorking || props.isModified)
         };
 
         var sidebarDOM;
@@ -497,6 +501,7 @@ class VisitHandler extends BaseComponent {
                               */}
                             <div key="move"
                                 className={BuildDOMClass("ui labeled icon button", {
+                                    loading: isMoving,
                                     disabled: disabledButtons.move
                                 })}
                                 disabled={disabledButtons.move}

@@ -79,8 +79,14 @@ class Searcher extends BaseComponent {
             exclude    = props.exclude || [],
             fields     = stages[Object.keys(stages)[0]].fields,
             fieldKeys  = Object.keys(fields),
-            isSearching = props.status === "searching",
+            { status } = props,
+            isSearching = status === "searching",
             isDisabled  = (!props.query || props.query.length === 0 || isSearching);
+
+        /// Override status if passed in props
+        if(props.loading) {
+            status = "loading";
+        }
 
         return (
             <div id="FORCEPT-Patient-Searcher">
@@ -88,7 +94,7 @@ class Searcher extends BaseComponent {
                     <i className="search icon"></i>
                     <div className="content">Import a patient</div>
                 </div>
-                <div className="attached ui segment">
+                <div className={BuildDOMClass("attached ui segment")}>
                     <div className={BuildDOMClass("ui action right action left icon input", { "disabled loading": isSearching })}>
                         <i className="search icon"></i>
                         <input type="text"
@@ -102,7 +108,8 @@ class Searcher extends BaseComponent {
                     </div>
                 </div>
                 {(() => {
-                    switch(props.status) {
+                    switch(status) {
+                        case "loading":
                         case "searching":
                             return (
                                 <div className="ui basic bottom attached segment">

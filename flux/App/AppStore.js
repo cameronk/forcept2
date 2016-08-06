@@ -3,9 +3,13 @@
  * @author Azuru Technology
  */
 
+import debug from 'debug';
+
 import Actions from '../actions';
 import BaseStore from 'fluxible/addons/BaseStore';
 import RouteStore from '../Route/RouteStore';
+
+const __debug = debug('forcept:flux:App:AppStore');
 
 class AppStore extends BaseStore {
 
@@ -24,10 +28,7 @@ class AppStore extends BaseStore {
 
     setInitialState() {
         /// Default state
-        this.pageTitle = {
-            id: "meta.titles.loading",
-            defaultMessage: "Loading..."
-        };
+        this.pageTitle = null;
         this.loading = false;
         this.flash   = null;
         this.req   = {};
@@ -87,11 +88,17 @@ class AppStore extends BaseStore {
      */
     handlePageTitle(currentRoute) {
         this.dispatcher.waitFor(RouteStore, () => {
+
             this.route = currentRoute;
+
             if (currentRoute && currentRoute.title) {
                 this.pageTitle = currentRoute.title;
-                this.emitChange();
+            } else {
+                this.pageTitle = null;
             }
+            
+            this.emitChange();
+
         });
     }
 

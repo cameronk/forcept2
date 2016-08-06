@@ -11,6 +11,9 @@ export default keyMirror({
      * Application
      */
 
+    /// Navigation
+    'NAVIGATE_SUCCESS': null,
+
     /// Top-level application loading state
     'APP_LOADING': null,
 

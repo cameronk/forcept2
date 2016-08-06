@@ -25,21 +25,47 @@ if(process.env.BROWSER) {
 
 class Container extends React.Component {
 
+    /*
+     *
+     */
+    componentDidMount = () => {
+        this.updateTitle(this.props.pageTitle);
+    }
+
+    /*
+     *
+     */
     componentDidUpdate(prevProps, prevState) {
+
         const newProps = this.props;
         if (newProps.pageTitle === prevProps.pageTitle) {
             return;
         }
 
-        console.log(newProps.pageTitle);
-
-        document.title = this.props.intl.formatMessage(newProps.pageTitle); //this.props.intl.formatMessage(newProps.pageTitle);
+        this.updateTitle(newProps.pageTitle);
     }
 
+    /*
+     * Update the page title.
+     */
+    updateTitle = (pageTitle) => {
+        if(pageTitle !== null && typeof pageTitle === "object") {
+            document.title = this.props.intl.formatMessage(pageTitle) + " - FORCEPT";
+        } else {
+            document.title = "FORCEPT";
+        }
+    }
+
+    /*
+     *
+     */
     _handleShowSidebar = () => {
         $("#Container").toggleClass("sidebar");
     }
 
+    /*
+     *
+     */
     render() {
 
         const { currentNavigateError,

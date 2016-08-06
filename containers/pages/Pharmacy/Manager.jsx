@@ -64,7 +64,7 @@ class PharmacyManager extends BaseComponent {
         }
 
         return (
-            <div className="ui stackable centered grid">
+            <div className="ui stackable grid">
                 <div className="row clear bottom">
                     <div className="sixteen wide column">
                         <HeaderBar message={messages["pages.pharmacy.manager.heading"]} />
