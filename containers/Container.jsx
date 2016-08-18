@@ -13,6 +13,7 @@ import debug from 'debug';
 
 import AppStore from '../flux/App/AppStore';
 import VerticalMenu from '../components/Navigation/VerticalMenu';
+import MessageScaffold from '../components/Scaffold/Message';
 import StoreDebugger from '../components/Console/StoreDebugger';
 
 const __debug = debug('forcept:containers:Container')
@@ -77,7 +78,15 @@ class Container extends React.Component {
 
         // TODO add real handlers for these things
         if(currentNavigateError) {
-            content = "An error occurred.";
+            content = (
+                <div className="ui basic segment">
+                    <MessageScaffold
+                        type="error"
+                        icon="warning"
+                        header="An error occurred."
+                        text={currentNavigateError.message} />
+                </div>
+            );
         } else if(!Handler) {
             content = "Handler not found";
         } else {

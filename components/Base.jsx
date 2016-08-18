@@ -23,10 +23,11 @@ export function grabContext(types) {
         getRequest      : PropTypes.func.isRequired,
         isAuthenticated : PropTypes.func.isRequired,
         getUser         : PropTypes.func.isRequired,
+        getConfiguration: PropTypes.func.isRequired,
 
         /// FORCEPT
         getFieldTypes   : PropTypes.func.isRequired,
-        getDisplayTypes   : PropTypes.func.isRequired
+        getDisplayTypes   : PropTypes.func.isRequired,
 
     };
 

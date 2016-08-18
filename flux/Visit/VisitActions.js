@@ -43,25 +43,32 @@ export function ReadVisitsAtStageAction(context, payload, done) {
 
     __debug(" ==> Action: ReadVisisAtStage");
 
+    /*
+     * Read all visits at a certain stage.
+     */
     context.service
         .read('VisitService')
         .params({
             where: {
                 stage: payload.stageID
             }
-        }).end().then(({data}) => {
+        }).end().then(({ data }) => {
 
             __debug("Found %s visits at stage %s", data.length, payload.stageID);
 
             var promises = data.map(
                 (visit, index) => (
+
+                    /*
+                     * Read PATIENT data for all patients in THIS VISIT
+                     */
                     context.service
                         .read('RecordService')
                         .params({
                             patients: visit.patients,
                             visit: visit.id,
                             stages: [1]
-                        }).end().then(({data}) => {
+                        }).end().then(({ data }) => {
 
                             ///                 0 = .read() returns array of objects, grab the first
                             ///                    1 = root stage
@@ -71,15 +78,46 @@ export function ReadVisitsAtStageAction(context, payload, done) {
 
                             return visit;
                         })
+
                 )
             );
 
+            /*
+             * Update visit list with reordered information.
+             */
             Promise.all(promises).then(visits => {
                 context.dispatch(Actions.VISIT_LIST_UPDATE, visits);
+                done();
+            }).catch(err => {
+                done(err);
+            });
+
+        });
+}
+
+/*
+ *
+ */
+export function LoadVisitListAction(context, { params }, done) {
+    if(params.stageID) {
+
+        context.executeAction(ClearVisitListAction).then(() => {
+
+            context.executeAction(ReadVisitsAtStageAction, {
+                stageID: params.stageID.split("-")[0]
+            }).catch(err => {
+                __debug("Caught error in LoadVisitListAction");
+                done(err);
+            }).then(() => {
+                __debug(".then() after LoadVisitListAction promises");
                 done();
             });
 
         });
+
+    } else {
+        done();
+    }
 }
 
 // ============================== \\

@@ -23,6 +23,9 @@ export default keyMirror({
     /// Set flash data for application
     'APP_FLASH': null,
 
+    'APP_UPDATE_CONFIG': null,
+    'APP_CONFIG_CHANGED': null,
+
     /** ============================= **/
 
     /*

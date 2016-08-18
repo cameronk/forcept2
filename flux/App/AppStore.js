@@ -18,7 +18,10 @@ class AppStore extends BaseStore {
         [Actions.NAVIGATE_SUCCESS]: 'handlePageTitle',
         [Actions.APP_LOADING]: 'handleLoading',
         [Actions.APP_FLASH]: 'handleFlash',
-        [Actions.APP_SET_STATUS]: 'setStatus'
+        [Actions.APP_SET_STATUS]: 'setStatus',
+
+        [Actions.APP_UPDATE_CONFIG]: 'updateConfig',
+        [Actions.APP_CONFIG_CHANGED]: 'setConfigChanged'
     }
 
     constructor(dispatcher) {
@@ -34,6 +37,9 @@ class AppStore extends BaseStore {
         this.req   = {};
         this.route = {};
         this.status = null;
+
+        this.config = {};
+        this.configChanged = false;
     }
 
     // =============================== \\
@@ -96,7 +102,7 @@ class AppStore extends BaseStore {
             } else {
                 this.pageTitle = null;
             }
-            
+
             this.emitChange();
 
         });
@@ -122,6 +128,24 @@ class AppStore extends BaseStore {
 
     // =============================== \\
 
+    getConfig = () => this.config;
+
+    updateConfig = (config) => {
+        for(var k in config) {
+            this.config[k] = config[k];
+        }
+        this.emitChange();
+    }
+
+    setConfigChanged = (status) => {
+        this.configChanged = status;
+        this.emitChange();
+    }
+
+    hasConfigChanged = () => this.configChanged;
+
+    // =============================== \\
+
     /*
      * H20
      */
@@ -130,7 +154,10 @@ class AppStore extends BaseStore {
             pageTitle: this.pageTitle,
             loading: this.loading,
             flash: this.flash,
-            status: this.status
+            status: this.status,
+
+            config: this.config,
+            configChanged: this.configChanged
         };
     }
     rehydrate(state) {
@@ -138,6 +165,9 @@ class AppStore extends BaseStore {
         this.loading = state.loading;
         this.flash = state.flash;
         this.status = state.status;
+
+        this.config = state.config;
+        this.configChanged = state.configChanged;
     }
 }
 

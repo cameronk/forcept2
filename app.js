@@ -61,6 +61,7 @@ app.plug({
         var req     = options.req || {};
         var user    = options.user || {};
         var isAuthenticated = options.isAuthenticated || false;
+        var configuration = options.configuration || {};
 
         var defineFor = function(context) {
             context.getRequest = function() {
@@ -73,6 +74,11 @@ app.plug({
             }
             context.isAuthenticated = function() {
                 return isAuthenticated;
+            }
+            context.getConfiguration = function(param) {
+                if(!param) return configuration;
+                if(!configuration.hasOwnProperty(param)) return null;
+                return configuration[param];
             }
         };
 
@@ -104,7 +110,8 @@ app.plug({
                 return {
                     req: req,
                     user: user,
-                    isAuthenticated: isAuthenticated
+                    isAuthenticated: isAuthenticated,
+                    configuration: configuration
                 };
             },
 
@@ -117,6 +124,7 @@ app.plug({
                 req = state.req;
                 user = state.user;
                 isAuthenticated = state.isAuthenticated;
+                configuration = state.configuration;
             }
         };
     },

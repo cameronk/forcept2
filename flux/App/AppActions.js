@@ -22,3 +22,23 @@ export function SetAppStatusAction(context, payload, done) {
     context.dispatch(Actions.APP_SET_STATUS, payload);
     done();
 }
+
+export function UpdateConfigAction(context, payload, done) {
+    context.dispatch(Actions.APP_UPDATE_CONFIG, payload);
+    done();
+}
+
+export function SaveConfigAction(context, { current, changes }, done) {
+    context.service
+        .update('AppService')
+        .body({
+            current: current,
+            changes: changes
+        }).end()
+        .then(itWorked => {
+            if(itWorked) {
+                context.dispatch(Actions.APP_CONFIG_CHANGED, true);
+                done();
+            }
+        });
+}

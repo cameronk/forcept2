@@ -290,6 +290,9 @@ var navAction = function navigateAction(context, payload, done) {
         __debug('[NavigateAction] executing route action');
         context.executeAction(action, route, function (err) {
             if (err) {
+
+                __debug("[NavigateAction] caught error in route action!");
+
                 var error500 = {
                     transactionId: navigate.transactionId,
                     statusCode: err.statusCode || 500,
@@ -299,6 +302,9 @@ var navAction = function navigateAction(context, payload, done) {
                 context.dispatch('NAVIGATE_FAILURE', error500);
                 done(Object.assign(err, error500));
             } else {
+
+                __debug("[NavigateAction] --> success!");
+
                 context.dispatch(Actions.NAVIGATE_SUCCESS, route);
                 done();
             }

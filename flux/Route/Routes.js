@@ -8,7 +8,7 @@ import { defineMessages } from 'react-intl';
 
 import { LogoutAction } from '../Auth/AuthActions';
 import { LoadStagesAction } from '../Stage/StageActions';
-import { ClearVisitListAction } from '../Visit/VisitActions';
+import { LoadVisitListAction } from '../Visit/VisitActions';
 import { LoadMedicationPageActions } from '../Pharmacy/MedicationActions';
 
 const __debug = debug('forcept:flux:Route:Routes');
@@ -54,6 +54,12 @@ const messages = defineMessages({
     consoleDisplaysGroupTitle: {
         id: "pages.console.displays.group.title",
         defaultMessage: "{group} / Displays / Console"
+    },
+
+    /// Data management
+    consoleDataManagementTitle: {
+        id: "pages.console.dataManagement.title",
+        defaultMessage: "Data management / Console"
     },
 
     /// Visits
@@ -162,7 +168,15 @@ export default {
         handler: getPage('Console/Displays'),
         title: messages.consoleDisplaysGroupTitle
     },
-
+    consoleDataManagement: {
+        path: '/console/data-management',
+        namespace: 'console',
+        method: 'get',
+        auth: true,
+        admin: true,
+        handler: getPage('Console/DataManagement'),
+        title: messages.consoleDataManagementTitle
+    },
 
     /*
      * Visits
@@ -173,7 +187,7 @@ export default {
         method: 'get',
         auth: true,
         handler: getPage('Visit/List'),
-        action: ClearVisitListAction,
+        action: LoadVisitListAction,
         title: messages.visitsAtStageTitle
     },
     visitStageHandle: {

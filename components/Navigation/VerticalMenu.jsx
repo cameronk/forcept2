@@ -7,10 +7,12 @@ import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 
+import AppStore from '../../flux/App/AppStore';
 import StageStore from '../../flux/Stage/StageStore';
 import DisplayStore from '../../flux/Display/DisplayStore';
 import routes from '../../flux/Route/Routes';
 import BaseComponent, { grabContext } from '../Base';
+import MessageScaffold from '../../components/Scaffold/Message';
 import NavLink from './NavLink';
 
 import StageMessages from '../../lang/Stage';
@@ -58,6 +60,11 @@ const messages = defineMessages({
         id: "verticalmenu.user.consoleUsersItem",
         defaultMessage: "Users"
     },
+    consoleDataManagementItem: {
+        id: "verticalmenu.user.consoleDataManagementItem",
+        defaultMessage: "Data management"
+    },
+
 
     /// Displays
     noDisplayGroupsAvailable: {
@@ -76,6 +83,19 @@ class VerticalMenu extends BaseComponent {
 
     static contextTypes = grabContext()
 
+    componentDidMount = () => {
+        this.componentDidUpdate();
+    }
+
+    componentDidUpdate = () => {
+        $(".FORCEPT-Navigation-Link").click(() => {
+            var container = document.getElementById("Container");
+            if(container.classList.contains("sidebar")) {
+                container.classList.remove("sidebar");
+            }
+        });
+    }
+
     render() {
 
         var props = this.props,
@@ -84,7 +104,20 @@ class VerticalMenu extends BaseComponent {
             isAuthenticated = ctx.isAuthenticated(),
             stageKeys = Object.keys(props.stages),
             groupKeys = Object.keys(props.groups),
+            restartWarningItem,
             stagesItem, groupsItem, pharmacyItem, userItem;
+
+        if(props.hasConfigChanged) {
+            restartWarningItem = (
+                <div className="item">
+                    <MessageScaffold
+                        type="warning"
+                        header="Heads up!"
+                        text="Some configuration values have changed and will not be reflected until FORCEPT is restarted."
+                        />
+                </div>
+            );
+        }
 
         /*
          * Show the user area if user is authenticated
@@ -101,7 +134,7 @@ class VerticalMenu extends BaseComponent {
                                 <NavLink
                                     href={"/visits/" + thisStage.slug}
                                     key={thisStage.id}
-                                    className="item">
+                                    className="FORCEPT-Navigation-Link item">
                                     {thisStage.name || formatMessage(StageMessages.untitled)}
                                 </NavLink>
                             );
@@ -110,6 +143,7 @@ class VerticalMenu extends BaseComponent {
                 </div>
             );
 
+            /*
             groupsItem = (
                 <div className="item">
                     <div className="header">{formatMessage(DisplayMessages.pluralNoun)}</div>
@@ -122,7 +156,7 @@ class VerticalMenu extends BaseComponent {
                                         <NavLink
                                             href={"/displays/" + thisGroup.slug}
                                             key={thisGroup.id}
-                                            className="item">
+                                            className="FORCEPT-Navigation-Link item">
                                             {thisGroup.name || formatMessage(DisplayMessages.untitledGroup)}
                                         </NavLink>
                                     );
@@ -137,13 +171,13 @@ class VerticalMenu extends BaseComponent {
                         })()}
                     </div>
                 </div>
-            );
+            );*/
 
             pharmacyItem = (
                 <div className="item">
                     <div className="header">{formatMessage(PharmacyMessages.noun)}</div>
                     <div className="menu">
-                        <NavLink className="item" href="/pharmacy/manage">
+                        <NavLink className="FORCEPT-Navigation-Link item" href="/pharmacy/manage">
                             <i className="treatment icon"></i>
                             {formatMessage(messages.pharmacyManageMedications)}
                         </NavLink>
@@ -161,37 +195,41 @@ class VerticalMenu extends BaseComponent {
                             if(ctx.getUser("isAdmin") === true) {
                                 return (
                                     <div>
-                                        <NavLink className="item" href="/console">
+                                        <NavLink className="FORCEPT-Navigation-Link item" href="/console">
                                             <i className="chevron down icon"></i>
                                             {formatMessage(messages.consoleItem)}
                                         </NavLink>
                                         <div className="sub menu">
-                                            <NavLink href="/console/stages" className="item">
+                                            <NavLink href="/console/stages" className="FORCEPT-Navigation-Link item">
                                                 <i className="database icon"></i>
                                                 {formatMessage(messages.consoleStageItem)}
                                             </NavLink>
-                                            <NavLink href="/console/displays" className="item">
+                                            {/*<NavLink href="/console/displays" className="FORCEPT-Navigation-Link item">
                                                 <i className="list icon"></i>
                                                 {formatMessage(messages.consoleDisplaysItem)}
-                                            </NavLink>
-                                            <NavLink href="/console/users" className="item">
+                                            </NavLink>*/}
+                                            <NavLink href="/console/users" className="FORCEPT-Navigation-Link item">
                                                 <i className="users icon"></i>
                                                 {formatMessage(messages.consoleUsersItem)}
                                             </NavLink>
-                                            <NavLink href="/console/field-data" className="item">
+                                            {/*<NavLink href="/console/field-data" className="FORCEPT-Navigation-Link item">
                                                 <i className="list icon"></i>
                                                 {formatMessage(messages.consoleFieldDataItem)}
+                                            </NavLink>*/}
+                                            <NavLink href="/console/data-management" className="FORCEPT-Navigation-Link item">
+                                                <i className="tasks icon"></i>
+                                                {formatMessage(messages.consoleDataManagementItem)}
                                             </NavLink>
                                         </div>
                                     </div>
                                 );
                             }
                         })()}
-                        <a key="chooseLanguage" className="item">
+                        <a key="chooseLanguage" className="FORCEPT-Navigation-Link item">
                             <i className="globe icon"></i>
                             {formatMessage(messages.chooseLanguage)}
                         </a>
-                        <NavLink key="logout" routeName="logout" className="item">
+                        <NavLink key="logout" routeName="logout" className="FORCEPT-Navigation-Link item">
                             <i className="sign out icon"></i>
                             {formatMessage(messages.logout)}
                         </NavLink>
@@ -215,6 +253,7 @@ class VerticalMenu extends BaseComponent {
                         </div>
                     </div>
                 </div>
+                {restartWarningItem}
                 {stagesItem}
                 {groupsItem}
                 {pharmacyItem}
@@ -227,9 +266,10 @@ class VerticalMenu extends BaseComponent {
 
 VerticalMenu = connectToStores(
     VerticalMenu,
-    [StageStore],
+    [StageStore, AppStore],
     function(context, props) {
         return {
+            hasConfigChanged: context.getStore(AppStore).hasConfigChanged(),
             stages: context.getStore(StageStore).getStages(),
             groups: context.getStore(DisplayStore).getGroups()
         }

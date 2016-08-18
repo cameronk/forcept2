@@ -67,25 +67,6 @@ class VisitList extends BaseComponent {
 
     static contextTypes = grabContext()
 
-    componentDidMount() {
-        this.fetch();
-    }
-
-    componentDidUpdate(lastProps) {
-        /// Fetch new data when the navigation promise completes.
-        /// (is this the correct implementation?)
-        if(this.props.isNavigateComplete !== lastProps.isNavigateComplete
-            && this.props.isNavigateComplete === true) {
-            this.fetch();
-        }
-    }
-
-    fetch() {
-        this.context.executeAction(ReadVisitsAtStageAction, {
-            stageID: this.props.stageID
-        });
-    }
-
     render() {
 
         var { props } = this,
@@ -230,6 +211,8 @@ class VisitList extends BaseComponent {
             }
 
         }
+
+
 
         return (
             <div id="FORCEPT-FlexGrouper">

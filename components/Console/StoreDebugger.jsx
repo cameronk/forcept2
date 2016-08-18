@@ -13,7 +13,7 @@ import { UpdateCacheAction } from '../../flux/Stage/StageActions';
 import BaseComponent, { grabContext } from '../Base';
 
 const stores  = {
-    AppStore:          ["getFlash", "getPageTitle"],
+    AppStore:          ["getFlash", "getPageTitle", "getConfig"],
     VisitStore:        ["getStatus", "getVisit", "getList", "getRecentData", "isModified", "getCurrentTab", "getDestination"],
     SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
     StageStore:        ["getStages", "getFieldShiftContext"],

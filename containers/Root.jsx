@@ -25,6 +25,7 @@ export default provideContext(Root, {
     getRequest: PropTypes.func.isRequired,
     getUser   : PropTypes.func.isRequired,
     isAuthenticated: PropTypes.func.isRequired,
+    getConfiguration: PropTypes.func.isRequired,
 
     /// FORCEPT
     getFieldTypes: PropTypes.func.isRequired,

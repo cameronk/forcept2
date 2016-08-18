@@ -33,7 +33,6 @@ module.exports = function(cb) {
                     process.exit();
                 }
 
-
                 try {
                     data = JSON.parse(str);
                 } catch(e) {

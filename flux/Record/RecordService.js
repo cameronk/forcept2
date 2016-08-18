@@ -27,7 +27,7 @@ export default {
                 var constrainedRecordModels = {};
 
                 if(!params.stages) {
-                    
+
                     callback(
                         BuildError('Missing stages constraint for RecordService call.', {
                             output: {
@@ -91,8 +91,9 @@ export default {
                                 where: where
                             })
                             .catch(err => {
-                                __debug("[read] Error while fetching %s", modelName);
+                                __debug("[read] Error while fetching from '%s' model", modelName);
                                 __debug(err);
+                                throw err;
                             })
                             .then(records => {
                                 __debug("[read]: Found %s record(s) in %s", records.length, modelName);
@@ -109,6 +110,8 @@ export default {
                  */
                 Promise.all(promises).then(data => {
                     callback(null, data, null);
+                }).catch(err => {
+                    callback(err);
                 });
 
             },

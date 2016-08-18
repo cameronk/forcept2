@@ -36,7 +36,7 @@ class MessageScaffold extends BaseComponent {
                 data: React.PropTypes.object
             })
         ]),
-        value: React.PropTypes.oneOfType([
+        text: React.PropTypes.oneOfType([
             React.PropTypes.string,
             React.PropTypes.shape({
                 message: React.PropTypes.object,
@@ -73,7 +73,7 @@ class MessageScaffold extends BaseComponent {
         }
 
         if(props.text) {
-            switch(typeof props.Text) {
+            switch(typeof props.text) {
                 case "string":
                     textDOM = props.text;
                     break;

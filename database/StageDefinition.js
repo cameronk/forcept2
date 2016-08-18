@@ -122,8 +122,8 @@ export function BaseStageOptions(isRoot, tableName) {
  */
 export default function UpdateStageDefinition(stage, db) {
 
+    var fields    = {};
     var allFields = stage.get('fields');
-    var fields = {};
     var tableName = stage.get('tableName');
     var modelName = stage.get('modelName');
 
