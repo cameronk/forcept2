@@ -94,8 +94,10 @@ export default {
 
                         var stageID    = stage.get('id');
                         var newFields  = body.fields;
+                        var prevFields = stage.get('fields');
+                        var updatedFields = {};
                         var tableName  = stage.get('tableName');
-                        let prevFields = stage.get('fields');
+
                         let schema     = db.sequelize.getQueryInterface();
                         let updates    = [];
                         let additions  = 0;
@@ -110,14 +112,33 @@ export default {
                          * Deletions:
                          * - Are previous fields excluded in newFields?
                          */
-                        for(var field in prevFields) {
+                        for(let field in prevFields) {
+
+                            /// Add old fields to our updatedFields object...
+                            /// just in case removeColumn fails, we don't want to remove
+                            /// the entry in the fields JSON object.
+                            updatedFields[field] = prevFields[field];
+
                             if(!newFields.hasOwnProperty(field)) {
                                 deletions++;
                                 updates.push(
-                                    schema.removeColumn(
-                                        tableName,
-                                        field
-                                    )
+                                    new Promise((resolve, reject) => {
+
+                                        var thisField = field;
+                                        __debug(" -> Deleting %s", thisField);
+
+                                        schema.removeColumn(
+                                            tableName,
+                                            thisField
+                                        ).catch(err => {
+                                            reject(err);
+                                        }).then(() => {
+                                            /// Now that we know the removal was successful,
+                                            /// delete the field from updatedFields.
+                                            delete updatedFields[thisField];
+                                            resolve(thisField);
+                                        });
+                                    })
                                 );
                             }
                         }
@@ -126,30 +147,49 @@ export default {
                          * Additions:
                          * - Are new fields present?
                          */
-                        for(var field in newFields) {
+                        for(let field in newFields) {
+
+                            /// Don't add the field to updatedFields until we know
+                            /// addColumn actually worked.
+
                             if(!prevFields.hasOwnProperty(field)) {
                                 additions++;
                                 updates.push(
-                                    schema.addColumn(
-                                        tableName,
-                                        field,
-                                        {
-                                            type: db.Sequelize.TEXT
-                                        }
-                                    )
+                                    new Promise((resolve, reject) => {
+
+                                        var thisField = field;
+                                        __debug(" -> Adding %s", thisField);
+
+                                        schema.addColumn(
+                                            tableName,
+                                            thisField,
+                                            {
+                                                type: db.Sequelize.TEXT
+                                            }
+                                        ).catch(err => {
+                                            reject(err);
+                                        }).then(() => {
+                                            /// Now that addColumn was successful, we can
+                                            /// add the field to the updatedFields object.
+                                            updatedFields[thisField] = newFields[thisField];
+                                            resolve(thisField);
+                                        });
+                                    })
                                 );
                             }
                         }
 
                         __debug("[update]: Running %s additions, %s deletions", additions, deletions);
 
-                        Promise.all(updates).then(() => {
+                        Promise.all(updates).then((status) => {
+
                             __debug("[update]: ...done!");
+                            __debug("[update] %j", status);
                             __debug("[update]: saving fields to stage record");
 
                             stage.set('name', body.name);
                             stage.set('type', body.type);
-                            stage.set('fields', newFields);
+                            stage.set('fields', updatedFields);
                             stage.save()
                                 .then((stage) => {
                                     __debug("[update]: ...done!");

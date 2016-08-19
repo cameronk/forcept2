@@ -132,9 +132,11 @@ class VisitStore extends BaseStore {
     clearList = () => {
         __debug("Clearing visit list.");
         this.list = null;
+        this.emitChange();
     }
 
     updateList = (visits) => {
+        __debug("Updating list -> %s visits", visits.length);
         this.list = visits;
         this.emitChange();
     }
@@ -219,7 +221,9 @@ class VisitStore extends BaseStore {
             modified: this.modified,
             destination: this.destination,
             recentData: this.recentData,
-            tab: this.tab
+            tab: this.tab,
+
+            list: this.list
         };
     }
 
@@ -229,7 +233,9 @@ class VisitStore extends BaseStore {
         this.modified = state.modified;
         this.destination = state.destination;
         this.recentData = state.recentData;
-        this.tab = state.tab
+        this.tab = state.tab;
+
+        this.list = state.list;
     }
 
 }

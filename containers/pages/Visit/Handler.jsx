@@ -54,7 +54,7 @@ const messages = defineMessages({
     },
     importPatient: {
         id: root + 'importPatient',
-        defaultMessage: 'Import a patient'
+        defaultMessage: 'Search for a patient'
     },
     noPatients: {
         id: root + 'noPatients',
@@ -541,11 +541,11 @@ class VisitHandler extends BaseComponent {
                     </span>
                 </a>,
                 <a key="import"
-                    className="control item"
+                    className={BuildDOMClass("control item", { active: tab === "import" })}
                     onClick={this._setTab("import")}>
-                    <i className="fitted download icon"></i>
+                    <i className="fitted search icon"></i>
                     <span className="forcept responsive desktop only">
-                        {formatMessage(BasicMessages.import)}
+                        {formatMessage(BasicMessages.search)}
                     </span>
                     <span className="forcept responsive mobile only">
                         {formatMessage(messages.importPatient)}

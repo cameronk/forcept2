@@ -86,6 +86,8 @@ export function ReadVisitsAtStageAction(context, payload, done) {
              * Update visit list with reordered information.
              */
             Promise.all(promises).then(visits => {
+                __debug("Visits returned:");
+                __debug(visits);
                 context.dispatch(Actions.VISIT_LIST_UPDATE, visits);
                 done();
             }).catch(err => {

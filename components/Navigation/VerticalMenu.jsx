@@ -173,17 +173,20 @@ class VerticalMenu extends BaseComponent {
                 </div>
             );*/
 
-            pharmacyItem = (
-                <div className="item">
-                    <div className="header">{formatMessage(PharmacyMessages.noun)}</div>
-                    <div className="menu">
-                        <NavLink className="FORCEPT-Navigation-Link item" href="/pharmacy/manage">
-                            <i className="treatment icon"></i>
-                            {formatMessage(messages.pharmacyManageMedications)}
-                        </NavLink>
+
+            if(ctx.getUser("isAdmin")) {
+                pharmacyItem = (
+                    <div className="item">
+                        <div className="header">{formatMessage(PharmacyMessages.noun)}</div>
+                        <div className="menu">
+                            <NavLink className="FORCEPT-Navigation-Link item" href="/pharmacy/manage">
+                                <i className="treatment icon"></i>
+                                {formatMessage(messages.pharmacyManageMedications)}
+                            </NavLink>
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            }
 
             // ctx.getUser("isAdmin") === true && ctx.getStore('RouteStore').getCurrentRoute().namespace === "console"
 
@@ -225,10 +228,10 @@ class VerticalMenu extends BaseComponent {
                                 );
                             }
                         })()}
-                        <a key="chooseLanguage" className="FORCEPT-Navigation-Link item">
+                        {/*<a key="chooseLanguage" className="FORCEPT-Navigation-Link item">
                             <i className="globe icon"></i>
                             {formatMessage(messages.chooseLanguage)}
-                        </a>
+                        </a>*/}
                         <NavLink key="logout" routeName="logout" className="FORCEPT-Navigation-Link item">
                             <i className="sign out icon"></i>
                             {formatMessage(messages.logout)}

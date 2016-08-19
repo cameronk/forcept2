@@ -7,6 +7,7 @@ import debug from 'debug';
 import keyBy from 'lodash/keyBy';
 
 import Actions from '../actions';
+import { FatalErrorAction } from '../App/AppActions';
 import { navigateAction } from '../Route/RouteActions';
 import StageStore from './StageStore';
 import { JsonModel } from '../../database/helper';
@@ -89,7 +90,7 @@ export function ClearCacheAction(context, payload, done) {
  * Update the stage cache via payload.
  */
 export function UpdateCacheAction(context, payload, done) {
-    context.dispatch(Actions.STAGES_CACHE_MODIFIED);
+    context.dispatch(Actions.STAGES_CACHE_MODIFIED, true);
     context.dispatch(Actions.STAGES_UPDATE_CACHE, payload);
     done();
 }
@@ -105,6 +106,11 @@ export function UploadFieldsAction(context, { fields }) {
             fields: fields
         });
     });
+}
+
+export function SetConsoleStatusAction(context, status, done) {
+    context.dispatch(Actions.CONSOLE_SET_STATUS, status);
+    done();
 }
 
 /*
@@ -147,14 +153,37 @@ export function SaveStageAction(context, payload, done) {
         }
 
         context.dispatch(Actions.CONSOLE_SET_STATUS, "saved");
+        context.dispatch(Actions.STAGES_CACHE_MODIFIED, false);
+        
         context.executeAction(LoadStagesAction, {}, (err) => {
-            done();
+            if(err)
+                done(err);
+            else done();
         });
-        done();
 
     }).catch((err) => {
         __debug(err);
-        done();
+        // done(err);
+        context.executeAction(FatalErrorAction, err, () => {
+            done(err);
+        });
     });
 
+}
+
+export function RemoveFieldAction(context, { stageID, fieldID }, done) {
+    context.executeAction(SetConsoleStatusAction, "saving")
+        .then(() => context.executeAction(UpdateCacheAction, {
+            fields: {
+                [fieldID]: null
+            }
+        }))
+        .then(() => context.executeAction(SaveStageAction, {
+            id: stageID
+        }))
+        .catch(err => {
+            context.executeAction(FatalErrorAction, err, () => {
+                done(err);
+            });
+        }).then(done);
 }

@@ -32,6 +32,7 @@ getConfig(function(config) {
 
         shell.env.PORT = expressPort;
         shell.env.DEBUG = "forcept:*";
+        shell.env.NODE_ENV = "development";
 
         shell.exec('"./node_modules/.bin/nodemon" start.js -e js,jsx', function () {});
         __debug('run-dev: Webpack Dev Server listening on port ' + webpackPort);

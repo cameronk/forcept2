@@ -39,41 +39,21 @@ class Index extends BaseComponent {
         var props = this.props;
 
         return (
-            <div>
-                <h1>ResourceStore::getState()</h1>
-                <pre>{JSON.stringify(props.resourceState, null, '  ')}</pre>
-                <div className="ui divider"></div>
-                <div className="ui divider"></div>
-                <h1>VisitStore::getVisit()</h1>
-                <pre>{JSON.stringify(props.visit, null, '  ')}</pre>
-                <div className="ui divider"></div>
-                <h1>PatientStore::getPatients()</h1>
-                <pre>{JSON.stringify(props.patients, null, '  ')}</pre>
-                <div className="ui divider"></div>
-                <h1>StageStore::getStages()</h1>
-                <pre>{JSON.stringify(props.stages, null, '  ')}</pre>
-                <div className="ui divider"></div>
-                <h1>StageStore::getCache()</h1>
-                <pre>{JSON.stringify(props.stageCache, null, '  ')}</pre>
-                <div className="ui divider"></div>
+            <div className="ui basic segment">
+                <h1 className="ui header">
+                    Welcome to the FORCEPT console.
+                    <div className="sub header">
+                        Use the links in the sidebar to edit stages, users, and more.
+                    </div>
+                </h1>
+                <h4 className="ui header">
+                    FORCEPT v2.0.0. Contact ckelley@azurutechnology.com for information or assistance.
+                    <div className="sub header">
+                        Copyright &copy; Azuru Technology LLC 2016. All rights reserved.
+                    </div>
+                </h4>
             </div>
         );
     }
 }
-
-Index = connectToStores(
-    Index,
-    [ResourceStore, PatientStore],
-    (context, props) => {
-        let resourceStore = context.getStore(ResourceStore);
-        return {
-            resourceState: resourceStore.getState(),
-            patients: context.getStore(PatientStore).getPatients(),
-            stages: context.getStore(StageStore).getStages(),
-            stageCache: context.getStore(StageStore).getCache(),
-            visit: context.getStore(VisitStore).getVisit()
-        };
-    }
-)
-
 export default injectIntl(Index);

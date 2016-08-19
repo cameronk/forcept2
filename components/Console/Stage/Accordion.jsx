@@ -94,8 +94,8 @@ class Accordion extends BaseComponent {
                                         if(!isShifting) {
                                             return (
                                                 <div className="content" key={key + "-content"}>
-                                                    <Field
-                                                        _key={key}
+                                                    <Field _key={key}
+                                                        stageID={this.props.stageID}
                                                         field={thisField} />
                                                 </div>
                                             );

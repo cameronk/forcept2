@@ -7,7 +7,7 @@ import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 
-import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
+import { UpdateCacheAction, RemoveFieldAction } from '../../../flux/Stage/StageActions';
 import { SetFieldShiftContext } from '../../../flux/Console/StageBuilderActions';
 import BaseComponent, { grabContext } from '../../Base';
 import FieldSettings from './FieldSettings';
@@ -51,10 +51,9 @@ class Field extends BaseComponent {
     }
 
     _removeField = (evt) => {
-        this.context.executeAction(UpdateCacheAction, {
-            fields: {
-                [this.props._key]: null
-            }
+        this.context.executeAction(RemoveFieldAction, {
+            stageID: this.props.stageID,
+            fieldID: this.props._key
         });
     }
 
@@ -68,7 +67,7 @@ class Field extends BaseComponent {
     render() {
 
         var props     = this.props,
-            { field } = props,
+            { field, stageID } = props,
             mutable   = (field.mutable === true),
             typeSelectDOM, removeButtonDOM;
 

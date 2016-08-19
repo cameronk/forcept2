@@ -42,3 +42,8 @@ export function SaveConfigAction(context, { current, changes }, done) {
             }
         });
 }
+
+export function FatalErrorAction(context, error, done) {
+    context.dispatch('NAVIGATE_ERROR', error);
+    done();
+}

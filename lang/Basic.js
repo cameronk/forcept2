@@ -20,6 +20,10 @@ export default defineMessages({
         id: root + "create",
         defaultMessage: "Create"
     },
+    search: {
+        id: root + "search",
+        defaultMessage: "Search"
+    },
 
     ///
     errorOccurred: {

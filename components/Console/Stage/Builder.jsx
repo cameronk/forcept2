@@ -155,7 +155,9 @@ class Builder extends BaseComponent {
             /// FieldsAccordion
             FieldsAccordionDOM = (
                 <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <FieldsAccordion fields={cache.fields} />
+                    <FieldsAccordion
+                        stageID={this.props.stage.id || null}
+                        fields={cache.fields} />
                 </div>
             );
 

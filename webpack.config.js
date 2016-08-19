@@ -59,7 +59,7 @@ module.exports = function(devPort) {
             new webpack.NoErrorsPlugin(),
             new webpack.DefinePlugin({
                 'process.env': {
-                    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+                    NODE_ENV: JSON.stringify('development'),
                     BROWSER: JSON.stringify(true)
                 }
             })

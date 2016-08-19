@@ -16,7 +16,7 @@ const stores  = {
     AppStore:          ["getFlash", "getPageTitle", "getConfig"],
     VisitStore:        ["getStatus", "getVisit", "getList", "getRecentData", "isModified", "getCurrentTab", "getDestination"],
     SearchStore:       ["getStatus", "getQuery", "getContext", "getResults", "getSelected"],
-    StageStore:        ["getStages", "getFieldShiftContext"],
+    StageStore:        ["getCache", "getStages", "getFieldShiftContext"],
     PatientStore:      ["getPatients"],
     MedicationStore:   ["getCache", "getMedications"],
     PrescriptionStore: ["getSets"]
@@ -37,18 +37,20 @@ class StoreDebugger extends BaseComponent {
         var props = this.props,
             propKeys = Object.keys(this.props);
 
-        return (
-            <div id="FORCEPT-StoreDebugger">
-                {propKeys.map((loc) => {
-                    return (
-                        <div key={loc} className="ui segment">
-                            <div className="small ui header">{loc}</div>
-                            <pre>{JSON.stringify(props[loc], null, '  ')}</pre>
-                        </div>
-                    );
-                })}
-            </div>
-        );
+        if(process.env.BROWSER && process.env.NODE_ENV && process.env.NODE_ENV === "development") {
+            return (
+                <div id="FORCEPT-StoreDebugger">
+                    {propKeys.map((loc) => {
+                        return (
+                            <div key={loc} className="ui segment">
+                                <div className="small ui header">{loc}</div>
+                                <pre>{JSON.stringify(props[loc], null, '  ')}</pre>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        } else return null;
     }
 
 }
