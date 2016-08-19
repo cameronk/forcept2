@@ -3,7 +3,7 @@ node_modules
 storage/*
 build/*
 dist/*
-
+tmp/*
 
 # Elastic Beanstalk Files
 
