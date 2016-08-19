@@ -1,0 +1,138 @@
+/**
+ *
+ */
+
+@import "Mixins.less";
+
+#FORCEPT-VisitHandler {
+
+    display: flex !important;
+    align-items: flex-start;
+    height: 100%;
+    overflow: hidden;
+
+    /*
+     * Sidebar toggler
+     */
+    .sidebar-toggle {
+        display: inline;
+        background: #e8e8e8;
+        font-size: 20px;
+        padding: 10px;
+        // padding-right: 15px;
+        transition: all 150ms ease;
+
+        &:not(.floating):hover {
+            cursor: pointer;
+            border-left: 5px solid #aaa;
+            transition: all 150ms ease;
+        }
+
+        &.floating {
+            position: fixed;
+            right: -5px;
+            top: 44px; /* assume tablet/mobile to save media queries */
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            border-right: 5px solid #aaa;
+
+            &:hover {
+                right: 0;
+                cursor: pointer;
+            }
+        }
+
+        &.floating {
+            .on-desktop({
+                top: 3px;
+            })
+        }
+    }
+
+    /*
+     * Primary content container ("Left side")
+     */
+    & > .primary {
+        flex-grow: 1;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        &.sidebarVisible {
+            .on-mobile({
+                display: none;
+            })
+        }
+    }
+
+    /*
+     * Move .on-mobile declaration to a separate container
+     */
+    & > .sidebar {
+        .on-mobile({
+            width: 100% !important;
+        })
+    }
+
+    /*
+     * Sidebar container ("Right side")
+     */
+    & > .sidebar {
+        display: flex;
+        flex-direction: column;
+
+        width: 250px;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background: #f8f8f8;
+        border-left: 1px solid #ccc;
+
+        & > .patient {
+            flex-grow: 1;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            #FORCEPT-Visit-Sidebar {
+                .ui.list {
+                    .item {
+                        padding: 0.5em 0.75em;
+                        border-color: #e5e5e5;
+                    }
+                }
+            }
+        }
+
+        & > .controls {
+            & > .ui.buttons {
+                .button {
+                    border-radius: 0 !important;
+                }
+            }
+
+            /*
+             *
+             */
+            #FORCEPT-Dropdown-MoveStage {
+                .item {
+                    .ui.circular.label {
+                        margin-right: 15px;
+                    }
+                }
+                .item.disabled {
+                    opacity: 1 !important;
+
+                    & > span {
+                        opacity: 0.45 !important;
+                    }
+
+                    .ui.circular.label {
+                        margin-right: 25px !important;
+                    }
+                }
+            }
+        }
+
+    }
+
+}

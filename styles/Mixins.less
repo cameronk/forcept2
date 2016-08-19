@@ -1,0 +1,11 @@
+.on-desktop(@rules) {
+    @media only screen and (min-width: 1145px) { @rules(); }
+}
+
+.on-tablet(@rules) {
+    @media only screen and (max-width: 1144px) { @rules(); }
+}
+
+.on-mobile(@rules) {
+    @media only screen and (max-width: 767px) { @rules(); }
+}

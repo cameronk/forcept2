@@ -1,3 +1,12 @@
 {
-  "optional": ["es7.classProperties"]
+    "plugins": [
+        "react-intl"
+    ],
+    "optional": ["es7.classProperties"],
+    "extra": {
+        "react-intl": {
+            "messagesDir": "./dist/messages/",
+            "enforceDescriptions": false
+        }
+    }
 }
