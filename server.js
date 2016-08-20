@@ -56,9 +56,6 @@ import SearchService from './flux/Search/SearchService';
 /// Containers
 import HtmlContainer from './containers/Html';
 
-/// Cron job imports
-import Cleanup from './utils/cleanup';
-
 /// Constants
 const env = process.env.NODE_ENV || "development";
 const port = process.env.PORT || 3000;
