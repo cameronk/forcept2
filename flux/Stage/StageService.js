@@ -117,13 +117,16 @@ export default {
                          */
                         for(let field in prevFields) {
 
-                            /// Add old fields to our updatedFields object...
-                            /// just in case removeColumn fails, we don't want to remove
-                            /// the entry in the fields JSON object.
-                            updatedFields[field] = prevFields[field];
 
                             if(!newFields.hasOwnProperty(field)) {
+
                                 deletions++;
+
+                                /// Add old fields to our updatedFields object...
+                                /// just in case removeColumn fails, we don't want to remove
+                                /// the entry in the fields JSON object.
+                                updatedFields[field] = prevFields[field];
+
                                 updates.push(
                                     new Promise((resolve, reject) => {
 
@@ -143,7 +146,11 @@ export default {
                                         });
                                     })
                                 );
+                            } else {
+                                /// The field is still in newFields, add that version.
+                                updatedFields[field] = newFields[field];
                             }
+
                         }
 
                         /*
