@@ -96,7 +96,7 @@ export default {
                     } else {
 
                         var stageID    = stage.get('id');
-                        var newFields  = body.fields;
+                        var newFields  = body.fields; /// HAS THE CURRENT FIELD ORDER
                         var prevFields = stage.get('fields');
                         var updatedFields = {};
                         var tableName  = stage.get('tableName');
@@ -199,9 +199,17 @@ export default {
                             __debug("[update] %j", status);
                             __debug("[update]: saving fields to stage record");
 
+                            var reorderedFields = {};
+
+                            for(var key in newFields) {
+                                if(updatedFields.hasOwnProperty(key)){
+                                    reorderedFields[key] = updatedFields[key];
+                                }
+                            }
+
                             stage.set('name', body.name);
                             stage.set('type', body.type);
-                            stage.set('fields', updatedFields);
+                            stage.set('fields', reorderedFields);
                             stage.save()
                                 .then((stage) => {
                                     __debug("[update]: ...done!");
