@@ -157,9 +157,9 @@ export default {
 
                             if(!prevFields.hasOwnProperty(field)) {
 
-                                if(Manifest.Fields[newFields[field].type].storageMethod !== "none") {
+                                if(Manifest.Fields[newFields[field].type].storageMethod === "none") {
                                     /// No storage method for this field, just add it to the object.
-                                    updatedFields[thisField] = newFields[thisField];
+                                    updatedFields[field] = newFields[field];
                                 } else {
 
                                     additions++;
@@ -185,7 +185,7 @@ export default {
                                             });
                                         })
                                     );
-                                    
+
                                 }
 
                             }
