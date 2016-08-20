@@ -7,7 +7,10 @@ import keyBy from 'lodash/keyBy';
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
 import UpdateStageDefinition, { BaseStageDefinition } from '../../database/StageDefinition';
-const __debug = require('debug')('forcept:flux:Console:StagesService')
+
+import Manifest from '../manifest';
+
+const __debug = require('debug')('forcept:flux:Console:StageService');
 
 export default {
     attach: function(db) {
@@ -153,29 +156,38 @@ export default {
                             /// addColumn actually worked.
 
                             if(!prevFields.hasOwnProperty(field)) {
-                                additions++;
-                                updates.push(
-                                    new Promise((resolve, reject) => {
 
-                                        var thisField = field;
-                                        __debug(" -> Adding %s", thisField);
+                                if(Manifest.Fields[newFields[field].type].storageMethod !== "none") {
+                                    /// No storage method for this field, just add it to the object.
+                                    updatedFields[thisField] = newFields[thisField];
+                                } else {
 
-                                        schema.addColumn(
-                                            tableName,
-                                            thisField,
-                                            {
-                                                type: db.Sequelize.TEXT
-                                            }
-                                        ).catch(err => {
-                                            reject(err);
-                                        }).then(() => {
-                                            /// Now that addColumn was successful, we can
-                                            /// add the field to the updatedFields object.
-                                            updatedFields[thisField] = newFields[thisField];
-                                            resolve(thisField);
-                                        });
-                                    })
-                                );
+                                    additions++;
+                                    updates.push(
+                                        new Promise((resolve, reject) => {
+
+                                            var thisField = field;
+                                            __debug(" -> Adding %s", thisField);
+
+                                            schema.addColumn(
+                                                tableName,
+                                                thisField,
+                                                {
+                                                    type: db.Sequelize.TEXT
+                                                }
+                                            ).catch(err => {
+                                                reject(err);
+                                            }).then(() => {
+                                                /// Now that addColumn was successful, we can
+                                                /// add the field to the updatedFields object.
+                                                updatedFields[thisField] = newFields[thisField];
+                                                resolve(thisField);
+                                            });
+                                        })
+                                    );
+                                    
+                                }
+
                             }
                         }
 

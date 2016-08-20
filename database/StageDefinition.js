@@ -4,6 +4,9 @@
  */
 
 import debug from 'debug';
+import omitBy from 'lodash/omitBy';
+import isUndefined from 'lodash/isUndefined';
+
 import ModelHelper from './helper';
 import Manifest from '../flux/manifest';
 
@@ -187,13 +190,16 @@ export default function UpdateStageDefinition(stage, db) {
                 /// Don't handle field at all
                 case "none":
                 default:
-
+                    __debug("|==> NO STORAGE");
                     break;
             }
 
         })(field, thisField.type);
 
     }
+
+    /// Omit "undefined" values from the object.
+    fields = omitBy(fields, isUndefined);
 
     /*
      * Push back to available record models
