@@ -75,7 +75,7 @@ class Field extends BaseComponent {
             removeButtonDOM = (
                 <button
                     onClick={this._removeField}
-                    className="ui tiny basic red labeled icon button">
+                    className="ui tiny labeled icon button">
                     <i className="remove icon"></i>
                     Remove this field
                 </button>
@@ -98,13 +98,15 @@ class Field extends BaseComponent {
                                 onChange={this._change('description')}>
                             </textarea>
                         </div>
-                        <button
-                            onClick={this._moveField}
-                            className="ui tiny basic green labeled icon button">
-                            <i className="right chevron icon"></i>
-                            Move this field
-                        </button>
-                        {removeButtonDOM}
+                        <div className="ui vertical buttons">
+                            <button
+                                onClick={this._moveField}
+                                className="ui tiny labeled icon button">
+                                <i className="right chevron icon"></i>
+                                Move this field
+                            </button>
+                            {removeButtonDOM}
+                        </div>
                     </div>
                     <div className="ten wide field">
                         <div className="ui basic segment">

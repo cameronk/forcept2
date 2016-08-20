@@ -162,6 +162,7 @@ class OptionList extends BaseComponent {
                     return (
                         <div className="ui small right left action input" key={option}>
                             <button className="ui icon button"
+                                tabIndex="-1"
                                 onClick={this._shift(option)}>
                                 <i className={(disabled ? "right chevron" : "sidebar") + " button icon"}></i>
                             </button>
@@ -169,7 +170,7 @@ class OptionList extends BaseComponent {
                                 placeholder="Type an option value here"
                                 value={thisOption.value}
                                 disabled={disabled} />
-                            <button className="ui red icon button" disabled={true}>
+                            <button tabIndex="-1"className="ui red icon button" disabled={true}>
                                 <i className="close icon"></i>
                             </button>
                         </div>
@@ -181,6 +182,7 @@ class OptionList extends BaseComponent {
                     return (
                         <div className="ui small right left action input" key={option}>
                             <button className="ui icon button"
+                                tabIndex="-1"
                                 onClick={this._setShiftContext(option)}>
                                 <i className="sidebar icon"></i>
                             </button>
@@ -190,17 +192,6 @@ class OptionList extends BaseComponent {
                                 onChange={this._updateOption(option)} />
                             {(() => {
                                 if(props.colors) {
-                                    // return (
-                                    //     <div className="ui compact selection dropdown">
-                                    //         <div className="text"><em>Pick a color</em></div>
-                                    //         <i className="dropdown icon"></i>
-                                    //         <div className="menu">
-                                    //             <div className={BuildDOMClass("item", { "active selected": thisOption.color && thisOption.color === "DB2828" || false })} onClick={this._updateOptionColor(option, "DB2828")}>
-                                    //                 <span className="ui mini red circular label"></span> Red
-                                    //             </div>
-                                    //         </div>
-                                    //     </div>
-                                    // )
 
                                     var color = thisOption.color || "";
 
@@ -208,11 +199,23 @@ class OptionList extends BaseComponent {
                                         <select className="ui compact selection dropdown" value={color} onChange={this._updateOptionColor(option)}>
                                             <option value="">Pick a color</option>
                                             <option value="DB2828">Red</option>
+                                            <option value="F2711C">Orange</option>
+                                            <option value="FBBD08">Yellow</option>
+                                            <option value="B5CC18">Olive</option>
+                                            <option value="21BA45">Green</option>
+                                            <option value="00B5AD">Teal</option>
+                                            <option value="2185D0">Blue</option>
+                                            <option value="6435C9">Violet</option>
+                                            <option value="A333C8">Purple</option>
+                                            <option value="E03997">Pink</option>
+                                            <option value="A5673F">Brown</option>
+                                            <option value="767676">Grey</option>
+                                            <option value="1B1C1D">Black</option>
                                         </select>
                                     )
                                 }
                             })()}
-                            <button className="ui red icon button" onClick={this._deleteOption(option)}>
+                            <button tabIndex="-1" className="ui red icon button" onClick={this._deleteOption(option)}>
                                 <i className="close icon"></i>
                             </button>
                         </div>

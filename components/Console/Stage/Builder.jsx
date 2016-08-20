@@ -62,14 +62,20 @@ class Builder extends BaseComponent {
 
     _addField = (type) => {
         return () => {
+
+            var settings = {
+                name: "",
+                type: type,
+                mutable: true,
+                /// Copy this object otherwise we overwrite the manifest... -_-
+                settings: Object.assign({}, this.context.getFieldTypes()[type].defaultSettings)
+            };
+
+            __debug("Creating new field: %j", settings);
+
             this.context.executeAction(UpdateCacheAction, {
                 fields: {
-                    [new Date().getTime()]: {
-        				name: "",
-        				type: type,
-        				mutable: true,
-        				settings: this.context.getFieldTypes()[type].defaultSettings
-        			}
+                    [new Date().getTime()]: settings
                 }
             });
         }
