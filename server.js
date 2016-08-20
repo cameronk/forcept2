@@ -56,6 +56,9 @@ import SearchService from './flux/Search/SearchService';
 /// Containers
 import HtmlContainer from './containers/Html';
 
+/// Cron job imports
+import Cleanup from './utils/cleanup';
+
 /// Constants
 const env = process.env.NODE_ENV || "development";
 const port = process.env.PORT || 3000;
@@ -315,6 +318,41 @@ getConfig(config => {
 
                     __debug(" ...delivering to: %s", config["dumping.deliverTo"]);
 
+                    /*
+                     * Send data dump function.
+                     */
+                    var SendDataDump = ({ message="" }) => {
+
+                        /// Options for this mail message
+                        var mailOptions = {
+                            from: 'forcept@azurutechnology.com',
+                            to: config['dumping.deliverTo'],
+                            subject: `${config['appName']} Data Dump - ${date}`,
+                            text: message,
+                            attachments: [
+                                {   // utf-8 string as an attachment
+                                    filename: `${snakeCase(config['appName'])}_${date}.db`,
+                                    path: 'storage/forcept.db'
+                                },
+                            ]
+                        };
+
+                        /// Send the mail
+                        transport.sendMail(mailOptions, (err, info) => {
+                            if(err) {
+                                __debug("WARNING: could not send data dump!");
+                                __debug(err);
+                                __debug(info);
+                            } else {
+                                __debug("Dispatched data dump @ %s.", date);
+                                __debug(info);
+                            }
+                        });
+
+                    }
+
+                    // =================== \\
+
                     var date = new Date().toISOString(),
                         DumpRule = new schedule.RecurrenceRule();
 
@@ -331,35 +369,18 @@ getConfig(config => {
                         }
                     });
 
+                    /// Send one now.
+                    SendDataDump({ message: "Sent when FORCEPT was started." });
+
                     /// Set up recurring job
-                    var DumpJob  = schedule.scheduleJob(DumpRule, () => {
+                    var DumpJob  = schedule.scheduleJob(DumpRule, SendDataDump);
 
-                        /// Options for this mail message
-                        var mailOptions = {
-                            from: 'forcept@azurutechnology.com',
-                            to: config['dumping.deliverTo'],
-                            subject: `${config['appName']} Data Dump - ${date}`,
-                            attachments: [
-                                {   // utf-8 string as an attachment
-                                    filename: `${snakeCase(config['appName'])}_${date}.db`,
-                                    path: 'storage/forcept.db'
-                                },
-                            ]
-                        };
-
-                        /// Send the mail
-                        transport.sendMail(mailOptions, (err, info) => {
-                            if(err) {
-                                __debug("WARNING: could not send automatic data dump!");
-                                __debug(err);
-                                __debug(info);
-                            } else {
-                                __debug("Dispatched automatic data dump @ %s.", date);
-                                __debug(info);
-                            }
-                        });
-                    })
+                } else {
+                    __debug(" ...has no address to deliver to.");
                 }
+
+            } else {
+                __debug(" ...is disabled.");
             }
 
         });
