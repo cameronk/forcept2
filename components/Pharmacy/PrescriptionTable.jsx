@@ -75,7 +75,7 @@ class PrescriptionTable extends BaseComponent {
                                     var thisPrescription = props.set.prescriptions[prescriptionID];
                                     var thisMedication   = props.medications[thisPrescription.medicationID];
                                     return (
-                                        <tr>
+                                        <tr key={prescriptionID}>
                                             <td>
                                                 {thisMedication.name}
                                             </td>
@@ -125,7 +125,7 @@ class PrescriptionTable extends BaseComponent {
                                                         {Object.keys(thisMedication.quantities).map(quID => {
                                                             let thisQuantity = thisMedication.quantities[quID];
                                                             return (
-                                                                <div className="item" onClick={this.prescribe(thisMedication.id, thisQuantity.id)}>
+                                                                <div key={quID} className="item" onClick={this.prescribe(thisMedication.id, thisQuantity.id)}>
                                                                     <span className="description">{thisQuantity.available} avail.</span>
                                                                     <span className="text">{thisQuantity.name || "Untitled quantity"}</span>
                                                                 </div>

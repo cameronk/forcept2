@@ -42,6 +42,8 @@ class PrescriptionStore extends BaseStore {
 
     getSets = () => this.sets;
 
+    getSet  = (id) => this.sets[id.toString()];
+
     updateSets = (sets) => {
         for(var patientID in sets) {
             var thisSet = sets[patientID];

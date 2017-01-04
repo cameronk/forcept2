@@ -43,8 +43,7 @@ export default {
             },
 
             /**
-             * Create a stage record in `stages`.
-             * Create a stage-specific table
+             *
              */
             create: function(req, resource, params, body, config, callback) {
 
