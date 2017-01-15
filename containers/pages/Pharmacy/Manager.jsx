@@ -78,6 +78,8 @@ class PharmacyManager extends BaseComponent {
                             location={props.currentMedication.id || 0}
                             basePath="/pharmacy/manage"
                             context="medication"
+                            collapse={10}
+                            orderBy={[ med => med.name.toLowerCase() ]}
                             isCacheModified={false} />
                     </div>
                     <div className="twelve wide computer eleven wide tablet right spaced column">

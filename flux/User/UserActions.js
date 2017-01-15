@@ -27,11 +27,13 @@ export function LoadUsersAction(context, payload, done) {
  *
  */
 export function CreateUserAction(context, payload, done) {
+    __debug("Creating a new user: %j", payload);
     context.service
         .create('UserService')
         .params({}).body({
             username: payload.username,
-            password: payload.password
+            password: payload.password,
+            isAdmin: payload.isAdmin || false
         })
         .end().then(({data}) => {
             context.dispatch(Actions.USERS_UPDATE, { [data.id] : data });

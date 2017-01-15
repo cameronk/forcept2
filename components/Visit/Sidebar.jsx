@@ -47,11 +47,16 @@ class Sidebar extends BaseComponent {
                 </div>
                 {stagesBeneath.map((stageBeneathID, index) => {
                     return (
-                        <Overview key={stageBeneathID}
-                            mode={"checklist"}
-                            isLast={(index === (stagesBeneath.length - 1))}
-                            patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
-                            stage={stages[stageBeneathID]} />
+                        <div>
+                            <div className="ui small header" style={{ marginBottom: 0, paddingBottom: 0 }}>
+                                {stages[stageBeneathID].name || "Untitled stage"}
+                            </div>
+                            <Overview key={stageBeneathID}
+                                mode={"checklist"}
+                                isLast={(index === (stagesBeneath.length - 1))}
+                                patient={thisPatient.hasOwnProperty(stageBeneathID) ? thisPatient[stageBeneathID] : {}}
+                                stage={stages[stageBeneathID]} />
+                        </div>
                     );
                 })}
             </div>

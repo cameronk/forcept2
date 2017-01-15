@@ -1,23 +1,23 @@
 /**
- * forcept - flux/Pharmacy/MedQuantityService.js
+ * forcept - flux/Pharmacy/DosageService.js
  * @author Azuru Technology
  */
 
 import keyBy from 'lodash/keyBy';
 import HttpStatus from 'http-status-codes';
 import BuildError from '../../utils/BuildError';
-const __debug = require('debug')('forcept:flux:Pharmacy:MedQuantityService')
+const __debug = require('debug')('forcept:flux:Pharmacy:DosageService')
 
 export default {
     attach: function(db) {
         return {
-            name: 'MedQuantityService',
+            name: 'DosageService',
 
             /**
              *
              */
             read: function(req, resource, params, config, callback) {
-                db.MedQuantity.findAll(params).then(meds => {
+                db.Dosage.findAll(params).then(meds => {
                     callback(null, keyBy(meds, 'id'), null);
                 })
             },
@@ -28,13 +28,13 @@ export default {
              */
             create: function(req, resource, params, body, config, callback) {
 
-                __debug("[create]: Creating a new medication quantity.");
+                __debug("[create]: Creating a new medication dosage.");
 
                 /*
                  * Create patient record.
                  */
-                (db.MedQuantity).create(body).then(med => {
-                    __debug("[create]: MedQuantity %s created.", med.id);
+                (db.Dosage).create(body).then(med => {
+                    __debug("[create]: Dosage %s created.", med.id);
                     callback(null, med.toJSON(), null);
                 }).catch(err => {
                     __debug("[create]: ERROR:");
@@ -49,18 +49,18 @@ export default {
              */
             update: function(req, resource, params, body, config, callback) {
 
-                __debug("[update]: Updating medication quantity #%s", params.id);
+                __debug("[update]: Updating medication dosage #%s", params.id);
 
-                (db.MedQuantity).findOne({
+                (db.Dosage).findOne({
                     where: {
                         id: params.id
                     }
                 }).then((med) => {
                     if(!med) {
                         callback(
-                            BuildError('Requested medication quantity not found.', {
+                            BuildError('Requested medication dosage not found.', {
                                 output: {
-                                    message: 'Requested medication quantity not found.'
+                                    message: 'Requested medication dosage not found.'
                                 },
                                 statusCode: HttpStatus.NOT_FOUND
                             })

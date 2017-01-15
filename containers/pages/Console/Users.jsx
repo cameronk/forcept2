@@ -51,7 +51,11 @@ class Users extends BaseComponent {
                 onApprove: () => {
                     var form = $("#Forcept-Modal-addUser .ui.form");
                     if(form.form('is valid')) {
-                        this.context.executeAction(CreateUserAction, form.form('get values'));
+                        var values = form.form('get values');
+                        __debug(values);
+                            values.isAdmin = (values.isAdmin === "on");
+                        this.context.executeAction(CreateUserAction, values);
+                        form.form('reset');
                         return true;
                     } else {
                         form.form('validate form');
@@ -140,6 +144,7 @@ class Users extends BaseComponent {
                                             <th></th>
                                             <th>Username</th>
                                             <th>Password</th>
+                                            <th>Admin?</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -153,11 +158,12 @@ class Users extends BaseComponent {
                                                     </td>
                                                     <td>{user.username}</td>
                                                     <td>
-                                                        <div className="ui button">
+                                                        <div className="ui disabled button">
                                                             <i className="lock icon"></i>
                                                             Change password
                                                         </div>
                                                     </td>
+                                                    <td>{user.isAdmin ? "Yes" : "No"}</td>
                                                     <td>
                                                         <div className="small ui buttons">
                                                             <div className="ui red button FORCEPT-Action-removeUser" data-user-id={id} onClick={this._submitRemoveUser(id)}>
@@ -172,7 +178,7 @@ class Users extends BaseComponent {
                                     <tfoot className="full-width">
                                         <tr>
                                             <th></th>
-                                            <th colSpan="3">
+                                            <th colSpan="4">
                                                 <div onClick={this._showAddUser}
                                                      className="ui right floated small primary labeled icon button">
                                                     <i className="user icon"></i>
@@ -208,6 +214,10 @@ class Users extends BaseComponent {
                             <div className="field">
                                 <label>Confirm password</label>
                                 <input type="password" name="passwordRepeat" placeholder="Confirm the password here" />
+                            </div>
+                            <div className="field">
+                                <label>Is this an administrator?</label>
+                                <input type="checkbox" name="isAdmin" /> Yes
                             </div>
                         </div>
                     </div>

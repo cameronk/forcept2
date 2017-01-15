@@ -53,6 +53,7 @@ export default keyMirror({
 
     ///
     'PRESCRIPTION_SET_UPDATE': null,
+    'PRESCRIPTION_SETS_CLEAR': null,
     'PRESCRIPTION_UPDATE_STATUS': null,
 
     /** ============================= **/

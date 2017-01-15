@@ -16,6 +16,7 @@ import { ClearVisitAction, GrabVisitAction, SetRecentVisitDataAction } from '../
 import { LoadDisplayGroupsAction, GrabDisplayGroupAction, ClearDisplayGroupCacheAction } from '../Display/DisplayActions';
 import { SetConsoleStatusAction } from '../Console/ConsoleActions';
 import { ResetRelativesAction, ClearQueryDataAction } from '../Search/SearchActions';
+import { ClearPrescriptionSetsAction } from '../Prescription/PrescriptionActions';
 
 var __debug = debug('forcept:flux:Route:RouteActions');
 
@@ -101,7 +102,14 @@ var PreNavigateActions = function(context, payload, done) {
          * We don't want results or selected patients to carry over
          * from request to request.
          */
-        context.executeAction(ClearQueryDataAction)
+        context.executeAction(ClearQueryDataAction),
+
+        /*
+         * The prescription set store holds a list of prescriptions assigned
+         * to a particular patient. We want to reload this whenever the user
+         * navigates away from a page.
+         */
+        context.executeAction(ClearPrescriptionSetsAction)
 
     ]).then(() => {
 

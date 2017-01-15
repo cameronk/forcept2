@@ -5,6 +5,7 @@
 
 import React, { PropTypes } from 'react';
 import BaseComponent, { grabContext } from '../Base';
+import LazyInput from 'lazy-input';
 
 import Label from './Label';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
@@ -54,19 +55,20 @@ class TextField extends BaseComponent {
         switch(props.type) {
             case "textarea":
                 inputDOM = (
-                    <textarea
+                    <LazyInput
+                        type='textarea'
                         autoComplete="off"
                         placeholder={(field.name || "Untitled field") + " goes here"}
-                        value={value}
+                        defaultValue={value}
                         onChange={this._change}>
-                    </textarea>
+                    </LazyInput>
                 );
                 break;
             case "number":
                 var hasUnit = (field.settings.unit && field.settings.unit.length > 0);
                 inputDOM = (
                     <div className={BuildDOMClass("ui", { "right labeled": hasUnit }, "input")}>
-                        <input
+                        <LazyInput
                             type="number"
                             autoComplete="off"
                             placeholder={(field.name || "Untitled field") + " goes here"}
@@ -86,7 +88,7 @@ class TextField extends BaseComponent {
                 break;
             default:
                 inputDOM = (
-                    <input
+                    <LazyInput
                         type={props.type || "text"}
                         autoComplete="off"
                         placeholder={(field.name || "Untitled field") + " goes here"}

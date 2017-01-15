@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/QuantityEditor.jsx
+ * forcept - components/Console/DosageEditor.jsx
  * @author Azuru Technology
  */
 
@@ -8,15 +8,15 @@ import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import pick from 'lodash/pick';
 
-import { UpdateMedicationCacheAction, SaveMedicationAction, AddMedQuantityAction } from '../../flux/Pharmacy/MedicationActions';
+import { UpdateMedicationCacheAction, SaveMedicationAction, AddDosageAction } from '../../flux/Pharmacy/MedicationActions';
 import BaseComponent, { grabContext } from '../Base';
-import QuantitiesAccordion from './QuantitiesAccordion';
+import DosageAccordion from './DosageAccordion';
 import HeadingScaffold from '../Scaffold/Heading';
 import MessageScaffold from '../Scaffold/Message';
 import { BuildDOMClass } from '../../utils/CSSClassHelper';
 
-const __debug = debug("forcept:components:Console:QuantityEditor");
-const root = "components.pharmacy.quantityeditor";
+const __debug = debug("forcept:components:Console:DosageEditor");
+const root = "components.pharmacy.dosageeditor";
 const messages = defineMessages({
     [root + ".name"]: {
         id:  root + ".name",
@@ -28,7 +28,7 @@ if(process.env.BROWSER) {
     require('../../styles/Builder.less');
 }
 
-class QuantityEditor extends BaseComponent {
+class DosageEditor extends BaseComponent {
 
     static contextTypes = grabContext()
 
@@ -55,8 +55,8 @@ class QuantityEditor extends BaseComponent {
         this.context.executeAction(SaveMedicationAction, { id: this.props.medication.id || null });
     }
 
-    _addQuantity = (type) => {
-        this.context.executeAction(AddMedQuantityAction, { id: this.props.medication.id || null });
+    _addDosage = (type) => {
+        this.context.executeAction(AddDosageAction, { id: this.props.medication.id || null });
     }
 
     render() {
@@ -68,29 +68,29 @@ class QuantityEditor extends BaseComponent {
 
         var nameLabel = props.intl.formatMessage(messages[root + ".name"]);
         var messageDOM, AddNewFieldButtonDOM,
-            QuantitiesAccordionDOM, QuantitiesAccordionDividerDOM;
+            DosageAccordionDOM, DosageAccordionDividerDOM;
 
         /// Enable some fields when ID is set.
         if(medication.id) {
 
             /// Add a new field
             AddNewFieldButtonDOM = (
-                <button onClick={this._addQuantity}
+                <button onClick={this._addDosage}
                     className={BuildDOMClass("ui labeled icon button" , { "disabled": status === 'saving' })}>
                     <i className="plus icon"></i>
-                    Add a new medication quantity
+                    Add a new medication dosage
                 </button>
             );
 
-            /// QuantitiesAccordion
-            QuantitiesAccordionDOM = (
+            /// DosageAccordion
+            DosageAccordionDOM = (
                 <div className={"ui fully expanded basic segment" + (status === 'saving' ? " loading" : "")}>
-                    <QuantitiesAccordion quantities={cache.quantities} />
+                    <DosageAccordion medication={medication} dosages={cache.dosages} />
                 </div>
             );
 
-            /// QuantitiesAccordion bottom divider
-            QuantitiesAccordionDividerDOM = (
+            /// DosageAccordion bottom divider
+            DosageAccordionDividerDOM = (
                 <div className="ui divider"></div>
             );
 
@@ -120,13 +120,13 @@ class QuantityEditor extends BaseComponent {
                         <div className="fields">
                             <div className="eight wide field">
                                 <label>{nameLabel}</label>
-                                <input type="text" value={cache.name} onChange={this._nameChange} placeholder={nameLabel} />
+                                <input type="text" defaultValue={cache.name} onChange={this._nameChange} placeholder={nameLabel} />
                             </div>
                         </div>
                     </form>
                 <div className="ui divider"></div>
-                    {QuantitiesAccordionDOM}
-                    {QuantitiesAccordionDividerDOM}
+                    {DosageAccordionDOM}
+                    {DosageAccordionDividerDOM}
                 <div className="ui buttons">
                     {AddNewFieldButtonDOM}
                     <button
@@ -144,4 +144,4 @@ class QuantityEditor extends BaseComponent {
     }
 }
 
-export default injectIntl(QuantityEditor);
+export default injectIntl(DosageEditor);

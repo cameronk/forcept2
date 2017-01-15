@@ -28,7 +28,7 @@ export function LoadMedicationsAction(context, payload, done) {
     context.service
         .read('MedicationService')
         .params({
-            getQuantities: true
+            getDosages: true
         }).end()
         .then(({ data }) => {
             __debug("Loaded %s medications", Object.keys(data).length);
@@ -60,15 +60,15 @@ export function GrabMedicationAction(context, { id }, done) {
                     var medication = JsonModel(data[id]);
 
                     context.service
-                        .read('MedQuantityService')
+                        .read('DosageService')
                         .params({
                             where: {
                                 medication: medication.id
                             },
-                            attributes: ['id', 'name', 'quantity']
+                            attributes: ['id', 'name', 'dosage']
                         }).end()
                         .then(({ data }) => {
-                            medication.quantities = data || {};
+                            medication.dosages = data || {};
                             finish(medication);
                         });
 
@@ -96,6 +96,21 @@ export function UpdateMedicationCacheAction(context, payload, done) {
     context.dispatch(Actions.PHARMACY_MEDS_CACHE_MODIFIED, true);
     context.dispatch(Actions.PHARMACY_MEDS_CACHE_UPDATE, payload);
     done();
+}
+
+export function UpdateMedicationStockAction(context, { medicationID, dosageID, newStock }, done) {
+    __debug("Updating medication stock for %i to %i", dosageID, newStock);
+    context.executeAction(UpdateMedicationCacheAction, {
+        dosages: {
+            [dosageID]: {
+                available: newStock
+            }
+        }
+    }).then(() => {
+        context.executeAction(SaveMedicationAction, {
+            id: medicationID
+        }).then(done);
+    });
 }
 
 export function ClearMedicationCacheAction(context, payload, done) {
@@ -135,16 +150,16 @@ export function SaveMedicationAction(context, payload, done) {
 
             var promises = [];
 
-            if(cache.quantities) {
-                for(var qID in cache.quantities) {
-                    var thisQuantity = cache.quantities[qID];
-                    __debug(" - Updating quantity ID %s", thisQuantity.id);
+            if(cache.dosages) {
+                for(var qID in cache.dosages) {
+                    var thisDosage = cache.dosages[qID];
+                    __debug(" - Updating dosage ID %s", thisDosage.id);
                     promises.push(
                         context.service
-                            .update('MedQuantityService')
+                            .update('DosageService')
                             .params({
-                                id: thisQuantity.id
-                            }).body(omit(thisQuantity, ['id', 'medication'])).end()
+                                id: thisDosage.id
+                            }).body(omit(thisDosage, ['id', 'medication'])).end()
                     );
                 }
             }
@@ -192,20 +207,20 @@ export function LoadMedicationPageActions(context, route, done) {
 
 /** ========================== **/
 
-export function AddMedQuantityAction(context, payload, done) {
+export function AddDosageAction(context, payload, done) {
     if(!payload.id) {
-        throw new Error("Cannot add medication quantity without a medication ID");
+        throw new Error("Cannot add medication dosage without a medication ID");
         done();
     } else {
         context.service
-            .create('MedQuantityService')
+            .create('DosageService')
             .body({
                 medication: payload.id
             }).end()
             .then(({ data }) => {
-                __debug("Received a new MedQuantity: %j", data);
+                __debug("Received a new Dosage: %j", data);
                 context.executeAction(UpdateMedicationCacheAction, {
-                    quantities: {
+                    dosages: {
                         [data.id]: data
                     }
                 }, () => done());

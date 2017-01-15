@@ -32,13 +32,19 @@ export default {
 
                 __debug("[create]: Creating a new user, '%s'.", body.username || "unnamed");
 
+                var record = {
+                    username: body.username,
+                    password: SHA256.update(body.password).digest('hex')
+                };
+
+                if(body.isAdmin) {
+                    record.isAdmin = true;
+                };
+
                 /*
                  * Create patient record.
                  */
-                db.User.create({
-                    username: body.username,
-                    password: SHA256.update(body.password).digest('hex')
-                }).then(user => {
+                db.User.create(record).then(user => {
                     __debug("[create]: User created.");
                     callback(null, user, null);
                 }).catch(err => {

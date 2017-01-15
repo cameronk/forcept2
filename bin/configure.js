@@ -23,6 +23,11 @@ if(!fs.existsSync(storagePath)) {
    fs.mkdirSync(storagePath);
 }
 
+const resourcesPath = './storage/resources';
+if(!fs.existsSync(resourcesPath)) {
+   fs.mkdirSync(resourcesPath);
+}
+
 const storageFile = storagePath + '/config.json';
 if(fs.existsSync(storageFile)) {
     console.log("Loading existing configuration values.");

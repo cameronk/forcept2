@@ -33,9 +33,15 @@ export default {
                 }
 
                 db.PrescriptionSet.findAll(config).then(sets => {
+                    __debug("===sets===");
                     sets = sets.map(set => {
                         set = set.toJSON();
-                        set.prescriptions = keyBy(set.prescriptions, 'id')
+                        __debug(set);
+                        if(set.hasOwnProperty('prescriptions')) {
+                            set.prescriptions = keyBy(set.prescriptions, 'id')
+                        } else {
+                            set.prescriptions = {};
+                        }
                         return set;
                     });
                     callback(null, sets, null);
@@ -54,7 +60,8 @@ export default {
                  */
                 (db.PrescriptionSet).create(body).then(set => {
                     __debug("[create]: Prescription set created.");
-                    set.prescriptions = new Object;
+                    set = set.toJSON();
+                    set.prescriptions = {};
                     callback(null, set, null);
                 }).catch(err => {
                     __debug("[create]: ERROR:");

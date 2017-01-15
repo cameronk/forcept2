@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     var Prescription = sequelize.define('Prescription', {
         setID: DataTypes.INTEGER,
         medicationID: DataTypes.INTEGER,
-        quantityID: DataTypes.INTEGER,
+        dosageID: DataTypes.INTEGER,
         amount: {
             type: DataTypes.INTEGER,
             defaultValue: 1,
@@ -23,6 +23,11 @@ module.exports = function(sequelize, DataTypes) {
                 models.Prescription.belongsTo(models.PrescriptionSet, {
                     as: 'prescription',
                     foreignKey: 'setID',
+                    targetKey: 'id'
+                });
+                models.Prescription.hasOne(models.User, {
+                    as: 'creator',
+                    foreignKey: 'createdBy',
                     targetKey: 'id'
                 });
             }

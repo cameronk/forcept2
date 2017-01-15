@@ -3,7 +3,7 @@
 var ModelHelper = require('../helper.js');
 
 module.exports = function(sequelize, DataTypes) {
-    var MedQuantity = sequelize.define('MedQuantity', {
+    var Dosage = sequelize.define('Dosage', {
         medication: DataTypes.INTEGER,
         name: DataTypes.STRING,
         available: DataTypes.INTEGER
@@ -11,13 +11,13 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 // associations can be defined here
-                (models.MedQuantity).belongsTo(models.Medication, {
-                    as: 'quantity',
+                (models.Dosage).belongsTo(models.Medication, {
+                    as: 'dosage',
                     foreignKey: 'medication',
                     targetKey: 'id',
                 });
             }
         }
     });
-    return MedQuantity;
+    return Dosage;
 };

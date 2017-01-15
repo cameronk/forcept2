@@ -162,12 +162,12 @@ app.plug({
      */
     plugContext: function (options, context, app) {
 
-        var fieldTypes   = Manifest.Fields;
-        var displayTypes = Manifest.Displays;
+        var fieldTypes   = JSON.stringify(Manifest.Fields);
+        var displayTypes = JSON.stringify(Manifest.Displays);
 
         var defineFor = function(ctx) {
-            ctx.getFieldTypes = () => fieldTypes;
-            ctx.getDisplayTypes = () => displayTypes;
+            ctx.getFieldTypes = () => JSON.parse(fieldTypes);
+            ctx.getDisplayTypes = () => JSON.parse(displayTypes);
         };
 
         // Returns a context plugin

@@ -56,7 +56,7 @@ class DataPoint extends BaseComponent {
             case "select":
                 if(field.settings && field.settings.multiple) {
                     dataDOM = (
-                        <ul>
+                        <ul style={{ paddingLeft: 14, paddingTop: 3, margin: 0 }}>
                             {value.map((item) => {
                                 return (
                                     <li>{item}</li>
@@ -75,7 +75,7 @@ class DataPoint extends BaseComponent {
             case "file":
                 dataDOM = value.map(({ type, id, ext }) => {
                     return (
-                        <div className="ui fluid card">
+                        <div className="ui fluid card" style={{ marginTop: 5 }}>
                             <div className="ui fluid image">
                                 <img src={["/resources/", id, ext].join("")} />
                             </div>

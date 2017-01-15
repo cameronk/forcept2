@@ -7,6 +7,7 @@ import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import LazyInput from 'lazy-input';
 
 import { BuildDOMClass } from '../../../utils/CSSClassHelper';
 import StageStore from '../../../flux/Stage/StageStore';
@@ -166,7 +167,7 @@ class OptionList extends BaseComponent {
                                 onClick={this._shift(option)}>
                                 <i className={(disabled ? "right chevron" : "sidebar") + " button icon"}></i>
                             </button>
-                            <input type="text"
+                            <LazyInput type="text"
                                 placeholder="Type an option value here"
                                 value={thisOption.value}
                                 disabled={disabled} />
@@ -186,7 +187,7 @@ class OptionList extends BaseComponent {
                                 onClick={this._setShiftContext(option)}>
                                 <i className="sidebar icon"></i>
                             </button>
-                            <input type="text"
+                            <LazyInput type="text"
                                 placeholder="Type an option value here"
                                 value={thisOption.value}
                                 onChange={this._updateOption(option)} />

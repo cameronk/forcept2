@@ -76,14 +76,35 @@ export default {
                         }
 
                         prescription.save()
-                            .then((prescription) => {
-                                callback(null, {
-                                    id: prescription.id
-                                }, null);
+                            .then((updatedPrescription) => {
+                                callback(null, updatedPrescription, null);
                             });
 
                     }
 
+                });
+            },
+
+            /**
+             *
+             */
+
+            delete: function(req, resource, params, config, callback) {
+                /*
+                 * Create patient record.
+                 */
+                (db.Prescription).findOne({
+                    where: {
+                        id: params.id
+                    }
+                }).then(prescription => {
+                    callback(null, {
+                        status: prescription.destroy()
+                    }, null);
+                }).catch(err => {
+                    __debug("[delete]: ERROR:");
+                    __debug(err);
+                    callback(err);
                 });
             }
         }

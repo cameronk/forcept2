@@ -14,7 +14,7 @@ module.exports = {
             medicationID: {
                 type: Sequelize.INTEGER
             },
-            quantityID: {
+            dosageID: {
                 type: Sequelize.INTEGER
             },
             amount: {

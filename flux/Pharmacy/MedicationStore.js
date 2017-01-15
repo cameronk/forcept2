@@ -64,15 +64,15 @@ class MedicationStore extends BaseStore {
     updateCache = (data) => {
         for(var prop in data) {
             var thisProp = data[prop];
-            if(prop === "quantities" && this.cache.hasOwnProperty('quantities')) {
+            if(prop === "dosages" && this.cache.hasOwnProperty('dosages')) {
                 for(var qID in thisProp) {
-                    var thisQuantity = thisProp[qID];
-                    if(this.cache.quantities.hasOwnProperty(qID)) {
-                        for(var quantProp in thisQuantity) {
-                            this.cache.quantities[qID][quantProp] = thisQuantity[quantProp];
+                    var thisDosage = thisProp[qID];
+                    if(this.cache.dosages.hasOwnProperty(qID)) {
+                        for(var quantProp in thisDosage) {
+                            this.cache.dosages[qID][quantProp] = thisDosage[quantProp];
                         }
                     } else {
-                        this.cache.quantities[qID] = thisProp[qID];
+                        this.cache.dosages[qID] = thisProp[qID];
                     }
                 }
             } else {

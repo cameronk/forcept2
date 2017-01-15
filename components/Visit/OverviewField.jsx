@@ -27,7 +27,7 @@ class OverviewField extends BaseComponent {
         var { props } = this,
             { field, value } = props,
             valueDefined = ValueDefined(field.type, value),
-            iconClass = (valueDefined ? "green check mark" : "red close"),
+            iconClass = (field.type == "prescriber" ? "external" : (valueDefined ? "green check mark" : "red close")),
             descriptionDOM, resourcesDOM;
 
         /*
@@ -70,7 +70,7 @@ class OverviewField extends BaseComponent {
             }
 
             return (
-                <div className="item">
+                <div className="item" data-field-type={field.type}>
                     <i className={iconClass + " icon"}></i>
                     <div className="content">
                         <span className="header">{upperFirst(field.name || "Untitled field")}</span>

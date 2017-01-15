@@ -1,5 +1,5 @@
 /**
- * forcept - components/Console/QuantitiesAccordion.jsx
+ * forcept - components/Console/DosageAccordion.jsx
  * @author Azuru Technology
  */
 
@@ -12,18 +12,18 @@ import isEqual from 'lodash/isEqual';
 // import StageStore from '../../flux/Stage/StageStore';
 import BaseComponent, { grabContext } from '../Base';
 // import Field from './Field';
-import Quantity from './Quantity';
+import Dosage from './Dosage';
 
-const __debug = debug("forcept:components:Pharmacy:QuantitiesAccordion");
-const root = "components.pharmacy.QuantitiesAccordion";
+const __debug = debug("forcept:components:Pharmacy:DosageAccordion");
+const root = "components.pharmacy.DosageAccordion";
 const messages = defineMessages({
     [root + ".errors.noFields.heading"]: {
         id: root + ".errors.noFields.heading",
-        defaultMessage: "No medication quantities created (yet)."
+        defaultMessage: "No medication dosages created (yet)."
     },
     [root + ".errors.noFields"]: {
         id: root + ".errors.noFields",
-        defaultMessage: "Use the 'Add a new medication quantity' button below to get started."
+        defaultMessage: "Use the 'Add a new medication dosage' button below to get started."
     },
     [root + ".name"]: {
         id:  root + ".name",
@@ -31,7 +31,7 @@ const messages = defineMessages({
     }
 });
 
-class QuantitiesAccordion extends BaseComponent {
+class DosageAccordion extends BaseComponent {
 
     /*
      *
@@ -42,18 +42,18 @@ class QuantitiesAccordion extends BaseComponent {
 
     render() {
         var props = this.props,
-            { quantities } = props,
+            { dosages } = props,
             accordionDOM;
 
-        var quantityKeys = quantities ? Object.keys(quantities) : [];
+        var dosageKeys = dosages ? Object.keys(dosages) : [];
 
-        if(quantityKeys.length > 0) {
+        if(dosageKeys.length > 0) {
             accordionDOM = (
                 <div className="ui fluid accordion">
                     {
                         flatten(
-                            quantityKeys.map((key, i) => {
-                                let thisQuantity = quantities[key];
+                            dosageKeys.map((key, i) => {
+                                let thisDosage = dosages[key];
                                 return [
                                     (
                                         <div className="title" key={key + "-title"}>
@@ -63,15 +63,16 @@ class QuantitiesAccordion extends BaseComponent {
                                                     {key}
                                                 </div>
                                                 {" "}
-                                                {thisQuantity.name && thisQuantity.name.length > 0 ? thisQuantity.name : `New quantity`}
+                                                {thisDosage.name && thisDosage.name.length > 0 ? thisDosage.name : `New dosage`}
                                             </div>
                                         </div>
                                     ),
                                     (
                                         <div className="content" key={key + "-content"}>
-                                            <Quantity
+                                            <Dosage
                                                 _key={key}
-                                                quantity={thisQuantity} />
+                                                medication={this.props.medication}
+                                                dosage={thisDosage} />
                                         </div>
                                     )
                                 ];
@@ -97,4 +98,4 @@ class QuantitiesAccordion extends BaseComponent {
     }
 }
 
-export default injectIntl(QuantitiesAccordion);
+export default injectIntl(DosageAccordion);

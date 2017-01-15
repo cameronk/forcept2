@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 // associations can be defined here
-                (models.Medication).hasMany(models.MedQuantity, {
-                    as: 'quantities',
+                (models.Medication).hasMany(models.Dosage, {
+                    as: 'dosages',
                     foreignKey: 'medication'
                 });
             }

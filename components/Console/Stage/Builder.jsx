@@ -7,6 +7,7 @@ import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import pick from 'lodash/pick';
+import LazyInput from 'lazy-input';
 
 import { UpdateCacheAction, SaveStageAction, UploadFieldsAction } from '../../../flux/Stage/StageActions';
 import StageStore from '../../../flux/Stage/StageStore';
@@ -68,7 +69,7 @@ class Builder extends BaseComponent {
                 type: type,
                 mutable: true,
                 /// Copy this object otherwise we overwrite the manifest... -_-
-                settings: Object.assign({}, this.context.getFieldTypes()[type].defaultSettings)
+                settings: this.context.getFieldTypes()[type].defaultSettings
             };
 
             __debug("Creating new field: %j", settings);
@@ -198,14 +199,17 @@ class Builder extends BaseComponent {
                     <div className="fields">
                         <div className="eight wide field">
                             <label>{nameLabel}</label>
-                            <input type="text" value={cache.name} onChange={this._nameChange} placeholder={nameLabel} />
+                            <LazyInput
+                                type="text"
+                                value={cache.name}
+                                onChange={this._nameChange}
+                                placeholder={nameLabel} />
                         </div>
                         <div className="eight wide field">
                             <label>Type</label>
                             <select className="ui dropdown" value={cache.type} onChange={this._typeChange}>
                                 <option value="">Type</option>
                                 <option value="basic">Basic</option>
-                                <option value="pharmacy">Pharmacy</option>
                             </select>
                         </div>
                     </div>
@@ -231,6 +235,7 @@ class Builder extends BaseComponent {
                 {PresetControlsDOM}
             </div>
         );
+        // <option value="pharmacy">Pharmacy</option>
     }
 }
 

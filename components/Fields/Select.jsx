@@ -31,6 +31,7 @@ class SelectField extends BaseComponent {
 
         var options = {
             allowAdditions: (settings.customizable || false),
+            forceSelection: false,
             onChange: this._change2
         };
 
@@ -54,14 +55,23 @@ class SelectField extends BaseComponent {
             updated = value.split(','),
             diff = difference(updated, current);
 
+        /**
+         * If the last option was removed, value.length == 0
+         * so we set updated to an empty array.
+         */
+        if(value.length === 0) {
+            updated = [];
+        }
+
         __debug("!!!!!!!!!!!!!!!! Caught change2 for %s", this.props.fieldID);
         __debug("Value: ", value);
+        __debug("Length: ", value.length);
         __debug("Choice: ", $choice);
         __debug("Current: ", current);
         __debug("Updated: ", updated);
         __debug("Difference: ", diff);
 
-        if($choice && value !== "") {
+        // if($choice && value !== "") {
             this.context.executeAction(UpdatePatientAction, {
                 [patientID]: {
                     [stageID]: {
@@ -69,12 +79,13 @@ class SelectField extends BaseComponent {
                     }
                 }
             });
-        }
+        // }
 
     }
 
     /**
-     * Update component if value changed.
+     * Update component if the patient tab is changed,
+     * in order to populate the new patients' value for the dropdown.
      */
     shouldComponentUpdate(newProps) {
         return this.props.patientID !== newProps.patientID;
@@ -88,6 +99,8 @@ class SelectField extends BaseComponent {
     componentDidUpdate() {
         var { props } = this,
             container = $(`#FieldDropdown-${this.props.fieldID}`);
+
+        __debug("componentDidUpdate -> ", props.value);
 
         if(props.value.length > 0) {
             container.dropdown('set exactly', props.value);

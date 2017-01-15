@@ -23,18 +23,18 @@ export default {
 
                 var config = {};
 
-                if(params.getQuantities) {
-                    __debug("[read] getting quantities");
+                if(params.getDosages) {
+                    __debug("[read] getting dosages");
                     config.include = [{
-                        model: db.MedQuantity,
-                        as: 'quantities'
+                        model: db.Dosage,
+                        as: 'dosages'
                     }];
                 }
 
                 db.Medication.findAll(config).then(meds => {
                     meds = meds.map(med => {
                         med = med.toJSON();
-                        med.quantities = keyBy(med.quantities, 'id')
+                        med.dosages = keyBy(med.dosages, 'id')
                         return med;
                     });
                     __debug("[read] found %s medications", meds.length);

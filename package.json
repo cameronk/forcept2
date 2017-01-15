@@ -4,13 +4,17 @@
   "private": true,
   "main": "start.js",
   "scripts": {
-    "build": "webpack --progress --config webpack.config.production.js",
+    "build": "rm -rf ./dist && webpack --progress --config webpack.config.production.js",
     "dev": "node run-dev.js",
     "lint": "eslint ./*.js ./**/*.js",
     "start": "node run-prod.js",
     "configure": "node bin/configure.js",
-    "db:setup": "sequelize db:migrate --env='production' && sequelize db:seed:all --env='production'",
-    "db:setup:dev": "sequelize db:migrate && sequelize db:seed:all",
+    "db:migrate:prod": "node_modules/.bin/sequelize db:migrate --env production",
+    "db:seed:prod": "node_modules/.bin/sequelize db:seed:all --env production",
+    "db:migrate:dev": "node_modules/.bin/sequelize db:migrate",
+    "db:seed:dev": "node_modules/.bin/sequelize db:seed:all",
+    "db:setup": "npm run db:migrate:prod && npm run db:seed:prod",
+    "db:setup:dev": "npm run db:migrate:dev && npm run db:seed:dev",
     "db:seed:rollback": "sequelize db:seed:undo:all"
   },
   "dependencies": {
@@ -47,6 +51,7 @@
     "intl-locales-supported": "^1.0.0",
     "jquery": "^2.2.1",
     "keymirror": "^0.1.1",
+    "lazy-input": "^2.0.0",
     "less": "^2.6.1",
     "less-loader": "^2.2.2",
     "lodash": "^4.6.1",

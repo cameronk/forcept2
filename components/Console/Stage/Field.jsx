@@ -6,6 +6,7 @@
 import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import LazyInput from 'lazy-input';
 
 import { UpdateCacheAction, RemoveFieldAction } from '../../../flux/Stage/StageActions';
 import { SetFieldShiftContext } from '../../../flux/Console/StageBuilderActions';
@@ -88,15 +89,20 @@ class Field extends BaseComponent {
                     <div className="six wide column">
                         <div className="field">
                             <label>Name:</label>
-                            <input type="text" placeholder={"Enter a field name"} value={field.name} onChange={this._change('name')} />
+                            <LazyInput
+                                type="text"
+                                placeholder={"Enter a field name"}
+                                value={field.name}
+                                onChange={this._change('name')} />
                         </div>
                         <div className="field">
                             <label>Description:</label>
-                            <textarea
+                            <LazyInput
+                                type='textarea'
                                 placeholder={"Enter a field description (optional)"}
                                 value={field.description}
                                 onChange={this._change('description')}>
-                            </textarea>
+                            </LazyInput>
                         </div>
                         <div className="ui vertical buttons">
                             <button

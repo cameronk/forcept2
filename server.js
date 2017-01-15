@@ -48,7 +48,7 @@ import UserService from './flux/User/UserService';
 import DisplayService from './flux/Display/DisplayService';
 import DisplayGroupService from './flux/Display/DisplayGroupService';
 import MedicationService from './flux/Pharmacy/MedicationService';
-import MedQuantityService from './flux/Pharmacy/MedQuantityService';
+import DosageService from './flux/Pharmacy/DosageService';
 import PrescriptionService from './flux/Prescription/PrescriptionService';
 import PrescriptionSetService from './flux/Prescription/PrescriptionSetService';
 import SearchService from './flux/Search/SearchService';
@@ -178,7 +178,7 @@ getConfig(config => {
                   FetchrPlugin.registerService(DisplayService.attach(db));
                   FetchrPlugin.registerService(DisplayGroupService.attach(db));
                   FetchrPlugin.registerService(MedicationService.attach(db));
-                  FetchrPlugin.registerService(MedQuantityService.attach(db));
+                  FetchrPlugin.registerService(DosageService.attach(db));
                   FetchrPlugin.registerService(PrescriptionService.attach(db));
                   FetchrPlugin.registerService(PrescriptionSetService.attach(db));
                   FetchrPlugin.registerService(SearchService.attach(db));

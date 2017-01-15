@@ -7,6 +7,7 @@ import React from 'react';
 import { connectToStores } from 'fluxible-addons-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
+import chunk from 'lodash/chunk';
 
 import BaseComponent, { grabContext } from '../Base';
 import MessageScaffold from '../Scaffold/Message';
@@ -81,7 +82,8 @@ class Searcher extends BaseComponent {
             fieldKeys  = Object.keys(fields),
             { status } = props,
             isSearching = status === "searching",
-            isDisabled  = (!props.query || props.query.length === 0 || isSearching);
+            isDisabled  = (!props.query || props.query.length === 0 || isSearching),
+            isImportDisabled = (props.selected && props.selected.length === 0)
 
         /// Override status if passed in props
         if(props.loading) {
@@ -118,106 +120,86 @@ class Searcher extends BaseComponent {
                             );
                             break;
                         case "searched":
+
+                            __debug("Showing search results");
                             if(props.results) {
 
-                                var resultKeys = Object.keys(props.results),
-                                    isImportDisabled = (props.selected.length === 0);
+                                var resultKeys = Object.keys(props.results);
 
                                 return (
-                                    <div className="bottom attached ui segment">
-                                        <table className="ui compact celled definition table">
-                                            <thead>
-                                                <tr>
-                                                    <th className="center aligned">Import</th>
-                                                    {fieldKeys.map(fieldID => {
-                                                        let thisField = fields[fieldID];
+                                    <div className="attached ui segment">
+                                        {chunk(resultKeys, 3).map(patients => {
+                                            return (
+                                                <div className="ui three cards">
+                                                    {patients.map(patientID => {
+
+                                                        var thisPatient = props.results[patientID];
+                                                        var patientIsInVisit = !(thisPatient.currentVisit === null || thisPatient.currentVisit === "checkout")
+                                                        var disableThisPatient = (props.disablePatientsInVisits && patientIsInVisit);
+                                                        var isSelected = (props.selected.indexOf(patientID) !== -1);
+
                                                         return (
-                                                            <th key={fieldID}>
-                                                                {thisField.name || "Untitled field"}
-                                                            </th>
-                                                        );
-                                                    })}
-                                                    <th>Visits</th>
-                                                    <th>In visit</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {resultKeys.map(patientID => {
-
-                                                    var thisPatient = props.results[patientID];
-                                                    var patientIsInVisit = !(thisPatient.currentVisit === null || thisPatient.currentVisit === "checkout")
-                                                    var disableThisPatient = (props.disablePatientsInVisits && patientIsInVisit);
-
-                                                    return (
-                                                        <tr className={BuildDOMClass({
-                                                            /// Disable the row if the disablePatientsInVisits flag is true
-                                                            ///   AND the patient flowlocation is NOT checkout
-                                                            disabled: disableThisPatient,
-                                                            positive: (props.selected.indexOf(patientID) !== -1)
-                                                        })} key={patientID}>
-
-                                                            <td className="center aligned collapsing">
-                                                                {disableThisPatient ? (
-                                                                    <i className="minus icon"></i>
-                                                                ) : (
-                                                                    <div className="ui fitted slider checkbox">
-                                                                        <input type="checkbox" onChange={this._selectPatient(patientID)}/> <label></label>
+                                                            <div key={patientID} className={BuildDOMClass("card", { teal: isSelected })}>
+                                                                <div className="content">
+                                                                    <div className="header">
+                                                                        {thisPatient.firstName || ""} {thisPatient.lastName || ""}
                                                                     </div>
-                                                                )}
-                                                            </td>
+                                                                </div>
+                                                                <div className="content">
+                                                                    <h4 className="ui sub header">
+                                                                        {thisPatient.visits.length || 0} prior visits
+                                                                    </h4>
+                                                                    <div className="description">
+                                                                        <div className="ui list">
+                                                                            {fieldKeys.map(fieldID => {
 
-                                                            {fieldKeys.map(fieldID => {
+                                                                                var thisField = fields[fieldID];
 
-                                                                var thisField = fields[fieldID];
+                                                                                if(ValueDefined(thisField.type, thisPatient[fieldID])) {
+                                                                                    return (
+                                                                                        <div className="item">
+                                                                                            <div className="header">{thisField.name}</div>
+                                                                                            <div className="content">
+                                                                                                <DataPoint
+                                                                                                    value={thisPatient[fieldID]}
+                                                                                                    field={{
+                                                                                                        name:  thisField.name,
+                                                                                                        type:  thisField.type,
+                                                                                                        settings: thisField.settings
+                                                                                                    }} />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    );
+                                                                                }
 
-                                                                if(ValueDefined(thisField.type, thisPatient[fieldID])) {
-                                                                    return (
-                                                                        <td key={fieldID}>
-                                                                            <DataPoint
-                                                                                value={thisPatient[fieldID]}
-                                                                                field={{
-                                                                                    name:  thisField.name,
-                                                                                    type:  thisField.type,
-                                                                                    settings: thisField.settings
-                                                                                }} />
-                                                                        </td>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <td key={fieldID} className="center aligned">
-                                                                            <i className="minus icon"></i>
-                                                                        </td>
-                                                                    );
-                                                                }
+                                                                            })}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="extra content">
+                                                                    {disableThisPatient ? (
+                                                                        <span>This patient <strong>cannot</strong> be imported</span>
+                                                                    ) : [
+                                                                        (
+                                                                            <div className="right floated ui large fitted checkbox">
+                                                                                <input type="checkbox" onChange={this._selectPatient(patientID)}/> <label></label>
+                                                                            </div>
+                                                                        ),
+                                                                        (
+                                                                            <span>{isSelected ? "This patient will be imported" : "Check the box to import this patient"}</span>
+                                                                        )
+                                                                    ]}
+                                                                </div>
+                                                            </div>
+                                                        );
 
-                                                            })}
-
-                                                            <td>{thisPatient.visits.length || 0}</td>
-                                                            <td className={patientIsInVisit ? "" : "positive"}>
-                                                                {patientIsInVisit ? "Yes" : "No" }
-                                                            </td>
-
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                            <tfoot className="full-width">
-                                                <tr>
-                                                    <th></th>
-                                                    <th colSpan={fieldKeys.length + 3}>
-                                                        <div onClick={this._doImport}
-                                                            className={BuildDOMClass("ui right floated small primary labeled icon button", { disabled: isImportDisabled })}>
-                                                            <i className="download icon"></i>
-                                                            {props.intl.formatMessage(messages.importX, {
-                                                                count: props.selected.length
-                                                            })}
-                                                        </div>
-                                                    </th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
+                                                    })}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                );
+                                )
+
                             } else {
                                 return (
                                     <div className="bottom attached ui segment">
@@ -229,6 +211,15 @@ class Searcher extends BaseComponent {
                             break;
                     }
                 })()}
+                <div className="bottom attached ui segment">
+                    <div onClick={this._doImport}
+                        className={BuildDOMClass("ui small primary labeled icon button", { disabled: isImportDisabled })}>
+                        <i className="download icon"></i>
+                        {props.intl.formatMessage(messages.importX, {
+                            count: props.selected.length
+                        })}
+                    </div>
+                </div>
             </div>
         );
 

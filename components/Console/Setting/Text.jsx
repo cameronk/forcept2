@@ -7,6 +7,7 @@ import React from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import debug from 'debug';
 import $ from 'jquery';
+import LazyInput from 'lazy-input';
 
 import StageStore from '../../../flux/Stage/StageStore';
 import { UpdateCacheAction } from '../../../flux/Stage/StageActions';
@@ -41,7 +42,7 @@ class SettingText extends BaseComponent {
         return (
             <div className="field">
                 <label>{props.label || ""}</label>
-                <input
+                <LazyInput
                     placeholder={props.placeholder}
                     id={id + "-" + props.field}
                     type="text"
